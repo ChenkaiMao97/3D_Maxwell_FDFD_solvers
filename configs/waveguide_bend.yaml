@@ -1,0 +1,31 @@
+sim_type: waveguide_bend
+
+########## parameters for paths ##########
+model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv-10_11_25T06_03_52
+output_path: ./ # change this to a different drive if you need to save big files
+
+########## parameters for the physical simulation ##########
+sim_shape: [192, 192, 80] # number of pixels in x, y, z
+wavelength: 800 # in nm
+dL: 20 # simulation resolution, in nm
+pmls: [10, 10, 10, 10, 10, 10] # number of pixels of PML for x_start, x_end, y_start, y_end, z_start, z_end
+
+kwargs: # key word arguments for constructing the problem, defined in the waveguide_bend.py file
+  substrate_eps: 2.1025 # 1.45**2
+  waveguide_eps: 7.29 # 2.7**2
+  top_medium_eps: 1.0 # 1.0**2
+  waveguide_height_nm: 400
+  waveguide_width_nm: 400
+  radius_nm: 800 # bend radius
+  source_distance_from_face_nm: 300
+  plot_source: True
+  ln_R: -10 # parameter for PML, don't change
+
+########## parameters for the GMRES solver ##########
+max_iter: 500
+tol: 1e-4
+verbose: True
+restart: 40 # if == 0, no restart, otherwise, run restarted GMRES
+
+########## other configs ##########
+spins_verification: 0 # if 1, run simulation in spins as well to verify the results

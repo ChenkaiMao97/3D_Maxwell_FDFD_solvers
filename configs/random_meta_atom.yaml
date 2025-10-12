@@ -1,0 +1,11 @@
+model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_20_120-10_12_25T09_08_26
+output_path: ./ # change this to a different drive if you need to save big files
+
+########## parameters for the GMRES solver ##########
+max_iter: 500
+tol: 1e-4
+verbose: True
+restart: 0 # if == 0, no restart, otherwise, run restarted GMRES
+
+########## other configs ##########
+spins_verification: 1 # if 1, run simulation in spins as well to verify the results

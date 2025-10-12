@@ -1,0 +1,30 @@
+sim_type: meta_atom
+
+########## parameters for paths ##########
+model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_20_120-10_12_25T09_08_26
+output_path: ./ # change this to a different drive if you need to save big files
+
+########## parameters for the physical simulation ##########
+sim_shape: [48, 48, 160] # number of pixels in x, y, z
+wavelength: 800 # in nm
+dL: 10 # simulation resolution, in nm
+pmls: [0, 0, 0, 0, 10, 10] # number of pixels of PML for x_start, x_end, y_start, y_end, z_start, z_end
+
+kwargs: # key word arguments for constructing the problem, defined in the meta_atom.py file
+  substrate_eps: 2.1025 # 1.45**2
+  meta_atom_eps: 7.29 # 2.7**2
+  top_medium_eps: 1.0 # 1.0**2
+  substrate_thickness_nm: 500 # in nm
+  meta_atom_height_nm: 640 # in nm
+  meta_atom_size: 320 # in nm
+  source_below_meta_nm: 160 # in nm
+  source_polarization: 'x'
+
+########## parameters for the GMRES solver ##########
+max_iter: 500
+tol: 1e-4
+verbose: True
+restart: 0 # if == 0, no restart, otherwise, run restarted GMRES
+
+########## other configs ##########
+spins_verification: 1 # if 1, run simulation in spins as well to verify the results
