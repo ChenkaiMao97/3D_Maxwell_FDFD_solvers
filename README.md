@@ -27,34 +27,35 @@ conda activate waveynet3d
 ```
 
 3. (noninteractive mode) You can run your simulation by calling static python scripts. 
-Simulate predefined random meta atom from the training dataset:
+
+ - Simulate predefined random meta atom from the training dataset:
 ```
 python random_sim.py configs/random_meta_atom.yaml
 ```
 
-Simulate predefined large aperiodic device from the training dataset: (note that for large simulations if iterations are large, GPUs may run out of memory, if that happens use restarted GMRES can help)
+ - Simulate predefined large aperiodic device from the training dataset: (note that for large simulations if iterations are large, GPUs may run out of memory, if that happens use restarted GMRES can help)
 ```
 python random_sim.py configs/random_large_aperiodic.yaml
 ```
 
-Simulate custom defined meta atom (if parameter distribution is different from training, NN will be worse)
+ - Simulate custom defined meta atom (if parameter distribution is different from training, NN will be worse)
 ```
 python custom_sim.py configs/meta_atom.yaml
 ```
 
-Simulate custom defined waveguide bend (if parameter distribution is different from training, NN will be worse)
+ - Simulate custom defined waveguide bend (if parameter distribution is different from training, NN will be worse)
 ```
 python custom_sim.py configs/waveguide_bend.yaml
 ```
 
 4. (interacrive mode) You can also run commands interactively in a jupyter notebook. Note that in order to make jupyter notebook work on the server, you need to ssh with -X and port forwarding, (e.g. ssh -X -L 8888:localhost:8888 username@server_ip)
 
-start the jupyter notebook as below, and open localhost:8888 in your local browser 
+ - start the jupyter notebook as below, and open localhost:8888 in your local browser 
 ```
 cd notebook
 jupyter notebook --port 8888 --no-browsers
 ```
 
-5. For spins, it works by first start a local maxwells-b docker server, which accepts simulations. To check if the maxwells-b docker is running, run "docker container ls". If it is not running, you can start it by running this bash script: "/home/chenkaim/scripts/spins/maxwell-b/run_docker"
+5. For spins, it works by first starting a local maxwells-b docker server, which accepts simulations. To check if the maxwells-b docker is running, run "docker container ls". If it is not running, you can start it by running this bash script: "/home/chenkaim/scripts/spins/maxwell-b/run_docker"
 
 
