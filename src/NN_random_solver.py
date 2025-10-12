@@ -25,6 +25,7 @@ def NN_random_solve(config):
     from waveynet3d.data.simulation_dataset import SyntheticDataset_same_wl_dL_shape as dataset_fn
     from waveynet3d.trainers.iterative_trainer import IterativeTrainer as trainer_fn
     dummy_trainer = trainer_fn(model_config=None, model_saving_path=None)
+
     dummy_ds = dataset_fn(dummy_trainer.domain_sizes, dummy_trainer.pml_ranges, residual_type=dummy_trainer.residual_type)
     dummy_ds.set_ln_R(dummy_trainer.ln_R)
 
@@ -45,6 +46,10 @@ def NN_random_solve(config):
     for i in range(ith_data):
         sample = next(ds_iter)
     eps, src, dL, wl, pmls = sample['eps'].cuda(), sample['source'].cuda(), sample['dL'], sample['wl'], sample['pmls']
+
+    print("The training data shape is between ", f"({dummy_trainer.domain_sizes[0]}, {dummy_trainer.domain_sizes[2]}, {dummy_trainer.domain_sizes[4]})", "and ", \
+                                                 f"({dummy_trainer.domain_sizes[1]}, {dummy_trainer.domain_sizes[3]}, {dummy_trainer.domain_sizes[5]})")
+    print("Current problem shape: ", eps.shape[1:4])
 
     # prepare the GMRES solver:
     Aop = lambda x: r2c(residue_E(c2r(x), eps[...,0], src, pmls, dL[0].numpy(), wl[0].numpy(), batched_compute=True, Aop=True))

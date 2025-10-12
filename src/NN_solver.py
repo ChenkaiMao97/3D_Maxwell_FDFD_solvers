@@ -32,6 +32,10 @@ def NN_solve(config, eps, src):
     from waveynet3d.data.simulation_dataset import SyntheticDataset_same_wl_dL_shape as dataset_fn
     from waveynet3d.trainers.iterative_trainer import IterativeTrainer as trainer_fn
     dummy_trainer = trainer_fn(model_config=None, model_saving_path=None)
+    print("The training data shape is between ", f"({dummy_trainer.domain_sizes[0]}, {dummy_trainer.domain_sizes[2]}, {dummy_trainer.domain_sizes[4]})", "and ", \
+                                                 f"({dummy_trainer.domain_sizes[1]}, {dummy_trainer.domain_sizes[3]}, {dummy_trainer.domain_sizes[5]})")
+    print("Current problem shape: ", eps.shape[1:4])
+
     dummy_ds = dataset_fn(dummy_trainer.domain_sizes, dummy_trainer.pml_ranges, residual_type=dummy_trainer.residual_type)
     dummy_ds.set_ln_R(dummy_trainer.ln_R)
     eps, _ = dummy_ds.build_complex_eps(eps[0], wl, dL, sim_shape, pml=pmls) # add more channels to eps, which contains pml features
