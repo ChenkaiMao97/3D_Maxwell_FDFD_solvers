@@ -21,10 +21,8 @@ def main(config):
     problem_constructor = get_problem_constructor(config['sim_type'])
     eps, src = problem_constructor(config["sim_shape"], config['wavelength'], config['dL'], config['pmls'], config['kwargs'])
 
-    start_time = time.time()
     solution, residual_history, final_residual = NN_solve(config, eps, src)
     print(f"final residual absolute mean: {torch.mean(torch.abs(final_residual))}")
-    print(f"time taken for NN solver: {time.time() - start_time} seconds")
 
     if config['spins_verification']:
         spins_solution, spins_residual = spins_solve(config, eps, src)
@@ -55,4 +53,7 @@ def main(config):
 if __name__ == "__main__":
     config_path = sys.argv[1]
     config = yaml.load(open(config_path, "r"), Loader=yaml.FullLoader)
+    gpu_id = get_least_used_gpu()
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
+    print(f"using GPU {gpu_id}")
     main(config)

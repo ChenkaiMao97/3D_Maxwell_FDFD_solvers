@@ -1,6 +1,7 @@
 import os
 import torch
 import torch.distributed as dist
+import gpustat
 
 def MAE(a, b):
     return torch.mean(torch.abs(a-b))/torch.mean(torch.abs(b))
@@ -40,9 +41,12 @@ def init_dist():
     )
 
 def prepare_model(sim_shape, model_path, model_fn):
-    init_dist()
+    # init_dist()
     model = model_fn(domain_sizes=sim_shape, paddings=[0,0,0])
-    checkpoint = torch.load(os.path.join(model_path, "models/best_model.pt"), weights_only=False)
+    try:
+        checkpoint = torch.load(os.path.join(model_path, "models/best_model.pt"), weights_only=False, map_location='cuda:0')
+    except:
+        checkpoint = torch.load(os.path.join(model_path, "models/last_model.pt"), weights_only=False, map_location='cuda:0')
     model.load_state_dict(checkpoint['state_dict'])
     model.cuda()
     return model
@@ -52,3 +56,11 @@ def get_pixels(kwargs, key, dL):
     if value % dL != 0:
         print(f"Warning: {key} is not divisible by dL, rounding to the nearest integer")
     return round(value / dL)
+
+
+def get_least_used_gpu():
+    stats = gpustat.GPUStatCollection.new_query()
+    ids = map(lambda gpu: int(gpu.entry['index']), stats)
+    ratios = map(lambda gpu: float(gpu.entry['memory.used'])/float(gpu.entry['memory.total']), stats)
+    bestGPU = min(zip(ids, ratios), key=lambda x: x[1])[0]
+    return bestGPU

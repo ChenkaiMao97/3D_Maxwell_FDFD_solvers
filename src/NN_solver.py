@@ -2,6 +2,7 @@ import sys, os
 from src.gmres import mygmrestorch
 from src.physics import residue_E, src2rhs
 from src.utils import *
+import time
 import gin
 
 @torch.no_grad()
@@ -50,6 +51,7 @@ def NN_solve(config, eps, src):
     gmres = mygmrestorch(model, Aop, tol=tol, max_iter=max_iter)
 
     # solve the problem:
+    time_start = time.time()
     complex_rhs = r2c(src2rhs(src, dL, wl))
     freq = torch.tensor(dL/wl)[None].cuda()
     gmres.setup_eps(eps, freq)
@@ -57,6 +59,8 @@ def NN_solve(config, eps, src):
         x, history, _, _ = gmres.solve(complex_rhs, verbose)
     else:
         x, history = gmres.solve_with_restart(complex_rhs, tol, max_iter, restart, verbose)
+    time_end = time.time()
+    print(f"time taken for NN GMRES solver: {time_end - time_start} seconds")
     final_residual = residual_fn(x)
 
     return x, history, final_residual

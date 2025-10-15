@@ -4,6 +4,7 @@ import torch
 from src.gmres import mygmrestorch
 from src.physics import residue_E, src2rhs
 from src.utils import *
+import time
 import gin
 
 @torch.no_grad()
@@ -24,6 +25,7 @@ def NN_random_solve(config):
     # use the dummy trainer and ds to reproduce the feature engineering for eps (this part should be rewritten to be cleaner)
     from waveynet3d.data.simulation_dataset import SyntheticDataset_same_wl_dL_shape as dataset_fn
     from waveynet3d.trainers.iterative_trainer import IterativeTrainer as trainer_fn
+    # from waveynet3d.trainers.distillation_trainer import DistillationTrainer as trainer_fn
     dummy_trainer = trainer_fn(model_config=None, model_saving_path=None)
 
     dummy_ds = dataset_fn(dummy_trainer.domain_sizes, dummy_trainer.pml_ranges, residual_type=dummy_trainer.residual_type)
@@ -57,12 +59,15 @@ def NN_random_solve(config):
     gmres = mygmrestorch(model, Aop, tol=tol, max_iter=max_iter)
 
     # solve the problem:
+    time_start = time.time()
     complex_rhs = r2c(src2rhs(src, dL, wl))
     gmres.setup_eps(eps, dL/wl)
     if restart == 0:
         x, history, _, _ = gmres.solve(complex_rhs, verbose)
     else:
         x, history = gmres.solve_with_restart(complex_rhs, tol, max_iter, restart, verbose)
+    time_end = time.time()
+    print(f"time taken for NN GMRES solver: {time_end - time_start} seconds")
     final_residual = residual_fn(x)
 
     return x, history, final_residual, eps, src, dL, wl, pmls

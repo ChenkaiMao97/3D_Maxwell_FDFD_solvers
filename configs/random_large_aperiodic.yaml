@@ -1,11 +1,16 @@
-model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv-10_11_25T06_03_52
+# (1) small model 10/14
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_small-10_14_25T06_57_15
+
+# (2) medium model 10/14
+model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_medium-10_14_25T07_06_43
+
 output_path: ./ # change this to a different drive if you need to save big files
 
 ########## parameters for the GMRES solver ##########
 max_iter: 500
 tol: 1e-4
 verbose: True
-restart: 0 # if == 0, no restart, otherwise, run restarted GMRES
+restart: 15 # if == 0, no restart, otherwise, run restarted GMRES
 
 ########## other configs ##########
 spins_verification: 1 # if 1, run simulation in spins as well to verify the results

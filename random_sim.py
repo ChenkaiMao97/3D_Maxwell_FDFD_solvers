@@ -8,10 +8,8 @@ import yaml
 import time
 
 def main(config):
-    start_time = time.time()
     solution, residual_history, final_residual, eps, src, dL, wl, pmls = NN_random_solve(config)
     print(f"final residual absolute mean: {torch.mean(torch.abs(final_residual))}")
-    print(f"time taken for NN solver: {time.time() - start_time} seconds")
 
     if config['spins_verification']:
         spins_solution, spins_residual = spins_solve(config, eps[...,0].detach().cpu(), src.detach().cpu(), dL=float(dL[0].numpy()), wl=float(wl[0].numpy()), pmls=pmls)
@@ -32,4 +30,7 @@ def main(config):
 if __name__ == "__main__":
     config_path = sys.argv[1]
     config = yaml.load(open(config_path, "r"), Loader=yaml.FullLoader)
+    gpu_id = get_least_used_gpu()
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
+    print(f"using GPU {gpu_id}")
     main(config)
