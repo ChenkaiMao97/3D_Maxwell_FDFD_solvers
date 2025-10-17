@@ -27,7 +27,7 @@ from src.physics import residue_E, eps_to_yee
 from src.PML_utils import make_dxes_numpy
 import time
 
-HACK_DATA_PATH="/media/ps3/chenkaim/Waveynet3d/waveynet3d/spins/temp_files/"
+# 
 
 @optplan.register_node(optplan.CustomSource)
 class custom_source(EmSource):
@@ -57,8 +57,12 @@ def simulate(
     eps, 
     source,
     pml_layers,
-    proj_folder=HACK_DATA_PATH,
-    output_data_folder=HACK_DATA_PATH,
+    proj_folder,
+    output_data_folder,
+    theta=0,
+    psi=0,
+    ln_R=-10,
+    m=4,
     plot=False
 ):
     # a temporary solution: save the eps to the output folder, which maxwell-b will read and run the simulation
@@ -73,7 +77,7 @@ def simulate(
     sim_space = create_sim_space(eps.shape, pml_layers, dL=dL)
 
     # Setup the objectives and all values that should be recorded (monitors).
-    dummy_obj, dummy_monitors = create_objective(sim_space, wavelength, source=source, store_dir = output_data_folder)
+    dummy_obj, dummy_monitors = create_objective(sim_space, wavelength, source=source, store_dir = output_data_folder, theta=theta, psi=psi, ln_R=ln_R, m=m)
     trans_list = create_transformations(dummy_obj, dummy_monitors, sim_space)
     plan = optplan.OptimizationPlan(transformations=trans_list)
 
@@ -154,7 +158,7 @@ def create_sim_space(
     )
 
 
-def create_objective(sim_space: optplan.SimulationSpace, wavelength, source=None, store_dir = None) -> Tuple[optplan.Function, List[optplan.Monitor]]:
+def create_objective(sim_space: optplan.SimulationSpace, wavelength, source=None, store_dir = None, theta=0, psi=0, ln_R=-10, m=4) -> Tuple[optplan.Function, List[optplan.Monitor]]:
     if source is None:
         # raise NotImplementedError("source is not implemented yet")
         source = optplan.PlaneWaveSource(
@@ -162,8 +166,8 @@ def create_objective(sim_space: optplan.SimulationSpace, wavelength, source=None
             # extents=[0.7*args.X_dL*args.dL, 0.7*args.Y_dL*args.dL, args.dL],
             extents=[40*25, 40*25, 25],
             normal=[0, 0, 1],
-            theta=0,
-            psi=0,
+            theta=theta,
+            psi=psi,
             polarization_angle=0,
             power=1.0,
             store_dir = store_dir
@@ -176,12 +180,25 @@ def create_objective(sim_space: optplan.SimulationSpace, wavelength, source=None
         wavelength=wavelength,
     )
 
+    bloch_vector = [2*np.pi/wavelength*np.sin(theta)*np.cos(psi),\
+                    2*np.pi/wavelength*np.sin(theta)*np.sin(psi),\
+                    0]
+                    # 2*np.pi/wavelength*np.cos(theta)]
+    
+    if theta != 0 or psi != 0:
+        print(f"assuming bloch boundary condition with rotation angles (theta, psi) = ({theta}, {psi})")
+        print(f"bloch vector of {bloch_vector} is used. (Notice that only x and y has bloch boundary condition, z is assumed to have PML.)")
+    
+
     sim = optplan.FdfdSimulation(
         source=source,
         solver= "maxwell_cg",
         wavelength=wavelength,
         simulation_space=sim_space,
-        epsilon=epsilon
+        epsilon=epsilon,
+        bloch_vector=bloch_vector,
+        ln_R=ln_R,
+        m=m
     )
 
     dummy_overlap = optplan.ImportOverlap(
@@ -240,7 +257,7 @@ def create_transformations(
 
     return [trans]
 
-def get_results(store_dir=HACK_DATA_PATH, plot=False):
+def get_results(store_dir, plot=False):
     Ex = torch.from_numpy(np.load(store_dir+'0.0001Ex.npy'))
     Ey = torch.from_numpy(np.load(store_dir+'0.0001Ey.npy'))
     Ez = torch.from_numpy(np.load(store_dir+'0.0001Ez.npy'))
@@ -284,6 +301,8 @@ if __name__ == "__main__":
     pml_layers = [10,10,10,10,10,10]
     dL = 25
     wavelength = 800
+
+    HACK_DATA_PATH="/media/ps3/chenkaim/Waveynet3d/waveynet3d/spins/temp_files/"
 
     from waveynet3d.data.simulation_dataset import SyntheticDataset
     ds = SyntheticDataset(

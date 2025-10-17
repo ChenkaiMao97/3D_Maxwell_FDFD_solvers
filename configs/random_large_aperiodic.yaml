@@ -1,8 +1,8 @@
 # (1) small model 10/14
-# model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_small-10_14_25T06_57_15
+model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_small-10_14_25T06_57_15
 
 # (2) medium model 10/14
-model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_medium-10_14_25T07_06_43
+#model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_medium-10_14_25T07_06_43
 
 output_path: ./ # change this to a different drive if you need to save big files
 

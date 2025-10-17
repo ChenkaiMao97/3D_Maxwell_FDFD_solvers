@@ -199,8 +199,8 @@ class mygmrestorch(mygmres):
                 res_norm = self.vecnorm(res)
                 relres = torch.abs(res_norm / norm_b)
                 relres_restart_history.append(relres)
-                print(">>> Relative residual: ", relres, "absolute residual: ", res_norm)
-                if len(e_relres_history) <= 2:
+                print(">>> Relative residual: ", f"{relres:.2e}", "absolute residual: ", f"{res_norm:.2e}")
+                if len(e_relres_history) <= 2 or relres < 1.1 * tol: # 1.1 for numerical stability
                     break
                 # if len(relres_restart_history) > 1 and relres_restart_history[-1] > 0.95*relres_restart_history[-2]:
                 #     print("!!! reduce too small, stop")

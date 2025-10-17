@@ -25,7 +25,8 @@ def main(config):
     print(f"final residual absolute mean: {torch.mean(torch.abs(final_residual))}")
 
     if config['spins_verification']:
-        spins_solution, spins_residual = spins_solve(config, eps, src)
+        ln_R = -10 if 'ln_R' not in config['kwargs'] else config['kwargs']['ln_R'] # PML parameter, don't change
+        spins_solution, spins_residual = spins_solve(config, eps, src, ln_R=ln_R)
         rel_diff, E_diff = scaled_MAE(c2r(solution).cpu(), spins_solution)
         print("relative error between E_spin and E_model", rel_diff)
     

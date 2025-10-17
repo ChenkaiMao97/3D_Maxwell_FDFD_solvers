@@ -24,6 +24,7 @@ kwargs: # key word arguments for constructing the problem, defined in the meta_a
   meta_atom_size: 300 # in nm
   source_below_meta_nm: 160 # in nm
   source_polarization: 'x'
+  ln_R: -10 # parameter for PML, don't change
 
 ########## parameters for the GMRES solver ##########
 max_iter: 500
