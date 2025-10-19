@@ -5,23 +5,29 @@ sim_type: meta_atom
 # model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_small-10_14_25T13_39_49
 
 # (2) medium model 10/14
-model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_medium-10_14_25T17_27_10
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_medium-10_14_25T17_27_10
+
+# (3) 
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_lip_60_120_medium-10_17_25T09_23_03
+
+# (4) 
+model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_30_pml_medium-10_16_25T15_18_59
 
 output_path: ./ # change this to a different drive if you need to save big files
 
 ########## parameters for the physical simulation ##########
 sim_shape: [50, 50, 210] # number of pixels in x, y, z
 wavelength: 800 # in nm
-dL: 9.375 # simulation resolution, in nm
-pmls: [0, 0, 0, 0, 20, 20] # number of pixels of PML for x_start, x_end, y_start, y_end, z_start, z_end
+dL: 10 # simulation resolution, in nm
+pmls: [0, 0, 0, 0, 30, 30] # number of pixels of PML for x_start, x_end, y_start, y_end, z_start, z_end
 
 kwargs: # key word arguments for constructing the problem, defined in the meta_atom.py file
   substrate_eps: 2.1025 # 1.45**2
   meta_atom_eps: 7.29 # 2.7**2
   top_medium_eps: 1.0 # 1.0**2
-  substrate_thickness_nm: 500 # in nm
-  meta_atom_height_nm: 640 # in nm
-  meta_atom_size: 300 # in nm
+  substrate_thickness_nm: 600 # in nm
+  meta_atom_height_nm: 800 # in nm
+  meta_atom_size: 200 # in nm
   source_below_meta_nm: 160 # in nm
   source_polarization: 'x'
   ln_R: -10 # parameter for PML, don't change
@@ -30,7 +36,7 @@ kwargs: # key word arguments for constructing the problem, defined in the meta_a
 max_iter: 500
 tol: 1e-4 # relative residual target
 verbose: True
-restart: 40 # if == 0, no restart, otherwise, run restarted GMRES
+restart: 0 # if == 0, no restart, otherwise, run restarted GMRES
 
 ########## other configs ##########
 spins_verification: 1 # if 1, run simulation in spins as well to verify the results

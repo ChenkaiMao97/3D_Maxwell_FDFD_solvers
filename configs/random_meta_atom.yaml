@@ -3,11 +3,16 @@
 # model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_eps16-10_13_25T04_46_26
 
 # (1) small model 10/14
-model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_small-10_14_25T13_39_49
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_small-10_14_25T13_39_49
 
 # (2) medium model 10/14
 # model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_medium-10_14_25T17_27_10
 
+# (3) 
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_lip_60_120_medium-10_17_25T09_23_03
+
+# (4) 
+model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_30_pml_medium-10_16_25T15_18_59
 
 output_path: ./ # change this to a different drive if you need to save big files
 
@@ -15,7 +20,7 @@ output_path: ./ # change this to a different drive if you need to save big files
 max_iter: 500
 tol: 1e-4
 verbose: True
-restart: 0 # if == 0, no restart, otherwise, run restarted GMRES
+restart: 50 # if == 0, no restart, otherwise, run restarted GMRES
 
 ########## other configs ##########
 spins_verification: 1 # if 1, run simulation in spins as well to verify the results

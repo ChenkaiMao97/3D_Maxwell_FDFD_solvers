@@ -3,18 +3,24 @@ sim_type: waveguide_bend
 ########## parameters for paths ##########
 # model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv-10_11_25T06_03_52
 # (1) small model 10/14
-model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_small-10_14_25T06_57_15
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_small-10_14_25T06_57_15
 
 # (2) medium model 10/14
 # model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_medium-10_14_25T07_06_43
 
+# (3)
+model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_30_pml_small-10_16_25T15_21_04
+
+# (4)
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_30_pml_medium-10_16_25T15_23_33
+
 output_path: ./ # change this to a different drive if you need to save big files
 
 ########## parameters for the physical simulation ##########
-sim_shape: [192, 192, 80] # number of pixels in x, y, z
+sim_shape: [160, 160, 100] # number of pixels in x, y, z
 wavelength: 800 # in nm
 dL: 20 # simulation resolution, in nm
-pmls: [10, 10, 10, 10, 10, 10] # number of pixels of PML for x_start, x_end, y_start, y_end, z_start, z_end
+pmls: [30, 30, 30, 30, 30, 30] # number of pixels of PML for x_start, x_end, y_start, y_end, z_start, z_end
 
 kwargs: # key word arguments for constructing the problem, defined in the waveguide_bend.py file
   substrate_eps: 2.1025 # 1.45**2
