@@ -1,8 +1,8 @@
 import sys
-from src.NN_solver import NN_solve
-from src.spins_solver import spins_solve
-from src.utils import *
-from src.plot_field3D import plot_3slices
+from src.solvers.NN_solver import NN_solve
+from src.solvers.spins_solver import spins_solve
+from src.utils.utils import *
+from src.utils.plot_field3D import plot_3slices
 import matplotlib.pyplot as plt
 import yaml
 import time

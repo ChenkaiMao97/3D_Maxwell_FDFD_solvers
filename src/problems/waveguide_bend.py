@@ -1,10 +1,10 @@
 import torch
 import numpy as np
-from src.utils import get_pixels
+from src.utils.utils import get_pixels
 
-import src.simulator
-from src.PML_utils import make_dxes_numpy
-from src.physics import eps_to_yee
+# import src.simulator
+from src.utils.PML_utils import make_dxes_numpy
+from src.utils.physics import eps_to_yee
 from spins.fdfd_tools.waveguide_mode import solve_waveguide_mode, compute_source
 from spins.gridlock import direction
 from spins.fdfd_tools.vectorization import vec
@@ -53,16 +53,24 @@ def get_waveguide_source(wavelength, dL, pml_layers, eps, src_direction, src_sli
     slices = tuple([slice(i, f+1) for i, f in zip(*src_slice)])
 
     eps_yee = eps_to_yee(torch.from_numpy(eps[None]))[0].permute(3,0,1,2).numpy()
-    mu = np.ones_like(eps_yee)
+    # mu = np.ones_like(eps_yee)
     
     sim_params = {
         'omega': omega,
         'dxes': dxes,
         'axis': axis.value,
         'slices': slices,
-        'polarity': direction.axisvec2polarity(src_direction),
-        'mu': mu
+        'polarity': direction.axisvec2polarity(src_direction)
     }
+    # print("eps_yee.shape: ", eps_yee.shape)
+    # print("slices: ", slices)
+    # print("mu.shape: ", mu.shape)
+    # print("dxes[0][0].shape: ", dxes[0][0].shape)
+    # print("dxes[0][1].shape: ", dxes[0][1].shape)
+    # print("dxes[0][2].shape: ", dxes[0][2].shape)
+    # print("omega: ", omega)
+    # print("axis: ", axis.value)
+    # print("polarity: ", direction.axisvec2polarity(src_direction))
 
     wgmode_result = solve_waveguide_mode(
         mode_number = mode_num,
@@ -120,6 +128,7 @@ def make_waveguide_bend(sim_shape, wl, dL, pmls, kwargs):
 
     print("computing waveguide mode source...")
     source_slice = tuple([(x_start, ypos, z_start), (x_end, ypos, z_end)])
+
     source = get_waveguide_source(wl, dL, pmls, eps.numpy(), source_dir, source_slice, ln_R=ln_R)
     source = torch.view_as_real(torch.from_numpy(source).permute(1,2,3,0)).reshape(*sim_shape,6).to(torch.float32)
     print("waveguide mode source computed")

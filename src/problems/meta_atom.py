@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from src.utils import get_pixels
+from src.utils.utils import get_pixels
 
 def circle_supersample(h, w, cx, cy, r, ss=8, dtype=np.float32):
     """

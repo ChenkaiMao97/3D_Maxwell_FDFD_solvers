@@ -1,0 +1,97 @@
+import bin.inverse_design
+import src.invde.base_challenge
+import src.invde.utils.utils
+import src.problems.base_problem
+import src.problems.integrated_photonics
+
+import src.invde.opt
+import src.invde.step_fn
+import src.invde.filter_proj
+import src.invde.constraints
+import src.invde.utils.jax_utils
+
+#### (1) design problem and backend
+run_inverse_design.design_challenge = "integrated_photonics"
+BaseProblem._backend = "NN"
+
+#### (2) setup dL, wl and simulation / optimization sizes
+IntegratedPhotonicsChallenge.wavelengths = [800]
+IntegratedPhotonicsChallenge.dL = 20
+IntegratedPhotonicsChallenge.pmls = (30,30,30,30,30,30)
+
+BaseProblem.design_region_size = (800, 800, 200) # same unit as dL
+BaseProblem.surrounding_sizes = (280, 280, 280, 280, 260, 260) # same unit as dL
+
+#### (3) define material index
+max_eps = 8
+BaseProblem.eps_design_max = %max_eps
+BaseProblem.eps_design_min = 1
+BaseProblem.eps_background = 1
+BaseProblem.eps_substrate = 2.25
+
+#### (4) define waveguide specs, for waveguide bend we have two waveguides, on left and bottom size of the design region
+get_integrated_photonics_challenge.port_pml_offset = 60
+get_integrated_photonics_challenge.input_monitor_offset = 40
+get_integrated_photonics_challenge.wg_eps = %max_eps
+get_integrated_photonics_challenge.wg_min_separation = 200
+get_integrated_photonics_challenge.wg_mode_padding = 200
+get_integrated_photonics_challenge.excite_port_idx = 0
+get_integrated_photonics_challenge.left_wg_specs = [(0,400,0)] # (center_offset, width, order)
+get_integrated_photonics_challenge.right_wg_specs = [] 
+get_integrated_photonics_challenge.top_wg_specs = []
+get_integrated_photonics_challenge.bottom_wg_specs = [(0,400,0)]
+
+#### (5) define optimization targets:
+get_integrated_photonics_challenge.target_s_params = [(0,1)] # zero-reflection and full transmission 
+
+#### (6) define optimizer args:
+length_scale_pixel = 5
+
+
+
+############################ optimization args ###################################
+length_scale_pixel = 5
+Designer.length_scale_pixel = %length_scale_pixel
+
+Designer.save_bin = False
+Designer.step_fn = @ccsa_step_fn
+Designer.latent_bounds = (0, 1)
+Designer.final_step_discretization = 'binary'
+
+_get_default_initializer.mean=0.5
+_get_default_initializer.stddev=0.001
+_get_default_initializer.length_scale = %length_scale_pixel
+
+Designer.steps_per_beta = 20
+Designer.steps_per_beta_during_constraint = 30
+Designer.beta_schedule  = [8,16,32,64]
+
+# Designer.constraint_tolerance_schedule = [0,0,0,3] # used for nlopt
+Designer.constraint_weight_schedule = [0,0,0,1] # used for optax
+
+# Designer.opt_type = 'nlopt'
+Designer.opt_type = 'optax'
+
+# Designer.load_latent_path='/media/tmp0/chenkaim/checkpoints/sss/inverse_design_DDM256_meta-06_28_25T10_29_19/logs/step_20.h5'
+
+Designer.lr = 3e-4
+Designer.end_lr = 3e-4
+
+############################ decode filter project ################################
+Designer.projection_fn = @tanh_projection
+Designer.decode_fn = @identity_op
+Designer.filter_fn = @conic_filter
+
+############################ constraint functions #################################
+eta_e = 0.75
+eta_d = 0.25 # 1 - eta_e
+indicator_c = 1e4
+
+constraint_solid_decode.eta_e = %eta_e
+constraint_solid_decode.indicator_c = %indicator_c
+constraint_void_decode.eta_d = %eta_d
+constraint_void_decode.indicator_c = %indicator_c
+
+constraints_function.solid_contraints_fn = @constraint_solid_decode
+constraints_function.void_contraints_fn = @constraint_void_decode
+Designer.constraints_function = @constraints_function
