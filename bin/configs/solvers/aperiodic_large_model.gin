@@ -1,0 +1,22 @@
+import src.solvers.NN_solver
+
+NN_solver.model_path = '/media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_30_pml_small-10_16_25T15_21_04'
+NN_solver.max_iter = 100
+NN_solver.tol = 1e-3
+NN_solver.verbose = True
+NN_solver.restart = 0
+
+NN_solver.save_intermediate = False # logging
+
+
+##################### model options ################################
+# (1) 
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv-10_11_25T06_03_52
+# (2) small model 10/14
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_small-10_14_25T06_57_15
+# (3) medium model 10/14
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_medium-10_14_25T07_06_43
+# (4)
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_30_pml_small-10_16_25T15_21_04
+# (5)
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_30_pml_medium-10_16_25T15_23_33

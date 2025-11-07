@@ -1,0 +1,49 @@
+sim_type: super_pixel_binary
+
+########## parameters for paths ##########
+# (1) small model 10/14
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_small-10_14_25T13_39_49
+
+# (2) medium model 10/14
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_medium-10_14_25T17_27_10
+
+# (3) 
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_lip_60_120_medium-10_17_25T09_23_03
+
+# (4) 
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_30_pml_medium-10_16_25T15_18_59
+
+# (5) 
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_30_pml_medium-10_16_25T15_23_33
+
+# (6) Best aperiodic model
+model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_30_pml_small-10_16_25T15_21_04
+
+output_path: ./figs_super_pixel_binary/ # change this to a different drive if you need to save big files
+
+########## parameters for the physical simulation ##########
+sim_shape: [128, 128, 64] # number of pixels in x, y, z
+wavelength: 800 # in nm
+dL: 25 # simulation resolution, in nm
+pmls: [30, 30, 30, 30, 30, 30] # number of pixels of PML for x_start, x_end, y_start, y_end, z_start, z_end
+
+kwargs: # key word arguments for constructing the problem, defined in the super_pixel_freeform.py file
+  substrate_eps: 2.1025 # 1.45**2
+  meta_atom_eps: 5.76 # 2.7**2
+  top_medium_eps: 1.0 # 1.0**2
+  substrate_thickness_nm: 320 # in nm
+  meta_atom_height_nm: 320 # in nm
+  source_below_meta_nm: 160 # in nm
+  source_polarization: 'x'
+  beta: 100
+  eta: 0.5
+  ln_R: -10 # parameter for PML, don't change
+
+########## parameters for the GMRES solver ##########
+max_iter: 500
+tol: 1e-4 # relative residual target
+verbose: True
+restart: 0 # if == 0, no restart, otherwise, run restarted GMRES
+
+########## other configs ##########
+spins_verification: 0 # if 1, run simulation in spins as well to verify the results
