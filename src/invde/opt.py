@@ -14,6 +14,7 @@ from tqdm import tqdm
 
 from src.invde.utils.utils import DesignState
 from src.problems.base_challenge import BaseChallenge
+from src.utils.plot_field3D import plot_3slices
 
 import matplotlib.pyplot as plt
 
@@ -36,7 +37,7 @@ class Designer:
         steps_per_beta_during_constraint: Optional[int] = None,
         lr: float = None,
         end_lr: float = None,
-        log_fn_type: str = "wdm",
+        log_fn_type: str = "integrated_photonics",
         challenge: BaseChallenge = None,
         latent_init_fn: Optional[Callable] = None,
         latent_mean: Optional[float] = None,
@@ -255,25 +256,9 @@ class Designer:
         self.state.params = params
 
         if self.log_dir is not None:
-            self.log_final_loss_and_response(response, aux, self.challenge.problem.epsilon_r(params["density"].density))
+            self.log_final_loss_and_response(response, aux, params)
 
-        # prepare the data for DDM:
-        eps = self.challenge.problem.epsilon_r(params["density"].density)
-        input_eps = onp.stack([eps]*len(self.challenge._wavelength), axis=0)
-        Ez_out_forward_RI = onp.stack((aux["fields_ez"][:,0].real, aux["fields_ez"][:,0].imag), axis=-1)
-
-        try:
-            source = self.challenge.problem.get_sources()
-            source_RI = onp.stack((source.real, source.imag), axis=-1)
-
-            wls = onp.asarray(self.challenge._wavelength)/1000000
-            dLs = onp.asarray([self.challenge.problem.params.resolution.to("mm")]*len(self.challenge._wavelength))
-        except:
-            source_RI = onp.zeros(1)
-            wls = onp.zeros(1)
-            dLs = onp.zeros(1)
-
-        return input_eps, Ez_out_forward_RI, source_RI, wls, dLs, self.state
+        return self.state
     
     def optimize_nlopt(self):
         assert self.state is not None, "Please call init to initialize state"
@@ -352,37 +337,25 @@ class Designer:
             self.log_final_loss_and_response(response, aux, params)
 
         # prepare the data for DDM:
-        eps = self.challenge.problem.epsilon_r(params["density"].density)
-        input_eps = onp.stack([eps]*len(self.challenge._wavelength), axis=0)
-        Ez_out_forward_RI = onp.stack((aux["fields_ez"][:,0].real, aux["fields_ez"][:,0].imag), axis=-1)
-
-        source = self.challenge.problem.get_sources()
-        source_RI = onp.stack((source.real, source.imag), axis=-1)
-
-        wls = onp.asarray(self.challenge._wavelength)/1000000
-        dLs = onp.asarray([self.challenge.problem.params.resolution.to("mm")]*len(self.challenge._wavelength))
-
+       
         return input_eps, Ez_out_forward_RI, source_RI, wls, dLs, self.state
     
     def stop_workers(self):
         self.challenge.problem.stop_workers()
     
     def log_step(self, my_grad, params, response, aux):
-        if self.log_fn_type == "wdm":
-            self.log_step_wdm(my_grad, params, response, aux)
-        elif self.log_fn_type == "gc":
-            self.log_step_gc(my_grad, params, response, aux)
-        elif self.log_fn_type == "meta":
-            self.log_step_meta(my_grad, params, response, aux)
+        if self.log_fn_type == "integrated_photonics":
+            self.log_step_integrated_photonics(my_grad, params, response, aux)
         else:
             raise ValueError(f"Invalid log_fn_type: {self.log_fn_type}")
 
-    def log_step_wdm(self, my_grad, params, response, aux):
+    def log_step_integrated_photonics(self, my_grad, params, response, aux):
         # log step
+        print("sparam: ", aux)
         if self.log_dir is not None:
             os.makedirs(self.log_dir, exist_ok=True)
 
-            num_wls = len(self.challenge._wavelength)
+            num_wls = len(self.challenge._wavelengths)
             plt.figure(figsize=((num_wls+3)*4, 4))
             plt.subplot(1,num_wls+3,1)
             plt.imshow(onp.rot90(self.state.latents["density"].density), cmap="binary")
@@ -404,12 +377,22 @@ class Designer:
             plt.yticks([])
             plt.colorbar()
 
-            couple_eff = jnp.abs(response.array) ** 2
+            couple_eff = jnp.abs(aux) ** 2
             for i in range(num_wls):
-                max_port = jnp.argmax(self.challenge._max_transmission[i,0])
+                max_port = jnp.argmax(self.challenge.target_s_params[i])
                 plt.subplot(1,num_wls+3,i+4)
-                plt.imshow(onp.rot90(aux["fields_ez"][i,0,:,:].real), cmap="seismic")
-                plt.title(f"Ez real {self.challenge._wavelength[i]} nm\nport {max_port} couple eff: {couple_eff[i,0,max_port]:.3f}")
+                E = response[i]
+                sx, sy, sz, _ = E.shape
+                center_z_E = E[:,:,round(1/2*(sz-1)),:]
+                plt.imshow(onp.rot90(center_z_E[...,-1].real), cmap="seismic")
+                plt.title(f"Ez real at z=0, wl {self.challenge._wavelengths[i]}\nport {max_port} couple eff: {couple_eff[i,max_port]:.3f}")
+                eps = self.challenge.problem.epsilon_r(params["density"].density)
+                eps_plot = eps[:,:,round(1/2*(sz-1))]
+                plt.imshow(onp.rot90(eps_plot), cmap="binary", alpha=0.3)
+                # h, w = eps_plot.shape
+                for port in self.challenge.problem._ports:
+                    coords = port.coords()
+                    plt.plot((coords[0][0], coords[1][0]), (coords[0][1], coords[1][1]), color='red', linewidth=2)
                 plt.xticks([])
                 plt.yticks([])
                 plt.colorbar()
@@ -417,121 +400,118 @@ class Designer:
             plt.savefig(os.path.join(self.log_dir, f"step_{self.state.step}.png"))
             plt.close()
 
-            if self.save_bin:
+            if self.save_bin and self.state.step % 10 == 0:
                 with h5py.File(os.path.join(self.log_dir, f"step_{self.state.step}.h5"), "w") as f:
                     f["latent"] = self.state.latents["density"].density
                     f["params"] = params["density"].density
                     f["grad"] = my_grad["density"].density
-                    f['ez'] = aux["fields_ez"]
+                    f["ez"] = onp.stack(response)[...,-1]
+                    f["eps"] = self.challenge.problem.epsilon_r(params["density"].density)
+
+    # def log_step_gc(self, my_grad, params, response, aux):
+    #     # log step
+    #     if self.log_dir is not None:
+    #         os.makedirs(self.log_dir, exist_ok=True)
+
+    #         num_wls = len(self.challenge._wavelengths)
+    #         plt.figure(figsize=((num_wls+3)*4, 4))
+    #         plt.subplot(1,num_wls+3,1)
+    #         plt.imshow(self.state.latents["density"].density, cmap="binary")
+    #         plt.title("latent")
+    #         plt.xticks([])
+    #         plt.yticks([])
+    #         plt.colorbar()
+    #         plt.subplot(1,num_wls+3,2)
+    #         plt.imshow(params["density"].density, cmap="binary")
+    #         plt.title(f"params\nstep: {self.state.step}")
+    #         plt.xticks([])
+    #         plt.yticks([])
+    #         plt.colorbar()
+    #         plt.subplot(1,num_wls+3,3)
+    #         vm = jnp.max(jnp.abs(my_grad["density"].density))
+    #         plt.imshow(my_grad["density"].density, cmap="seismic", vmin=-vm, vmax=vm)
+    #         plt.title("grad")
+    #         plt.xticks([])
+    #         plt.yticks([])
+    #         plt.colorbar()
+
+    #         couple_eff = jnp.abs(response.array) ** 2
+    #         for i in range(num_wls):
+    #             plt.subplot(1,num_wls+3,i+4)
+    #             plt.imshow(aux["fields_ez"][i,:,:].real, cmap="seismic")
+    #             plt.title(f"Ez real {self.challenge._wavelengths[i]} nm\n couple eff: {couple_eff[i]:.3f}")
+    #             plt.xticks([])
+    #             plt.yticks([])
+    #             plt.colorbar()
+    #         plt.tight_layout()
+    #         plt.savefig(os.path.join(self.log_dir, f"step_{self.state.step}.png"))
+    #         plt.close()
+
+    #         if self.save_bin:
+    #             with h5py.File(os.path.join(self.log_dir, f"step_{self.state.step}.h5"), "w") as f:
+    #                 f["latent"] = self.state.latents["density"].density
+    #                 f["params"] = params["density"].density
+    #                 f["grad"] = my_grad["density"].density
+    #                 f['ez'] = aux["fields_ez"]
     
-    def log_step_gc(self, my_grad, params, response, aux):
-        # log step
-        if self.log_dir is not None:
-            os.makedirs(self.log_dir, exist_ok=True)
+    # def log_step_meta(self, my_grad, params, response, aux):
+    #     # log step
+    #     if self.log_dir is not None:
+    #         os.makedirs(self.log_dir, exist_ok=True)
 
-            num_wls = len(self.challenge._wavelength)
-            plt.figure(figsize=((num_wls+3)*4, 4))
-            plt.subplot(1,num_wls+3,1)
-            plt.imshow(self.state.latents["density"].density, cmap="binary")
-            plt.title("latent")
-            plt.xticks([])
-            plt.yticks([])
-            plt.colorbar()
-            plt.subplot(1,num_wls+3,2)
-            plt.imshow(params["density"].density, cmap="binary")
-            plt.title(f"params\nstep: {self.state.step}")
-            plt.xticks([])
-            plt.yticks([])
-            plt.colorbar()
-            plt.subplot(1,num_wls+3,3)
-            vm = jnp.max(jnp.abs(my_grad["density"].density))
-            plt.imshow(my_grad["density"].density, cmap="seismic", vmin=-vm, vmax=vm)
-            plt.title("grad")
-            plt.xticks([])
-            plt.yticks([])
-            plt.colorbar()
+    #         num_wls = len(self.challenge._wavelengths)
+    #         plt.figure(figsize=((num_wls+3)*4, 4))
+    #         plt.subplot(1,num_wls+3,1)
+    #         plt.imshow(self.state.latents["density"].density, cmap="binary")
+    #         plt.title("latent")
+    #         plt.xticks([])
+    #         plt.yticks([])
+    #         plt.colorbar()
+    #         plt.subplot(1,num_wls+3,2)
+    #         plt.imshow(params["density"].density, cmap="binary")
+    #         plt.title(f"params\nstep: {self.state.step}")
+    #         plt.xticks([])
+    #         plt.yticks([])
+    #         plt.colorbar()
+    #         plt.subplot(1,num_wls+3,3)
+    #         vm = jnp.max(jnp.abs(my_grad["density"].density))
+    #         plt.imshow(my_grad["density"].density, cmap="seismic", vmin=-vm, vmax=vm)
+    #         plt.title("grad")
+    #         plt.xticks([])
+    #         plt.yticks([])
+    #         plt.colorbar()
 
-            couple_eff = jnp.abs(response.array) ** 2
-            for i in range(num_wls):
-                plt.subplot(1,num_wls+3,i+4)
-                plt.imshow(aux["fields_ez"][i,:,:].real, cmap="seismic")
-                plt.title(f"Ez real {self.challenge._wavelength[i]} nm\n couple eff: {couple_eff[i]:.3f}")
-                plt.xticks([])
-                plt.yticks([])
-                plt.colorbar()
-            plt.tight_layout()
-            plt.savefig(os.path.join(self.log_dir, f"step_{self.state.step}.png"))
-            plt.close()
+    #         transmission_eff = aux['FOM']
+    #         for i in range(num_wls):
+    #             plt.subplot(1,num_wls+3,i+4)
+    #             plt.imshow(aux["fields_ez"][i,:,:].real, cmap="seismic")
+    #             plt.title(f"Ez real {self.challenge._wavelengths[i]} nm\n couple eff: {transmission_eff[i]:.3f}")
+    #             plt.xticks([])
+    #             plt.yticks([])
+    #             plt.colorbar()
+    #         plt.tight_layout()
+    #         plt.savefig(os.path.join(self.log_dir, f"step_{self.state.step}.png"))
+    #         plt.close()
 
-            if self.save_bin:
-                with h5py.File(os.path.join(self.log_dir, f"step_{self.state.step}.h5"), "w") as f:
-                    f["latent"] = self.state.latents["density"].density
-                    f["params"] = params["density"].density
-                    f["grad"] = my_grad["density"].density
-                    f['ez'] = aux["fields_ez"]
-    
-    def log_step_meta(self, my_grad, params, response, aux):
-        # log step
-        if self.log_dir is not None:
-            os.makedirs(self.log_dir, exist_ok=True)
-
-            num_wls = len(self.challenge._wavelength)
-            plt.figure(figsize=((num_wls+3)*4, 4))
-            plt.subplot(1,num_wls+3,1)
-            plt.imshow(self.state.latents["density"].density, cmap="binary")
-            plt.title("latent")
-            plt.xticks([])
-            plt.yticks([])
-            plt.colorbar()
-            plt.subplot(1,num_wls+3,2)
-            plt.imshow(params["density"].density, cmap="binary")
-            plt.title(f"params\nstep: {self.state.step}")
-            plt.xticks([])
-            plt.yticks([])
-            plt.colorbar()
-            plt.subplot(1,num_wls+3,3)
-            vm = jnp.max(jnp.abs(my_grad["density"].density))
-            plt.imshow(my_grad["density"].density, cmap="seismic", vmin=-vm, vmax=vm)
-            plt.title("grad")
-            plt.xticks([])
-            plt.yticks([])
-            plt.colorbar()
-
-            transmission_eff = aux['FOM']
-            for i in range(num_wls):
-                plt.subplot(1,num_wls+3,i+4)
-                plt.imshow(aux["fields_ez"][i,:,:].real, cmap="seismic")
-                plt.title(f"Ez real {self.challenge._wavelength[i]} nm\n couple eff: {transmission_eff[i]:.3f}")
-                plt.xticks([])
-                plt.yticks([])
-                plt.colorbar()
-            plt.tight_layout()
-            plt.savefig(os.path.join(self.log_dir, f"step_{self.state.step}.png"))
-            plt.close()
-
-            if self.save_bin:
-                with h5py.File(os.path.join(self.log_dir, f"step_{self.state.step}.h5"), "w") as f:
-                    f["latent"] = self.state.latents["density"].density
-                    f["params"] = params["density"].density
-                    f["grad"] = my_grad["density"].density
-                    f['ez'] = aux["fields_ez"]
+    #         if self.save_bin:
+    #             with h5py.File(os.path.join(self.log_dir, f"step_{self.state.step}.h5"), "w") as f:
+    #                 f["latent"] = self.state.latents["density"].density
+    #                 f["params"] = params["density"].density
+    #                 f["grad"] = my_grad["density"].density
+    #                 f['ez'] = aux["fields_ez"]
     
     def log_final_loss_and_response(self, response, aux, params):
-        if self.log_fn_type == "wdm":
-            self.log_final_wdm(response, aux, params)
-        elif self.log_fn_type == "gc":
-            self.log_final_gc(response, aux, params)
-        elif self.log_fn_type == "meta":
-            self.log_final_meta(response, aux, params)
+        if self.log_fn_type == "integrated_photonics":
+            self.log_final_integrated_photonics(response, aux, params)
         else:
             raise ValueError(f"Invalid log_fn_type: {self.log_fn_type}")
 
     
-    def log_final_wdm(self, response, aux, params):
+    def log_final_integrated_photonics(self, response, aux, params):
         # log the final loss and response:
         os.makedirs(self.log_dir, exist_ok=True)
 
-        num_wls = len(self.challenge._wavelength)
+        num_wls = len(self.challenge._wavelengths)
         plt.figure(figsize=((num_wls+2)*4, 4))
         plt.subplot(1,num_wls+2,1)
         plt.imshow(onp.rot90(self.state.latents["density"].density), cmap="binary")
@@ -546,12 +526,18 @@ class Designer:
         plt.yticks([])
         # plt.colorbar()
 
-        couple_eff = jnp.abs(response.array) ** 2
+        couple_eff = jnp.abs(aux) ** 2
         for i in range(num_wls):
-            max_port = jnp.argmax(self.challenge._max_transmission[i,0])
+            max_port = jnp.argmax(self.challenge.target_s_params[i])
             plt.subplot(1,num_wls+2,i+3)
-            plt.imshow(onp.rot90(aux["fields_ez"][i,0,:,:].real), cmap="seismic")
-            plt.title(f"Ez real {self.challenge._wavelength[i]} nm\nport {max_port} couple eff: {couple_eff[i,0,max_port]:.3f}")
+            E = response[i]
+            sx, sy, sz, _ = E.shape
+            center_z_E = E[:,:,round(1/2*(sz-1)),:]
+            plt.imshow(onp.rot90(center_z_E[...,-1].real), cmap="seismic")
+            eps = self.challenge.problem.epsilon_r(params["density"].density)
+            eps_plot = eps[:,:,round(1/2*(sz-1))]
+            plt.imshow(onp.rot90(eps_plot), cmap="binary", alpha=0.3)
+            plt.title(f"Ez real at z=0, wl {self.challenge._wavelengths[i]}\nport {max_port} couple eff: {couple_eff[i,max_port]:.3f}")
             plt.xticks([])
             plt.yticks([])
             # plt.colorbar()
@@ -560,41 +546,43 @@ class Designer:
         plt.savefig(os.path.join(self.log_dir, f"final_step.png"))
         plt.close()
 
+        eps = self.challenge.problem.epsilon_r(params["density"].density)
+        onp.save(os.path.join(self.log_dir, f"final_eps.npy"), eps)
         onp.save(os.path.join(self.log_dir, f"final_latent.npy"), self.state.latents["density"].density)
         onp.save(os.path.join(self.log_dir, f"final_params.npy"), params["density"].density)
-        onp.save(os.path.join(self.log_dir, f"final_fields.npy"), aux["fields_ez"])
+        onp.save(os.path.join(self.log_dir, f"final_fields.npy"), jnp.stack(response))
     
-    def log_final_gc(self, response, aux, params):
-        # log the final loss and response:
-        os.makedirs(self.log_dir, exist_ok=True)
+    # def log_final_gc(self, response, aux, params):
+    #     # log the final loss and response:
+    #     os.makedirs(self.log_dir, exist_ok=True)
 
-        num_wls = len(self.challenge._wavelength)
-        # plt.figure(figsize=(4, 4))
-        # plt.subplot(1,num_wls+2,1)
-        plt.imsave(os.path.join(self.log_dir, f"final_step_param.png"), params, cmap="binary", dpi=300)
-        couple_eff = jnp.abs(response.array) ** 2
-        for i in range(num_wls):
-            vm = onp.max(onp.abs(aux["fields_ez"][i,:,:].real))
-            plt.imsave(os.path.join(self.log_dir, f"final_step_{self.challenge._wavelength[i]}_mm_eff_{couple_eff[i]:.3f}.png"), aux["fields_ez"][i,:,:].real, cmap="seismic", dpi=300, vmax=vm, vmin=-vm)
+    #     num_wls = len(self.challenge._wavelengths)
+    #     # plt.figure(figsize=(4, 4))
+    #     # plt.subplot(1,num_wls+2,1)
+    #     plt.imsave(os.path.join(self.log_dir, f"final_step_param.png"), params, cmap="binary", dpi=300)
+    #     couple_eff = jnp.abs(response.array) ** 2
+    #     for i in range(num_wls):
+    #         vm = onp.max(onp.abs(aux["fields_ez"][i,:,:].real))
+    #         plt.imsave(os.path.join(self.log_dir, f"final_step_{self.challenge._wavelengths[i]}_mm_eff_{couple_eff[i]:.3f}.png"), aux["fields_ez"][i,:,:].real, cmap="seismic", dpi=300, vmax=vm, vmin=-vm)
 
-        onp.save(os.path.join(self.log_dir, f"final_latent.npy"), self.state.latents["density"].density)
-        onp.save(os.path.join(self.log_dir, f"final_params.npy"), params)
-        onp.save(os.path.join(self.log_dir, f"final_fields.npy"), aux["fields_ez"])
+    #     onp.save(os.path.join(self.log_dir, f"final_latent.npy"), self.state.latents["density"].density)
+    #     onp.save(os.path.join(self.log_dir, f"final_params.npy"), params)
+    #     onp.save(os.path.join(self.log_dir, f"final_fields.npy"), aux["fields_ez"])
     
-    def log_final_meta(self, response, aux, params):
-        # log the final loss and response:
-        os.makedirs(self.log_dir, exist_ok=True)
+    # def log_final_meta(self, response, aux, params):
+    #     # log the final loss and response:
+    #     os.makedirs(self.log_dir, exist_ok=True)
 
-        num_wls = len(self.challenge._wavelength)
-        # plt.figure(figsize=(4, 4))
-        # plt.subplot(1,num_wls+2,1)
-        plt.imsave(os.path.join(self.log_dir, f"final_step_param.png"), params, cmap="binary", dpi=300)
-        transmission_eff = aux['FOM']
-        for i in range(num_wls):
-            vm = onp.max(onp.abs(aux["fields_ez"][i,:,:].real))
-            plt.imsave(os.path.join(self.log_dir, f"final_step_{self.challenge._wavelength[i]}_mm_eff_{transmission_eff[i]:.3f}.png"), aux["fields_ez"][i,:,:].real, cmap="seismic", dpi=300, vmax=vm, vmin=-vm)
+    #     num_wls = len(self.challenge._wavelengths)
+    #     # plt.figure(figsize=(4, 4))
+    #     # plt.subplot(1,num_wls+2,1)
+    #     plt.imsave(os.path.join(self.log_dir, f"final_step_param.png"), params, cmap="binary", dpi=300)
+    #     transmission_eff = aux['FOM']
+    #     for i in range(num_wls):
+    #         vm = onp.max(onp.abs(aux["fields_ez"][i,:,:].real))
+    #         plt.imsave(os.path.join(self.log_dir, f"final_step_{self.challenge._wavelengths[i]}_mm_eff_{transmission_eff[i]:.3f}.png"), aux["fields_ez"][i,:,:].real, cmap="seismic", dpi=300, vmax=vm, vmin=-vm)
 
-        onp.save(os.path.join(self.log_dir, f"final_latent.npy"), self.state.latents["density"].density)
-        onp.save(os.path.join(self.log_dir, f"final_params.npy"), params)
-        onp.save(os.path.join(self.log_dir, f"final_fields.npy"), aux["fields_ez"])
+    #     onp.save(os.path.join(self.log_dir, f"final_latent.npy"), self.state.latents["density"].density)
+    #     onp.save(os.path.join(self.log_dir, f"final_params.npy"), params)
+    #     onp.save(os.path.join(self.log_dir, f"final_fields.npy"), aux["fields_ez"])
     

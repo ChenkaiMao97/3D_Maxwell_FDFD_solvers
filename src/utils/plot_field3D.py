@@ -18,7 +18,98 @@ from skimage import measure
 #     'figure.titlesize': 28,
 # })
 
-def plot_3slices(data, fname=None, stride = 1, my_cmap = plt.cm.binary, cm_zero_center=True, title=None):
+import plotly.graph_objects as go
+
+def plot_3slices_plotly(data, fname="slices3d",
+                        opacity=0.45, colorscale="Greys", show_colorbar=True):
+    """
+    data: 3D numpy array with shape (sx, sy, sz)
+    Saves an interactive HTML and a static PNG (requires `pip install -U kaleido`).
+    """
+    sx, sy, sz = data.shape
+    x = np.arange(sx)
+    y = np.arange(sy)
+    z = np.arange(sz)
+
+    # Mid-plane indices
+    ix = sx // 2
+    iy = sy // 2
+    iz = sz // 2
+
+    # Slices (match your original orientation: XY @ z=mid, YZ @ x=mid, ZX @ y=mid)
+    xy_slice = data[:, :, iz]
+    yz_slice = data[ix, :, :]
+    zx_slice = data[:, iy, :].T  # consistent with your function where zx_slice = data[:, int(sy/2), :].T
+
+    # Build plane coordinates
+    # XY plane at constant z = iz
+    X_xy, Y_xy = np.meshgrid(x, y, indexing="ij")  # shape (sx, sy)
+    Z_xy = np.full_like(X_xy, fill_value=iz, dtype=float)
+
+    # YZ plane at constant x = ix
+    Y_yz, Z_yz = np.meshgrid(y, z, indexing="ij")  # shape (sy, sz)
+    X_yz = np.full_like(Y_yz, fill_value=ix, dtype=float)
+
+    # ZX plane at constant y = iy
+    Z_zx, X_zx = np.meshgrid(z, x, indexing="ij")  # shape (sz, sx)
+    Y_zx = np.full_like(Z_zx, fill_value=iy, dtype=float)
+
+    # Create figure
+    fig = go.Figure()
+
+    # XY surface
+    fig.add_surface(
+        x=X_xy, y=Y_xy, z=Z_xy,
+        surfacecolor=xy_slice,
+        colorscale=colorscale,
+        showscale=show_colorbar,
+        opacity=opacity,
+        cmin=np.min(data), cmax=np.max(data),
+    )
+
+    # YZ surface
+    fig.add_surface(
+        x=X_yz, y=Y_yz, z=Z_yz,
+        surfacecolor=yz_slice,
+        colorscale=colorscale,
+        showscale=False,           # avoid multiple colorbars
+        opacity=opacity,
+        cmin=np.min(data), cmax=np.max(data),
+    )
+
+    # ZX surface
+    fig.add_surface(
+        x=X_zx, y=Y_zx, z=Z_zx,
+        surfacecolor=zx_slice,
+        colorscale=colorscale,
+        showscale=False,
+        opacity=opacity,
+        cmin=np.min(data), cmax=np.max(data),
+    )
+
+    # Scene & layout (true aspect, hide axes for a clean look)
+    fig.update_scenes(
+        aspectmode="data",
+        xaxis_visible=False, yaxis_visible=False, zaxis_visible=False
+    )
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=0, b=0)
+    )
+
+    # Save interactive HTML
+    print(f"Saving interactive HTML to {fname}.html")
+    fig.write_html(f"{fname}.html", include_plotlyjs="cdn")
+
+    # Save static image (requires: pip install -U kaleido)
+    try:
+        fig.write_image(f"{fname}.png", scale=2, format="png")  # 2x for higher DPI
+    except ValueError as e:
+        print("Static image export needs 'kaleido'. Install with:\n  pip install -U kaleido")
+        print("Error:", e)
+
+    return fig
+
+def plot_3slices(data, fname=None, stride = 1, my_cmap = plt.cm.binary, cm_zero_center=True, title=None, ticks=True, colorbar=True):
     # using3D()
     sx, sy, sz = data.shape
     xy_slice = data[:, :, int(sz/2)]
@@ -29,7 +120,7 @@ def plot_3slices(data, fname=None, stride = 1, my_cmap = plt.cm.binary, cm_zero_
     y = list(range(sy))
     z = list(range(sz))
 
-    fig = plt.figure(figsize=(14,4))
+    fig = plt.figure(figsize=(12,4))
     ax = plt.subplot(131, projection="3d")
     ax.set_xlabel("x")
     ax.set_ylabel("y")
@@ -38,7 +129,7 @@ def plot_3slices(data, fname=None, stride = 1, my_cmap = plt.cm.binary, cm_zero_
     y1 = np.array([i + 0*j for j in x for i in y]).reshape((sx,sy))
     z1 = sz/2*np.ones((len(x), len(y)))
     if cm_zero_center:
-        vm = max(np.max(xy_slice), -np.min(xy_slice))
+        vm = max(np.max(xy_slice)+1e-6, -np.min(xy_slice)-1e-6)
         norm = Normalize(vmin=-vm, vmax=vm)
     else:
         norm = Normalize(vmin=np.min(xy_slice), vmax=np.max(xy_slice))
@@ -53,8 +144,17 @@ def plot_3slices(data, fname=None, stride = 1, my_cmap = plt.cm.binary, cm_zero_
     ax.set_aspect('equal')
     mappable = cm.ScalarMappable(norm=norm, cmap=my_cmap)
     mappable.set_array(xy_slice)
-    cbar = ax.figure.colorbar(mappable, ax=ax, shrink=0.5, aspect=5)
-
+    if colorbar:
+        cbar = ax.figure.colorbar(mappable, ax=ax, shrink=0.5, aspect=5)
+    if not ticks:
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_zticks([])
+        ax.set_axis_off()
+        ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))  # transparent background
+        ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        ax.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        # ax.grid(False)
 
     ax = plt.subplot(132, projection="3d")
     ax.set_xlabel("x")
@@ -64,7 +164,7 @@ def plot_3slices(data, fname=None, stride = 1, my_cmap = plt.cm.binary, cm_zero_
     y2 = np.array([0*i + j for j in y for i in z]).reshape((sy,sz))
     z2 = np.array([i + 0*j for j in y for i in z]).reshape((sy,sz))
     if cm_zero_center:
-        vm = max(np.max(yz_slice), -np.min(yz_slice))
+        vm = max(np.max(yz_slice)+1e-6, -np.min(yz_slice)-1e-6)
         norm = Normalize(vmin=-vm, vmax=vm)
     else:
         norm = Normalize(vmin=np.min(yz_slice), vmax=np.max(yz_slice))
@@ -73,8 +173,18 @@ def plot_3slices(data, fname=None, stride = 1, my_cmap = plt.cm.binary, cm_zero_
     ax.set_aspect('equal')
     mappable = cm.ScalarMappable(norm=norm, cmap=my_cmap)
     mappable.set_array(yz_slice)
-    cbar = ax.figure.colorbar(mappable, ax=ax, shrink=0.5, aspect=5)
-    
+    if colorbar:
+        cbar = ax.figure.colorbar(mappable, ax=ax, shrink=0.5, aspect=5)
+    if not ticks:
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_zticks([])
+        ax.set_axis_off()
+        ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))  # transparent background
+        ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        ax.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        # ax.grid(False)
+
     ax = plt.subplot(133, projection="3d")
     ax.set_xlabel("x")
     ax.set_ylabel("y")
@@ -83,7 +193,7 @@ def plot_3slices(data, fname=None, stride = 1, my_cmap = plt.cm.binary, cm_zero_
     y3 = sy/2*np.ones((len(z), len(x)))
     z3 = np.array([0*i + j for j in z for i in x]).reshape((sz,sx))
     if cm_zero_center:
-        vm = max(np.max(zx_slice), -np.min(zx_slice))
+        vm = max(np.max(zx_slice)+1e-6, -np.min(zx_slice)-1e-6)
         norm = Normalize(vmin=-vm, vmax=vm)
     else:
         norm = Normalize(vmin=np.min(zx_slice), vmax=np.max(zx_slice))
@@ -92,7 +202,130 @@ def plot_3slices(data, fname=None, stride = 1, my_cmap = plt.cm.binary, cm_zero_
     ax.set_aspect('equal')
     mappable = cm.ScalarMappable(norm=norm, cmap=my_cmap)
     mappable.set_array(zx_slice)
-    cbar = ax.figure.colorbar(mappable, ax=ax, shrink=0.5, aspect=5)
+    if colorbar:
+        cbar = ax.figure.colorbar(mappable, ax=ax, shrink=0.5, aspect=5)
+    if not ticks:
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_zticks([])
+        ax.set_axis_off()
+        ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))  # transparent background
+        ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        ax.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        # ax.grid(False)
+
+    plt.tight_layout()
+    plt.subplots_adjust(wspace=-0.5)
+
+    if title:
+        plt.title(title)
+
+    if fname:
+        plt.savefig(fname, dpi=100, transparent=True)
+        plt.close()
+    else:
+        return fig
+
+def plot_3slices_together(data, fname=None, stride = 1, my_cmap = plt.cm.binary, cm_zero_center=True, title=None, ticks=True, colorbar=True):
+    # using3D()
+    sx, sy, sz = data.shape
+    xy_slice = data[:, :, int(sz/2)]
+    yz_slice = data[int(sx/2), :, :]
+    zx_slice = data[:, int(sy/2), :].T
+
+    x = list(range(sx))
+    y = list(range(sy))
+    z = list(range(sz))
+
+    fig = plt.figure(figsize=(8,6))
+    ax = plt.subplot(111, projection="3d")
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_zlabel("z")
+
+    x3 = np.array([i + 0*j for j in z for i in x]).reshape((sz,sx))
+    y3 = sy/2*np.ones((len(z), len(x)))
+    z3 = np.array([0*i + j for j in z for i in x]).reshape((sz,sx))
+    if cm_zero_center:
+        vm = max(np.max(zx_slice), -np.min(zx_slice))
+        norm = Normalize(vmin=-vm, vmax=vm)
+    else:
+        norm = Normalize(vmin=np.min(zx_slice), vmax=np.max(zx_slice))
+    
+    colors_plane = my_cmap(norm(zx_slice))
+    colors_plane[...,3] = 0.4
+    ax.plot_surface(x3, y3, z3, rstride=stride,cstride=stride, facecolors=colors_plane)
+    ax.set_ylim((0,sy))
+    ax.set_aspect('equal')
+    mappable = cm.ScalarMappable(norm=norm, cmap=my_cmap)
+    mappable.set_array(zx_slice)
+    if colorbar:
+        cbar = ax.figure.colorbar(mappable, ax=ax, shrink=0.5, aspect=5)
+    if not ticks:
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_zticks([])
+        ax.set_axis_off()
+        ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))  # transparent background
+        ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        ax.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        ax.grid(False)
+
+    x1 = np.array([0*i + j for j in x for i in y]).reshape((sx,sy))
+    y1 = np.array([i + 0*j for j in x for i in y]).reshape((sx,sy))
+    z1 = sz/2*np.ones((len(x), len(y)))
+    if cm_zero_center:
+        vm = max(np.max(xy_slice), -np.min(xy_slice))
+        norm = Normalize(vmin=-vm, vmax=vm)
+    else:
+        norm = Normalize(vmin=np.min(xy_slice), vmax=np.max(xy_slice))
+
+    colors_plane = my_cmap(norm(xy_slice.T))
+    colors_plane[...,3] = 0.4
+    surf = ax.plot_surface(x1.T, y1.T, z1.T, rstride=stride, cstride=stride, facecolors=colors_plane)
+    ax.set_zlim((0,sz))
+    ax.set_aspect('equal')
+    mappable = cm.ScalarMappable(norm=norm, cmap=my_cmap)
+    mappable.set_array(xy_slice)
+    if colorbar:
+        cbar = ax.figure.colorbar(mappable, ax=ax, shrink=0.5, aspect=5)
+    if not ticks:
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_zticks([])
+        ax.set_axis_off()
+        ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))  # transparent background
+        ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        ax.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        ax.grid(False)
+
+    x2 = sx/2*np.ones((len(y), len(z)))
+    y2 = np.array([0*i + j for j in y for i in z]).reshape((sy,sz))
+    z2 = np.array([i + 0*j for j in y for i in z]).reshape((sy,sz))
+    if cm_zero_center:
+        vm = max(np.max(yz_slice), -np.min(yz_slice))
+        norm = Normalize(vmin=-vm, vmax=vm)
+    else:
+        norm = Normalize(vmin=np.min(yz_slice), vmax=np.max(yz_slice))
+    
+    colors_plane = my_cmap(norm(yz_slice))
+    colors_plane[...,3] = 0.4
+    ax.plot_surface(x2, y2, z2, rstride=stride,cstride=stride, facecolors=colors_plane)
+    ax.set_xlim((0,sx))
+    ax.set_aspect('equal')
+    mappable = cm.ScalarMappable(norm=norm, cmap=my_cmap)
+    mappable.set_array(yz_slice)
+    if colorbar:
+        cbar = ax.figure.colorbar(mappable, ax=ax, shrink=0.5, aspect=5)
+    if not ticks:
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_zticks([])
+        ax.set_axis_off()
+        ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))  # transparent background
+        ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        ax.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        ax.grid(False)
 
     plt.tight_layout()
     if title:

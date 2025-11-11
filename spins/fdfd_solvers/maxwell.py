@@ -109,7 +109,7 @@ class MaxwellSolver:
         self.solver = solver
         self.ln_R = ln_R
         self.m = m
-        print("MaxwellSolver with ln_R = ", self.ln_R, "m = ", self.m)
+        print("MaxwellSolver with ln_R = ", self.ln_R, "m = ", self.m, "residual threshold = ", self.err_thresh, "max iterations = ", self.max_iters)
 
     def solve(self,
               omega: complex,

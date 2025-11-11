@@ -12,8 +12,8 @@ import functools
 @gin.configurable
 def _get_default_initializer(
     mean=0.5,
-    stddev=0.1,
-    length_scale=1.0,
+    stddev=0.001,
+    length_scale=3.0,
     bounds=(0.0, 1.0)
 ):
     print("mean, stddev, length_scale, bounds: ", mean, stddev, length_scale, bounds)

@@ -3,7 +3,7 @@ from clize import run
 import os
 
 from bin.inverse_design import run_inverse_design
-from bin.run_job_utils import ExperimentConfig, set_up_experiment
+from bin.run_job_utils import ExperimentConfig, set_up_experiment, get_least_used_gpu
 
 @gin.configurable
 def run_job(
@@ -12,10 +12,12 @@ def run_job(
     experiment_dir: str=None,
     design_config: str=None,
     solver_config: str=None,
-    gpu_ids: str="0,1"
+    num_gpus: int=1
 ):
+    best_gpus = get_least_used_gpu(num_gpus)
+    gpu_ids = ",".join([str(gpu) for gpu in best_gpus])
     os.environ["CUDA_VISIBLE_DEVICES"] = gpu_ids
-    print(f"CUDA_VISIBLE_DEVICES: {os.environ['CUDA_VISIBLE_DEVICES']}")
+    print(f"using GPUs: {os.environ['CUDA_VISIBLE_DEVICES']}")
 
     unique_exp_name, base_dir, log_dir, code_dir, output_dir = set_up_experiment(
         name=experiment_name,

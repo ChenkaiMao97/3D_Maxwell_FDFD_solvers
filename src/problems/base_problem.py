@@ -1,5 +1,5 @@
 import os
-from src.utils.utils import printc, is_multiple, resolve
+from src.utils.utils import printc, is_multiple, resolve, c2r
 from src.invde.utils.utils import *
 
 import numpy as np
@@ -80,6 +80,9 @@ class BaseProblem:
 
         self.ports = [] # waveguides
         self.plane_waves = []
+
+        self.last_forward_E = {}
+        self.last_adjoint_E = {}
     
     def init_GPU_workers(self):
         # init solvers on each GPU
@@ -136,31 +139,41 @@ class BaseProblem:
             self.listener_thread.join()
         print("all process and threads stopped")
     
-    def compute_FDFD(self, wl, epsilon_r, source):
+    def compute_FDFD(self, wl, epsilon_r, source, mode):
+        assert mode in ['forward', 'adjoint'], f"mode must be 'forward' or 'adjoint'"
+
         assert wl in self.wavelengths, f"wavelength {wl} is not in the list of wavelengths: {self.wavelengths}"
 
-        # wl_torch = torch.tensor([wl], dtype=torch.float32)
-        # dl_torch = torch.tensor([self.dL], dtype=torch.float32)
-        # epsilon_r_torch = torch.tensor(epsilon_r, dtype=torch.float32)
-        # source_torch = torch.tensor(source, dtype=torch.complex64)
+        wl_torch = torch.tensor([wl], dtype=torch.float32)
+        dl_torch = torch.tensor([self.dL], dtype=torch.float32)
+        if isinstance(epsilon_r, np.ndarray):
+            epsilon_r = torch.from_numpy(epsilon_r)
+        if isinstance(source, np.ndarray):
+            source = torch.from_numpy(source)
+        epsilon_r = epsilon_r[None].to(torch.float32)
+        source = c2r(source[None].to(torch.complex64))
 
         # send task to GPU worker queue
         task_id = self.task_id_counter
         self.task_id_counter += 1
         device_id = self.wavelengths.index(wl) # each device handles one omega, to reuse the precomputed PML 
         
-        # last_E = self.last_forward_E.get(omega, None)
-        last_E = None
+        last_E = self.last_forward_E.get(wl, None) if mode == 'forward' else self.last_adjoint_E.get(wl, None)
 
-        self.task_queues[device_id].put((task_id, (epsilon_r, source, wl, self.dL, self.pmls, None, last_E)))
+        self.task_queues[device_id].put((task_id, (epsilon_r, source, wl_torch, dl_torch, self.pmls, None, last_E)))
 
         # wait and fetch the result
         with self.results_cond:
             while task_id not in self.results:
                 self.results_cond.wait()
-        e = self.results.pop(task_id)[None]
+        e = self.results.pop(task_id)
+
+        if mode == 'forward':
+            self.last_forward_E[wl] = e
+        else:
+            self.last_adjoint_E[wl] = e
         
-        return e
+        return e[0]
     
     def simulate(self):
         raise NotImplementedError("This method must be implemented in the subclass")

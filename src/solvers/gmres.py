@@ -1,4 +1,6 @@
 import torch
+from tqdm import tqdm
+from src.utils.plot_field3D import plot_3slices
 
 def MAE(a, b):
     return torch.mean(torch.abs(a-b))/torch.mean(torch.abs(b))
@@ -34,15 +36,14 @@ class mygmres():
         return torch.sqrt(self.dot(x, x))
     
     @torch.no_grad()
-    def solve(self, b, tol=1e-6, max_iter=100, restart=300, verbose=False, return_xr_history=False, plot_iters=None, complex_type=torch.complex128):
+    def solve(self, b, tol=1e-6, max_iter=100, start_iter=0, relres_history=None, init_b_norm=None, verbose=False, return_xr_history=False, plot_iters=None, complex_type=torch.complex128):
         assert torch.is_complex(b), "b must be complex"
         b = b.to(complex_type)
 
         beta = self.vecnorm(b)
-        # print("Initial residual norm: ", beta)
-        if verbose:
-            # print("Iteration: ", 0, "Residual norm: ", beta, "Relative residual norm: ", 1.0)
-            print("Iteration: %d, Residual norm: %e, Relative residual norm: %e" % (0, torch.abs(beta), 1.0))
+        if init_b_norm is None:
+            init_b_norm = beta
+
         V = []
         Z = []
         V.append(self.scale(b, 1/beta))
@@ -50,19 +51,20 @@ class mygmres():
         # num_iter = max_iter
 
         # Arnoldi process
-        relres_history = [1.0]
+        relres_history = relres_history if relres_history is not None else [1.0]
 
         x_history = []
         r_history = []
         if return_xr_history:
             assert plot_iters is not None, "plot_iters must be provided if return_xr_history is True"
-            
-        for j in range(max_iter):
+        
+        pbar = tqdm(range(max_iter), total=max_iter, desc="GMRES", leave=False)
+        for j in pbar:
             z = self.M(V[j].to(torch.complex64)).to(complex_type)
             Z.append(z)
             w = self.myop(z)
             for i in range(j + 1):
-                H[i, j] = self.dot(w, V[i])
+                H[i, j] = self.dot(V[i], w) # very important that the conjugate transpose is on V[i]
                 w = self.axby(1, w, -H[i, j], V[i])
                 assert torch.is_complex(w), "w must be complex"
 
@@ -77,14 +79,14 @@ class mygmres():
             y = result.solution
             # compute residual norm using y: ||H*y - e1||
             residual_norm = self.vecnorm(H[:num_iter + 1, :num_iter]@y - e1)
-            relres_history.append(torch.abs(residual_norm)/torch.abs(beta))
+            relres_norm = torch.abs(residual_norm/init_b_norm)
+            relres_history.append(relres_norm.item())
 
             # Check for convergence
             if verbose:
-                print("Iteration: %d, Residual norm: %e, Relative residual norm: %e" % (num_iter, torch.abs(residual_norm), torch.abs(residual_norm)/torch.abs(beta)))
-                
-            if torch.abs(residual_norm)/torch.abs(beta) < tol:
-                print("break at iteration: ", j+1)
+                pbar.set_description(f"GMRES: Iteration {num_iter + start_iter}, Res norm: {torch.abs(residual_norm):.2e}, rel-Res norm: {relres_norm:.2e}")
+
+            if relres_norm < tol:
                 break
 
             if return_xr_history and j in plot_iters:
@@ -104,9 +106,15 @@ class mygmres():
             x = self.axby(1, x, y[i], Z[i])
         assert x.dtype == complex_type, f"x must be {complex_type}, but got {x.dtype}"
 
-        if 1 and not verbose:
-            print("Iteration: %d, Residual norm: %e, Relative residual norm: %e" % (num_iter, torch.abs(residual_norm), torch.abs(residual_norm)/torch.abs(beta)))
-        return x, relres_history, x_history, r_history
+        # debug:
+        # r = self.axby(1, b, -1, self.myop(x))
+        # print("debug: r norm: ", self.vecnorm(r), "residual_norm: ", residual_norm)
+        # print("verify othogonality:")
+        # for i in range(j+1):
+        #     for k in range(i+1, j+1):
+        #         print(f"dot product between V[{i}] and V[{k}]: ", self.dot(V[i], V[k]), "norm: ", self.vecnorm(V[i]), self.vecnorm(V[k]))
+
+        return x, relres_history, j+1 + start_iter, x_history, r_history
 
 class mygmrestorch(mygmres):
     # def __init__(self, model, myop, tol=1e-8, max_iter=3):
@@ -116,8 +124,6 @@ class mygmrestorch(mygmres):
         myop, 
         tol=1e-8, 
         max_iter=3, 
-        pre_step=None, 
-        post_step=None,
         complex_type=torch.complex128
     ):
         super().__init__()
@@ -127,9 +133,6 @@ class mygmrestorch(mygmres):
         self.tol = tol
         self.max_iter = max_iter
         self.complex_type = complex_type
-
-        self.pre_step = pre_step if pre_step is not None else lambda x: x
-        self.post_step = post_step if post_step is not None else lambda x: x
         
     def setup_eps(self, eps, freq):
         self.model.setup(eps, freq)
@@ -157,58 +160,52 @@ class mygmrestorch(mygmres):
         return _norm
     
     @torch.no_grad()
-    def solve(self, b, verbose=False, return_xr_history=False, plot_iters=None):
+    def solve(self, b, verbose=False, return_xr_history=False, plot_iters=None, init_x=None):
         # b = self.model(b) # left preconditioning
         # check if b is complex
         assert torch.is_complex(b), "b must be complex"
 
-        # left preconditioning
-        b = self.pre_step(b)
-
         with torch.no_grad():
-            x, relres_history, x_history, r_history = super().solve(
+            init_b_norm = self.vecnorm(b)
+            if init_x is not None:
+                b = b - self.myop(init_x)
+                sol = init_x
+            else:
+                sol = self.zeros_like(b)
+            
+            x, relres_history, num_iter, x_history, r_history = super().solve(
                 b, tol=self.tol, max_iter=self.max_iter, verbose=verbose, 
                 return_xr_history=return_xr_history, plot_iters=plot_iters,
                 complex_type=self.complex_type)
-        
-        # right preconditioning
-        x = self.post_step(x)
-        return x, relres_history, x_history, r_history
+            
+            sol = self.axby(1, sol, 1, x)
+
+        return sol, relres_history, x_history, r_history
     
-    def solve_with_restart(self, b, tol, max_iter, restart, verbose):
+    def solve_with_restart(self, b, tol, max_iter, restart, verbose, init_x=None):
         # check if b is complex
         assert torch.is_complex(b), "b must be complex"
         
         with torch.no_grad():
-            print("Using restart solve with restart: ", restart)
-            relres = 1
-            norm_b = self.vecnorm(b)
-            x = self.zeros_like(b)
-            sum_iters = 0
+            # print("Using restart solve with restart: ", restart)
+            init_b_norm = self.vecnorm(b)
+            if init_x is not None:
+                b = b - self.myop(init_x)
+                sol = init_x
+            else:
+                sol = self.zeros_like(b)
+            num_iter = 0
             relres_history = [1.0]
-            res = b
-            res_norm = norm_b
-            relres_restart_history = []
-            while(relres > tol and sum_iters < max_iter):
-                e, e_relres_history, _, _ = super().solve(res, tol/relres, restart, verbose=verbose)
-                sum_iters += len(e_relres_history) - 1
-                e_relres_history = [val*res_norm for val in e_relres_history]
-                relres_history += e_relres_history[1:]
-                x = self.axby(1, x, 1, e)
-                res = b - self.myop(x)
-                res_norm = self.vecnorm(res)
-                relres = torch.abs(res_norm / norm_b)
-                relres_restart_history.append(relres)
-                print(">>> Relative residual: ", f"{relres:.2e}", "absolute residual: ", f"{res_norm:.2e}")
-                if len(e_relres_history) <= 2 or relres < 1.1 * tol: # 1.1 for numerical stability
+            while num_iter < max_iter:
+                e, relres_history, num_iter, _, _ = super().solve(b, tol, restart, start_iter=num_iter, relres_history=relres_history, init_b_norm=init_b_norm, verbose=verbose)
+                sol = self.axby(1, sol, 1, e)
+                b = b - self.myop(e)
+                if relres_history[-1] < tol:
                     break
-                # if len(relres_restart_history) > 1 and relres_restart_history[-1] > 0.95*relres_restart_history[-2]:
-                #     print("!!! reduce too small, stop")
-                #     break
 
         # print('>>> residual norm: ', self.vecnorm(b - self.myop(x)))
-        print('ITERATION: ', sum_iters)
-        return x, relres_history
+        # print('ITERATION: ', sum_iters)
+        return sol, relres_history
     
     # def setup_64(self, myop_64, model_64):
     #     self.myop_64 = myop_64

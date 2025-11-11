@@ -1,9 +1,9 @@
 import sys, os
 import numpy as np
 import torch
-from src.gmres import mygmrestorch
-from src.physics import residue_E, src2rhs
-from src.utils import *
+from src.solvers.gmres import mygmrestorch
+from src.utils.physics import residue_E, src2rhs
+from src.utils.utils import *
 import time
 import gin
 
