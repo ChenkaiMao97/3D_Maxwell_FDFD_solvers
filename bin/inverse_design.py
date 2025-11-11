@@ -48,15 +48,5 @@ def run_inverse_design(
     results = designer.optimize()
     designer.stop_workers()
 
-    input_eps, E, source, wls, dLs, state = results
-
-    os.makedirs(config.output_dir, exist_ok=True)
-    onp.save(os.path.join(config.output_dir, "input_eps.npy"), input_eps)
-    onp.save(os.path.join(config.output_dir, "Ez.npy"), E[..., 2])
-    onp.save(os.path.join(config.output_dir, "source.npy"), source)
-    onp.save(os.path.join(config.output_dir, "wls.npy"), wls)
-    onp.save(os.path.join(config.output_dir, "dLs.npy"), dLs)
-    onp.save(os.path.join(config.output_dir, "loss_curve.npy"), state.loss)
-
 if __name__ == "__main__":
     run_inverse_design()

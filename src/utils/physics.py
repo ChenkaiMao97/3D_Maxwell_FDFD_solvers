@@ -5,10 +5,6 @@ from src.utils.PML_utils import apply_scpml, conditioners
 
 import gin
 
-C_0 = 299792458.13099605
-EPSILON_0 = 8.85418782e-12
-MU_0 = 1.25663706e-6
-
 def c2r(x):
     bs, sx, sy, sz, _ = x.shape
     return torch.view_as_real(x).reshape(bs, sx, sy, sz, 6)
@@ -40,7 +36,7 @@ def src2rhs2d(src, dL, wavelength):
     return rhs
 
 #######################################################################################################
-############################## for testing stratton chu, remove later #################################
+############################### for single data (no batch dimension) ##################################
 #######################################################################################################
 def E_to_H(Ex, Ey, Ez, dxes, omega, bloch_vector=None):
     # dxes: List[List[np.ndarray]], dxes[0] is the grid spacing for E and dxes[1] for H, dxes[0][0] is the grid spacing for x
@@ -52,169 +48,75 @@ def E_to_H(Ex, Ey, Ez, dxes, omega, bloch_vector=None):
 
 def E_to_Hx(Ey, Ez, dxes, omega, bloch_vector=None):
     if bloch_vector is None:
-        dEzdy = torch.roll(Ez, shifts=-1, dims=2) - Ez  # Shift along y-axis
-        dEydz = torch.roll(Ey, shifts=-1, dims=3) - Ey  # Shift along z-axis
+        dEzdy = torch.roll(Ez, -1, dims=1) - Ez # np.roll([1,2,3],-1) = [2,3,1]
+        dEydz = torch.roll(Ey, -1, dims=2) - Ey
     else:
-        dEzdy = torch.cat((Ez[:, :, 1:, :], Ez[:, :, 0:1, :] * torch.exp(-1j * bloch_vector[1] * dL * 1e9 * Ez.shape[2])),
-                          dim=2) - Ez
-        dEydz = torch.cat((Ey[:, :, :, 1:], Ey[:, :, :, 0:1] * torch.exp(-1j * bloch_vector[2] * dL * 1e9 * Ey.shape[3])),
-                          dim=3) - Ey
+        dEzdy = np.concatenate((Ez[:,1:,:], Ez[:,0:1,:]*np.exp(-1j*bloch_vector[1]*dL*1e9*Ez.shape[1])), axis=1) - Ez
+        dEydz = np.concatenate((Ey[:,:,1:], Ey[:,:,0:1]*np.exp(-1j*bloch_vector[2]*dL*1e9*Ey.shape[2])), axis=2) - Ey
 
-    Hx = (dEzdy - dEydz) / (-1j * dxes * omega * MU_0)
+    Hx = (dEzdy / dxes[0][1][None,:,None] - dEydz / dxes[0][2][None,None,:]) / (-1j*omega)
     return Hx
 
 def E_to_Hy(Ez, Ex, dxes, omega, bloch_vector=None):
     if bloch_vector is None:
-        dExdz = torch.roll(Ex, shifts=-1, dims=3) - Ex  # Shift along z-axis
-        dEzdx = torch.roll(Ez, shifts=-1, dims=1) - Ez  # Shift along x-axis
+        dExdz = torch.roll(Ex, -1, dims=2) - Ex
+        dEzdx = torch.roll(Ez, -1, dims=0) - Ez
     else:
-        dExdz = torch.cat((Ex[:, :, :, 1:], Ex[:, :, :, 0:1] * torch.exp(-1j * bloch_vector[2] * dL * 1e9 * Ex.shape[3])),
-                          dim=3) - Ex
-        dEzdx = torch.cat((Ez[:, 1:, :, :], Ez[:, 0:1, :, :] * torch.exp(-1j * bloch_vector[0] * dL * 1e9 * Ez.shape[1])),
-                          dim=1) - Ez
+        dExdz = np.concatenate((Ex[:,:,1:], Ex[:,:,0:1]*np.exp(-1j*bloch_vector[2]*dL*1e9*Ex.shape[2])), axis=2) - Ex
+        dEzdx = np.concatenate((Ez[1:,:,:], Ez[0:1,:,:]*np.exp(-1j*bloch_vector[0]*dL*1e9*Ez.shape[0])), axis=0) - Ez
 
-    Hy = (dExdz - dEzdx) / (-1j * dxes * omega * MU_0)
+    Hy = (dExdz / dxes[0][2][None,None,:] - dEzdx / dxes[0][0][:,None,None]) / (-1j*omega)
     return Hy
 
 def E_to_Hz(Ex, Ey, dxes, omega, bloch_vector=None):
     if bloch_vector is None:
-        dEydx = torch.roll(Ey, shifts=-1, dims=1) - Ey  # Shift along x-axis
-        dExdy = torch.roll(Ex, shifts=-1, dims=2) - Ex  # Shift along y-axis
+        dEydx = torch.roll(Ey, -1, dims=0) - Ey
+        dExdy = torch.roll(Ex, -1, dims=1) - Ex
     else:
-        dEydx = torch.cat((Ey[:, 1:, :, :], Ey[:, 0:1, :, :] * torch.exp(-1j * bloch_vector[0] * dL * 1e9 * Ey.shape[1])),
-                          dim=1) - Ey
-        dExdy = torch.cat((Ex[:, :, 1:, :], Ex[:, :, 0:1, :] * torch.exp(-1j * bloch_vector[1] * dL * 1e9 * Ex.shape[2])),
-                          dim=2) - Ex
+        dEydx = np.concatenate((Ey[1:,:,:], Ey[0:1,:,:]*np.exp(-1j*bloch_vector[0]*dL*1e9*Ey.shape[0])), axis=0) - Ey
+        dExdy = np.concatenate((Ex[:,1:,:], Ex[:,0:1,:]*np.exp(-1j*bloch_vector[1]*dL*1e9*Ex.shape[1])), axis=1) - Ex
 
-    Hz = (dEydx - dExdy) / (-1j * dxes * omega * MU_0)
+    Hz = (dEydx / dxes[0][0][:,None,None] - dExdy / dxes[0][1][None,:,None]) / (-1j*omega)
     return Hz
 
-def H_to_E(Hx, Hy, Hz, dxes, omega, eps_grid, bloch_vector=None):
-    Ex = H_to_Ex(Hy, Hz, dxes, omega, eps_grid, bloch_vector=bloch_vector)
-    Ey = H_to_Ey(Hz, Hx, dxes, omega, eps_grid, bloch_vector=bloch_vector)
-    Ez = H_to_Ez(Hx, Hy, dxes, omega, eps_grid, bloch_vector=bloch_vector)
+def H_to_E(Hx, Hy, Hz, dxes, omega, bloch_vector=None):
+    Ex = H_to_Ex(Hy, Hz, dxes, omega, bloch_vector=bloch_vector)
+    Ey = H_to_Ey(Hz, Hx, dxes, omega, bloch_vector=bloch_vector)
+    Ez = H_to_Ez(Hx, Hy, dxes, omega, bloch_vector=bloch_vector)
     return (Ex, Ey, Ez)
 
-def H_to_Ex(Hy, Hz, dxes, omega, eps_grid, bloch_vector=None):
+def H_to_Ex(Hy, Hz, dxes, omega, bloch_vector=None):
     if bloch_vector is None:
-        dHzdy = -torch.roll(Hz, shifts=1, dims=2) + Hz  # np.roll([1,2,3],1) = [3,1,2]
-        dHydz = -torch.roll(Hy, shifts=1, dims=3) + Hy
+        dHzdy = -torch.roll(Hz, 1, dims=1) + Hz # np.roll([1,2,3],1) = [3,1,2]
+        dHydz = -torch.roll(Hy, 1, dims=2) + Hy
     else:
-        dHzdy = -torch.cat((Hz[:, -1:, :] * torch.exp(1j * bloch_vector[1] * dL * 1e9 * Hz.shape[1]), Hz[:, :-1, :]),
-                                axis=1) + Hz
-        dHydz = -torch.cat((Hy[:, :, -1:] * torch.exp(1j * bloch_vector[2] * dL * 1e9 * Hy.shape[2]), Hy[:, :, :-1]),
-                                axis=2) + Hy
+        dHzdy = -np.concatenate((Hz[:,-1:,:]*np.exp(1j*bloch_vector[1]*dL*1e9*Hz.shape[1]), Hz[:,:-1,:]), axis=1) + Hz
+        dHydz = -np.concatenate((Hy[:,:,-1:]*np.exp(1j*bloch_vector[2]*dL*1e9*Hy.shape[2]), Hy[:,:,:-1]), axis=2) + Hy
 
-    Ex = (dHzdy - dHydz ) / (1j * dxes * omega * EPSILON_0 * eps_grid)
+    Ex = (dHzdy / dxes[1][1][None,:,None] - dHydz / dxes[1][2][None,None,:]) / (1j*omega)
     return Ex
 
-def H_to_Ey(Hz, Hx, dxes, omega, eps_grid, bloch_vector=None):
+def H_to_Ey(Hz, Hx, dxes, omega, bloch_vector=None):
     if bloch_vector is None:
-        dHxdz = -torch.roll(Hx, shifts=1, dims=3) + Hx
-        dHzdx = -torch.roll(Hz, shifts=1, dims=1) + Hz
+        dHxdz = -torch.roll(Hx, 1, dims=2) + Hx
+        dHzdx = -torch.roll(Hz, 1, dims=0) + Hz
     else:
-        dHxdz = -torch.cat((Hx[:, :, -1:] * torch.exp(1j * bloch_vector[2] * dL * 1e9 * Hx.shape[2]), Hx[:, :, :-1]),
-                                axis=2) + Hx
-        dHzdx = -torch.cat((Hz[-1:, :, :] * torch.exp(1j * bloch_vector[0] * dL * 1e9 * Hz.shape[0]), Hz[:-1, :, :]),
-                                axis=0) + Hz
+        dHxdz = -np.concatenate((Hx[:,:,-1:]*np.exp(1j*bloch_vector[2]*dL*1e9*Hx.shape[2]), Hx[:,:,:-1]), axis=2) + Hx
+        dHzdx = -np.concatenate((Hz[-1:,:,:]*np.exp(1j*bloch_vector[0]*dL*1e9*Hz.shape[0]), Hz[:-1,:,:]), axis=0) + Hz
 
-    Ey = (dHxdz - dHzdx) / (1j * dxes * omega * EPSILON_0 * eps_grid)
+    Ey = (dHxdz / dxes[1][2][None,None,:] - dHzdx / dxes[1][0][:,None,None]) / (1j*omega)
     return Ey
 
-def H_to_Ez(Hx, Hy, dxes, omega, eps_grid, bloch_vector=None):
+def H_to_Ez(Hx, Hy, dxes, omega, bloch_vector=None):
     if bloch_vector is None:
-        dHydx = -torch.roll(Hy, shifts=1, dims=1) + Hy
-        dHxdy = -torch.roll(Hx, shifts=1, dims=2) + Hx
+        dHydx = -torch.roll(Hy, 1, dims=0) + Hy
+        dHxdy = -torch.roll(Hx, 1, dims=1) + Hx
     else:
-        dHydx = -torch.cat((Hy[-1:, :, :] * torch.exp(1j * bloch_vector[0] * dL * 1e9 * Hy.shape[0]), Hy[:-1, :, :]),
-                                axis=0) + Hy
-        dHxdy = -torch.cat((Hx[:, -1:, :] * torch.exp(1j * bloch_vector[1] * dL * 1e9 * Hx.shape[1]), Hx[:, :-1, :]),
-                                axis=1) + Hx
+        dHydx = -np.concatenate((Hy[-1:,:,:]*np.exp(1j*bloch_vector[0]*dL*1e9*Hy.shape[0]), Hy[:-1,:,:]), axis=0) + Hy
+        dHxdy = -np.concatenate((Hx[:,-1:,:]*np.exp(1j*bloch_vector[1]*dL*1e9*Hx.shape[1]), Hx[:,:-1,:]), axis=1) + Hx
 
-    Ez = (dHydx - dHxdy) / (1j * dxes * omega * EPSILON_0 * eps_grid)
+    Ez = (dHydx / dxes[1][0][:,None,None] - dHxdy / dxes[1][1][None,:,None]) / (1j*omega)
     return Ez
-#######################################################################################################
-############################### for single data (no batch dimension) ##################################
-#######################################################################################################
-# def E_to_H(Ex, Ey, Ez, dxes, omega, bloch_vector=None):
-#     # dxes: List[List[np.ndarray]], dxes[0] is the grid spacing for E and dxes[1] for H, dxes[0][0] is the grid spacing for x
-#     Hx = E_to_Hx(Ey, Ez, dxes, omega, bloch_vector=bloch_vector)
-#     Hy = E_to_Hy(Ez, Ex, dxes, omega, bloch_vector=bloch_vector)
-#     Hz = E_to_Hz(Ex, Ey, dxes, omega, bloch_vector=bloch_vector)
-#     return (Hx, Hy, Hz)
-    
-
-# def E_to_Hx(Ey, Ez, dxes, omega, bloch_vector=None):
-#     if bloch_vector is None:
-#         dEzdy = torch.roll(Ez, -1, dims=1) - Ez # np.roll([1,2,3],-1) = [2,3,1]
-#         dEydz = torch.roll(Ey, -1, dims=2) - Ey
-#     else:
-#         dEzdy = np.concatenate((Ez[:,1:,:], Ez[:,0:1,:]*np.exp(-1j*bloch_vector[1]*dL*1e9*Ez.shape[1])), axis=1) - Ez
-#         dEydz = np.concatenate((Ey[:,:,1:], Ey[:,:,0:1]*np.exp(-1j*bloch_vector[2]*dL*1e9*Ey.shape[2])), axis=2) - Ey
-
-#     Hx = (dEzdy / dxes[0][1][None,:,None] - dEydz / dxes[0][2][None,None,:]) / (-1j*omega)
-#     return Hx
-
-# def E_to_Hy(Ez, Ex, dxes, omega, bloch_vector=None):
-#     if bloch_vector is None:
-#         dExdz = torch.roll(Ex, -1, dims=2) - Ex
-#         dEzdx = torch.roll(Ez, -1, dims=0) - Ez
-#     else:
-#         dExdz = np.concatenate((Ex[:,:,1:], Ex[:,:,0:1]*np.exp(-1j*bloch_vector[2]*dL*1e9*Ex.shape[2])), axis=2) - Ex
-#         dEzdx = np.concatenate((Ez[1:,:,:], Ez[0:1,:,:]*np.exp(-1j*bloch_vector[0]*dL*1e9*Ez.shape[0])), axis=0) - Ez
-
-#     Hy = (dExdz / dxes[0][2][None,None,:] - dEzdx / dxes[0][0][:,None,None]) / (-1j*omega)
-#     return Hy
-
-# def E_to_Hz(Ex, Ey, dxes, omega, bloch_vector=None):
-#     if bloch_vector is None:
-#         dEydx = torch.roll(Ey, -1, dims=0) - Ey
-#         dExdy = torch.roll(Ex, -1, dims=1) - Ex
-#     else:
-#         dEydx = np.concatenate((Ey[1:,:,:], Ey[0:1,:,:]*np.exp(-1j*bloch_vector[0]*dL*1e9*Ey.shape[0])), axis=0) - Ey
-#         dExdy = np.concatenate((Ex[:,1:,:], Ex[:,0:1,:]*np.exp(-1j*bloch_vector[1]*dL*1e9*Ex.shape[1])), axis=1) - Ex
-
-#     Hz = (dEydx / dxes[0][0][:,None,None] - dExdy / dxes[0][1][None,:,None]) / (-1j*omega)
-#     return Hz
-
-# def H_to_E(Hx, Hy, Hz, dxes, omega, bloch_vector=None):
-#     Ex = H_to_Ex(Hy, Hz, dxes, omega, bloch_vector=bloch_vector)
-#     Ey = H_to_Ey(Hz, Hx, dxes, omega, bloch_vector=bloch_vector)
-#     Ez = H_to_Ez(Hx, Hy, dxes, omega, bloch_vector=bloch_vector)
-#     return (Ex, Ey, Ez)
-
-# def H_to_Ex(Hy, Hz, dxes, omega, bloch_vector=None):
-#     if bloch_vector is None:
-#         dHzdy = -torch.roll(Hz, 1, dims=1) + Hz # np.roll([1,2,3],1) = [3,1,2]
-#         dHydz = -torch.roll(Hy, 1, dims=2) + Hy
-#     else:
-#         dHzdy = -np.concatenate((Hz[:,-1:,:]*np.exp(1j*bloch_vector[1]*dL*1e9*Hz.shape[1]), Hz[:,:-1,:]), axis=1) + Hz
-#         dHydz = -np.concatenate((Hy[:,:,-1:]*np.exp(1j*bloch_vector[2]*dL*1e9*Hy.shape[2]), Hy[:,:,:-1]), axis=2) + Hy
-
-#     Ex = (dHzdy / dxes[1][1][None,:,None] - dHydz / dxes[1][2][None,None,:]) / (1j*omega)
-#     return Ex
-
-# def H_to_Ey(Hz, Hx, dxes, omega, bloch_vector=None):
-#     if bloch_vector is None:
-#         dHxdz = -torch.roll(Hx, 1, dims=2) + Hx
-#         dHzdx = -torch.roll(Hz, 1, dims=0) + Hz
-#     else:
-#         dHxdz = -np.concatenate((Hx[:,:,-1:]*np.exp(1j*bloch_vector[2]*dL*1e9*Hx.shape[2]), Hx[:,:,:-1]), axis=2) + Hx
-#         dHzdx = -np.concatenate((Hz[-1:,:,:]*np.exp(1j*bloch_vector[0]*dL*1e9*Hz.shape[0]), Hz[:-1,:,:]), axis=0) + Hz
-
-#     Ey = (dHxdz / dxes[1][2][None,None,:] - dHzdx / dxes[1][0][:,None,None]) / (1j*omega)
-#     return Ey
-
-# def H_to_Ez(Hx, Hy, dxes, omega, bloch_vector=None):
-#     if bloch_vector is None:
-#         dHydx = -torch.roll(Hy, 1, dims=0) + Hy
-#         dHxdy = -torch.roll(Hx, 1, dims=1) + Hx
-#     else:
-#         dHydx = -np.concatenate((Hy[-1:,:,:]*np.exp(1j*bloch_vector[0]*dL*1e9*Hy.shape[0]), Hy[:-1,:,:]), axis=0) + Hy
-#         dHxdy = -np.concatenate((Hx[:,-1:,:]*np.exp(1j*bloch_vector[1]*dL*1e9*Hx.shape[1]), Hx[:,:-1,:]), axis=1) + Hx
-
-#     Ez = (dHydx / dxes[1][0][:,None,None] - dHxdy / dxes[1][1][None,:,None]) / (1j*omega)
-#     return Ez
 ########################################################################################################
 
 

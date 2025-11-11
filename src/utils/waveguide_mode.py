@@ -1,18 +1,18 @@
 from typing import List, Tuple, Optional, Union
 
+import jax.numpy as jnp
 import numpy as np
 import os, sys
 import torch
 from matplotlib import pyplot as plt
 
-# a temporary local path for the modified spins library
-sys.path.append("/home/maxcmk/Desktop/spins/spins_env/lib/python3.8/site-packages")
 from spins.fdfd_tools.waveguide_mode import solve_waveguide_mode, compute_source, compute_overlap_e
 
 from src.utils.plot_field3D import plot_3slices
 from src.utils.physics import residue_E, eps_to_yee
 from src.utils.PML_utils import make_dxes_numpy
 import time
+import copy
 
 from dataclasses import dataclass, field
 import enum
@@ -172,6 +172,7 @@ class WaveguidePort:
                 'polarity': axisvec2polarity(self.axis_vector),
                 # 'mu': mu
             }
+            print("polarity: ", sim_params['polarity'])
 
             wgmode_result = solve_waveguide_mode(
                 mode_number = self.order,
@@ -179,10 +180,48 @@ class WaveguidePort:
                 **sim_params
             )
 
-            overlap_e = compute_overlap_e(**wgmode_result, **sim_params)
+            # Prepare slices
+            source_slices = list(copy.deepcopy(sim_params['slices']))
+            if sim_params['polarity'] == 1:
+                source_slices[axis.value] = slice(source_slices[axis.value].stop-1,
+                                                  source_slices[axis.value].stop)
+            else:
+                source_slices[axis.value] = slice(source_slices[axis.value].start,
+                                                  source_slices[axis.value].start+1)
+            trial_E_slices = list(copy.deepcopy(sim_params['slices']))
+            if sim_params['polarity'] == 1:
+                trial_E_slices[axis.value] = slice(trial_E_slices[axis.value].stop+self.offset,
+                                                   trial_E_slices[axis.value].stop+self.offset+1)
+            else:
+                trial_E_slices[axis.value] = slice(trial_E_slices[axis.value].start-self.offset-1,
+                                                   trial_E_slices[axis.value].start-self.offset)
+
+            # Normalize the phase of the fields
+            E2 = (abs(wgmode_result['E'][0])**2 + abs(wgmode_result['E'][1])**2 + abs(
+                wgmode_result['E'][2])**2)**0.5
+            max_ind = np.argmax(E2)
+            max_field = [wgmode_result['E'][i].flatten()[max_ind] for i in range(3)]
+            max_comp = np.argmax(np.abs(max_field))
+            phase = max_field[max_comp] / abs(max_field[max_comp])
+
+            # Calculate the overlap
+            arg_overlap = {
+                'E': wgmode_result['E'] / phase,
+                'H': wgmode_result['H'] / phase,
+                'wavenumber': wgmode_result['wavenumber'],
+                'axis': axis.value,
+                'omega': omega,
+                'polarity': sim_params['polarity'],
+                'dxes': dxes,
+                'slices': tuple(source_slices),
+                'trial_E_slices': tuple(trial_E_slices)
+            }
+            overlap_e = compute_overlap_e(**arg_overlap)
+            overlap_e = jnp.stack(overlap_e, axis=-1).astype(jnp.complex64) # (nx, ny, nz, 3) and dtype complex64
             self.overlap_es[wavelength] = overlap_e
 
             if precompute_source:
+                print("precomputing source for wavelength: ", wavelength)
                 J = compute_source(**wgmode_result, **sim_params)
                 for k in range(len(J)):
                     J[k] *= np.sqrt(power)

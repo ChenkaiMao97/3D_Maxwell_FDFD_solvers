@@ -626,7 +626,7 @@ def rotation_bloch_shift(axis: int,
     j = np.arange(0, shape[1])
     k = np.arange(0, shape[2])
     ind0 = np.meshgrid(i, j, k, indexing='ij')
-    ind = np.meshgrid(i, j, k, indexing='ij')
+    ind = list(np.meshgrid(i, j, k, indexing='ij'))
 
     # apply shift to the ind grid and adjust according to shift_orthogonal
     ind[axis] += shift_distance

@@ -23,8 +23,8 @@ def solver_worker(device_id, init_kwargs, task_queue, result_queue):
         # move tensors to GPU
         epsilon_r_torch = epsilon_r_torch.to(f'cuda:{device_id}')
         source_torch = source_torch.to(f'cuda:{device_id}')
-        wl_torch = wl_torch.to(f'cuda:{device_id}')
-        dl_torch = dl_torch.to(f'cuda:{device_id}')
+        if init_x is not None:
+            init_x = init_x.to(f'cuda:{device_id}')
         output = solver.solve(epsilon_r_torch, source_torch, gt=gt, init_x=init_x)
 
         result_queue.put((task_id, output.cpu()))

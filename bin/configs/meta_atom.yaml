@@ -39,4 +39,4 @@ verbose: True
 restart: 0 # if == 0, no restart, otherwise, run restarted GMRES
 
 ########## other configs ##########
-spins_verification: 0 # if 1, run simulation in spins as well to verify the results
+spins_verification: 1 # if 1, run simulation in spins as well to verify the results

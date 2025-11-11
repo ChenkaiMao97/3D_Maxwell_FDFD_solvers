@@ -4,6 +4,8 @@ import hashlib
 from dataclasses import dataclass, field
 from getpass import getuser
 from datetime import datetime
+
+import gpustat
 from typing import Optional
 
 
@@ -46,3 +48,10 @@ def seeding(ids):
     hash_obj = hashlib.sha256(seeding_str.encode("utf-8"))
     seed = int(hash_obj.hexdigest(), 16) % (2**32)
     return seed
+
+def get_least_used_gpu(num_gpus):
+    stats = gpustat.GPUStatCollection.new_query()
+    ids = map(lambda gpu: int(gpu.entry['index']), stats)
+    ratios = map(lambda gpu: float(gpu.entry['memory.used'])/float(gpu.entry['memory.total']), stats)
+    bestGPUs = sorted(zip(ids, ratios), key=lambda x: x[1])[:num_gpus]
+    return [gpu[0] for gpu in bestGPUs]

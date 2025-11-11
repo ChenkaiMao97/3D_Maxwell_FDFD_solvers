@@ -245,6 +245,7 @@ def compute_overlap_e(E: field_t,
                       axis: int,
                       polarity: int,
                       slices: List[slice],
+                      trial_E_slices: List[slice] = None,
                       mu: field_t = None,
                       ) -> field_t:
     """
@@ -267,6 +268,9 @@ def compute_overlap_e(E: field_t,
     :param mu: Magnetic permeability (default 1 everywhere)
     :return: overlap_e for calculating the mode overlap
     """
+    if trial_E_slices is None:
+        trial_E_slices = slices
+
     cross_plane = [slice(None)] * 3
     cross_plane[axis] = slices[axis]
 
@@ -285,10 +289,9 @@ def compute_overlap_e(E: field_t,
         Ee[k] = phase_E * E[k][tuple(cross_plane)]
         He[k] = phase_H * H[k][tuple(cross_plane)]
 
-
     # Write out the operator product for the mode orthogonality integral
     domain = np.zeros_like(E[0], dtype=int)
-    domain[slices] = 1
+    domain[trial_E_slices] = 1
 
     npts = E[0].size
     dn = np.zeros(npts * 3, dtype=int)

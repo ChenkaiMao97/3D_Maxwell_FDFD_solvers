@@ -27,13 +27,9 @@ def mse_loss_fn(
     latent_to_param_fn: Callable,
     state: DesignState
 ):
-    print("1")
     params = latent_to_param_fn(latents, beta=state.beta)
-    print("2")
     response = challenge.response(params)
-    print("3")
     loss, aux = challenge.loss(response)
-    print("4")
     return loss, (response, aux, params)
 
 @gin.configurable

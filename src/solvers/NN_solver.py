@@ -57,7 +57,7 @@ class NN_solver:
         # precompute the PML features:
         dummy_eps = torch.zeros(self.sim_shape)
         dummy_eps, _ = self.dummy_ds.build_complex_eps(dummy_eps, self.wl, self.dL, self.sim_shape, pml=self.pmls)
-        self.PML_channels = dummy_eps[...,1:]
+        self.PML_channels = dummy_eps[None, ..., 1:].cuda()
 
     def solve(self, eps, src, gt=None, init_x=None):
         # build the complex eps:
@@ -68,13 +68,13 @@ class NN_solver:
         residual_fn = lambda x: r2c(self.residual_fn(c2r(x), eps[...,0], src, self.pmls, self.dL, self.wl, batched_compute=True, Aop=False))
         gmres = mygmrestorch(self.model, Aop, tol=self.tol, max_iter=self.max_iter)
 
-        complex_rhs = r2c(src2rhs(src, dL, wl))
+        complex_rhs = r2c(src2rhs(src, self.dL, self.wl))
         freq = torch.tensor(self.dL/self.wl)[None].cuda()
         gmres.setup_eps(eps, freq)
         if self.restart == 0:
-            x, history, _, _ = gmres.solve(complex_rhs, self.verbose)
+            x, history, _, _ = gmres.solve(complex_rhs, self.verbose, init_x=init_x)
         else:
-            x, history = gmres.solve_with_restart(complex_rhs, self.tol, self.max_iter, self.restart, self.verbose)
+            x, history = gmres.solve_with_restart(complex_rhs, self.tol, self.max_iter, self.restart, self.verbose, init_x=init_x)
         # final_residual = self.residual_fn(x)
 
         return x

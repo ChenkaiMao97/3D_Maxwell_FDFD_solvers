@@ -16,7 +16,7 @@ BaseProblem._backend = "NN"
 
 #### (2) setup dL, wl and simulation / optimization sizes
 IntegratedPhotonicsChallenge.wavelengths = [800]
-IntegratedPhotonicsChallenge.dL = 20
+IntegratedPhotonicsChallenge.dL = 25
 IntegratedPhotonicsChallenge.pmls = (30,30,30,30,30,30)
 
 BaseProblem.design_region_size = (1600, 1600, 400) # same unit as dL
@@ -31,21 +31,20 @@ BaseProblem.eps_substrate = 2.25
 
 #### (4) define waveguide specs, for waveguide bend we have two waveguides, on left and bottom size of the design region
 get_integrated_photonics_challenge.port_pml_offset = 200
-get_integrated_photonics_challenge.input_monitor_offset = 40
+get_integrated_photonics_challenge.input_monitor_offset = 50
 get_integrated_photonics_challenge.wg_eps = %max_eps
-get_integrated_photonics_challenge.wg_min_separation = 800
+get_integrated_photonics_challenge.wg_min_separation = 400
 get_integrated_photonics_challenge.wg_mode_padding = 200
 get_integrated_photonics_challenge.excite_port_idx = 0
 get_integrated_photonics_challenge.left_wg_specs = [(0,400,0)] # (center_offset, width, order)
-get_integrated_photonics_challenge.right_wg_specs = []
+get_integrated_photonics_challenge.right_wg_specs = [(-400,400,0), (400,400,0)]
 get_integrated_photonics_challenge.top_wg_specs = []
-get_integrated_photonics_challenge.bottom_wg_specs = [(0,400,0)]
+get_integrated_photonics_challenge.bottom_wg_specs = []
 
 #### (5) define optimization targets:
-get_integrated_photonics_challenge.target_s_params = [(0,1)] # zero-reflection and full transmission 
+get_integrated_photonics_challenge.target_s_params = [(0,0,1)] # zero-reflection and full transmission 
 
 #### (6) define optimizer args:
-
 ############################ optimization args ###################################
 length_scale_pixel = 3
 Designer.length_scale_pixel = %length_scale_pixel
@@ -61,15 +60,15 @@ _get_default_initializer.length_scale = %length_scale_pixel
 
 Designer.steps_per_beta = 15
 Designer.steps_per_beta_during_constraint = 30
-Designer.beta_schedule  = [128,256,512]
+Designer.beta_schedule  = [8,32,128,512]
 
-Designer.constraint_tolerance_schedule = [0,0,0] # used for nlopt
-# Designer.constraint_weight_schedule = [0,0,1] # used for optax
+Designer.constraint_tolerance_schedule = [0,0,0,0] # used for nlopt
+# Designer.constraint_weight_schedule = [0,0,0,0] # used for optax
 
 Designer.opt_type = 'nlopt'
 # Designer.opt_type = 'optax'
 
-Designer.load_latent_path='/media/ps3/chenkaim/checkpoints/3D_Maxwell_FDFD_solvers/invde_waveguide_bend-10_23_25T01_28_38/logs/step_40.h5'
+# Designer.load_latent_path='/media/ps3/chenkaim/checkpoints/3D_Maxwell_FDFD_solvers/invde_waveguide_bend-10_23_25T01_28_38/logs/step_40.h5'
 
 Designer.lr = 1e-2
 Designer.end_lr = 1e-3

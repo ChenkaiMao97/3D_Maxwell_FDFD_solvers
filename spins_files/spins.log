@@ -112,15 +112,2309 @@
 [2025-10-21 14:58:08,905][INFO][solver][run_plan] Setting up workspace.
 [2025-10-21 14:58:08,906][INFO][solver][run_plan] Running transformation opt_cont.
 [2025-10-21 14:58:35,018][INFO][solver][run_plan] Spins finished.
-[2025-10-23 17:38:57,351][INFO][solver][run_plan] Setting up workspace.
-[2025-10-23 17:38:57,353][INFO][solver][run_plan] Running transformation opt_cont.
-[2025-10-23 17:39:40,360][INFO][solver][run_plan] Setting up workspace.
-[2025-10-23 17:39:40,363][INFO][solver][run_plan] Running transformation opt_cont.
-[2025-10-23 17:43:51,493][INFO][solver][run_plan] Setting up workspace.
-[2025-10-23 17:43:51,494][INFO][solver][run_plan] Running transformation opt_cont.
-[2025-10-23 17:47:15,646][INFO][solver][run_plan] Setting up workspace.
-[2025-10-23 17:47:15,653][INFO][solver][run_plan] Running transformation opt_cont.
-[2025-10-23 17:49:16,709][INFO][solver][run_plan] Setting up workspace.
-[2025-10-23 17:49:16,710][INFO][solver][run_plan] Running transformation opt_cont.
-[2025-11-04 13:08:28,859][INFO][solver][run_plan] Setting up workspace.
-[2025-11-04 13:08:28,860][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-22 15:36:32,398][INFO][solver][run_plan] Setting up workspace.
+[2025-10-22 15:36:32,406][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-22 15:39:22,420][INFO][solver][run_plan] Setting up workspace.
+[2025-10-22 15:39:22,421][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 15:22:00,143][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 15:22:00,148][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 15:22:34,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 15:22:34,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 15:22:34,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 15:22:34,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 15:23:52,930][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 15:23:52,930][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 15:23:52,930][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 15:23:52,932][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 15:23:52,932][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 15:23:52,932][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 15:25:44,525][INFO][solver][run_plan] Spins finished.
+[2025-10-24 15:25:44,525][INFO][solver][run_plan] Spins finished.
+[2025-10-24 15:25:44,525][INFO][solver][run_plan] Spins finished.
+[2025-10-24 16:03:08,302][ERROR][manager][comm_open] No such comm target registered: jupyter.widget.control
+[2025-10-24 16:03:08,302][ERROR][manager][comm_open] No such comm target registered: jupyter.widget.control
+[2025-10-24 16:03:08,302][ERROR][manager][comm_open] No such comm target registered: jupyter.widget.control
+[2025-10-24 16:03:08,306][WARNING][base_comm][get_comm] No such comm: e7e08c2e-e296-4cf7-9940-be365dc571ea
+[2025-10-24 16:03:08,306][WARNING][base_comm][get_comm] No such comm: e7e08c2e-e296-4cf7-9940-be365dc571ea
+[2025-10-24 16:03:08,306][WARNING][base_comm][get_comm] No such comm: e7e08c2e-e296-4cf7-9940-be365dc571ea
+[2025-10-24 17:28:59,639][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 17:28:59,643][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 17:30:49,417][INFO][solver][run_plan] Spins finished.
+[2025-10-24 17:40:03,690][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 17:40:03,692][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 17:42:18,401][INFO][solver][run_plan] Spins finished.
+[2025-10-24 18:42:38,909][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 18:42:38,911][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 18:44:55,940][INFO][solver][run_plan] Spins finished.
+[2025-10-24 18:46:12,818][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 18:46:12,818][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 18:46:12,820][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 18:46:12,820][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 18:48:53,504][INFO][solver][run_plan] Spins finished.
+[2025-10-24 18:48:53,504][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:38:44,131][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:38:44,131][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:38:44,131][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:38:44,132][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:38:44,132][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:38:44,132][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:41:27,078][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:41:27,078][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:41:27,078][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:41:43,968][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:41:43,968][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:41:43,968][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:41:43,968][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:41:43,969][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:41:43,969][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:41:43,969][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:41:43,969][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:42:39,400][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:42:39,400][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:42:39,400][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:42:39,400][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:42:39,400][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:42:39,402][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:42:39,402][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:42:39,402][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:42:39,402][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:42:39,402][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:44:30,426][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:44:30,426][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:44:30,426][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:44:30,426][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:44:30,426][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:44:47,522][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:44:47,522][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:44:47,522][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:44:47,522][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:44:47,522][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:44:47,522][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:44:47,524][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:44:47,524][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:44:47,524][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:44:47,524][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:44:47,524][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:44:47,524][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:46:23,301][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:46:23,301][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:46:23,301][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:46:23,301][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:46:23,301][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:46:23,301][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:46:42,403][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:46:42,403][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:46:42,403][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:46:42,403][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:46:42,403][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:46:42,403][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:46:42,403][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:46:42,404][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:46:42,404][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:46:42,404][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:46:42,404][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:46:42,404][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:46:42,404][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:46:42,404][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:47:58,114][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:47:58,114][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:47:58,114][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:47:58,114][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:47:58,114][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:47:58,114][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:47:58,114][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:48:16,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:48:16,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:48:16,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:48:16,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:48:16,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:48:16,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:48:16,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:48:16,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:48:16,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:48:16,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:48:16,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:48:16,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:48:16,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:48:16,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:48:16,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:48:16,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:49:03,495][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:49:03,495][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:49:03,495][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:49:03,495][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:49:03,495][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:49:03,495][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:49:03,495][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:49:03,495][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:49:37,537][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:49:37,537][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:49:37,537][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:49:37,537][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:49:37,537][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:49:37,537][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:49:37,537][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:49:37,537][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:49:37,537][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:49:37,538][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:49:37,538][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:49:37,538][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:49:37,538][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:49:37,538][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:49:37,538][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:49:37,538][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:49:37,538][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:49:37,538][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:52:16,816][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:52:16,816][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:52:16,816][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:52:16,816][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:52:16,816][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:52:16,816][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:52:16,816][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:52:16,816][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:52:16,816][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:52:49,481][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:52:49,481][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:52:49,481][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:52:49,481][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:52:49,481][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:52:49,481][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:52:49,481][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:52:49,481][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:52:49,481][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:52:49,481][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:52:49,482][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:52:49,482][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:52:49,482][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:52:49,482][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:52:49,482][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:52:49,482][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:52:49,482][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:52:49,482][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:52:49,482][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:52:49,482][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:54:53,456][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:54:53,456][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:54:53,456][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:54:53,456][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:54:53,456][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:54:53,456][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:54:53,456][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:54:53,456][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:54:53,456][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:54:53,456][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:55:27,148][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:55:27,148][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:55:27,148][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:55:27,148][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:55:27,148][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:55:27,148][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:55:27,148][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:55:27,148][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:55:27,148][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:55:27,148][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:55:27,148][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:55:27,149][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:55:27,149][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:55:27,149][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:55:27,149][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:55:27,149][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:55:27,149][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:55:27,149][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:55:27,149][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:55:27,149][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:55:27,149][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:55:27,149][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:57:36,106][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:57:36,106][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:57:36,106][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:57:36,106][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:57:36,106][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:57:36,106][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:57:36,106][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:57:36,106][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:57:36,106][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:57:36,106][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:57:36,106][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:58:07,263][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:58:07,263][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:58:07,263][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:58:07,263][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:58:07,263][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:58:07,263][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:58:07,263][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:58:07,263][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:58:07,263][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:58:07,263][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:58:07,263][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:58:07,263][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 19:58:07,264][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:58:07,264][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:58:07,264][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:58:07,264][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:58:07,264][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:58:07,264][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:58:07,264][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:58:07,264][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:58:07,264][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:58:07,264][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:58:07,264][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:58:07,264][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 19:59:26,027][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:59:26,027][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:59:26,027][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:59:26,027][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:59:26,027][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:59:26,027][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:59:26,027][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:59:26,027][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:59:26,027][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:59:26,027][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:59:26,027][INFO][solver][run_plan] Spins finished.
+[2025-10-24 19:59:26,027][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:00:03,096][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:00:03,096][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:00:03,096][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:00:03,096][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:00:03,096][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:00:03,096][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:00:03,096][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:00:03,096][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:00:03,096][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:00:03,096][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:00:03,096][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:00:03,096][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:00:03,096][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:00:03,098][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:00:03,098][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:00:03,098][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:00:03,098][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:00:03,098][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:00:03,098][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:00:03,098][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:00:03,098][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:00:03,098][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:00:03,098][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:00:03,098][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:00:03,098][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:00:03,098][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:01:55,045][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:01:55,045][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:01:55,045][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:01:55,045][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:01:55,045][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:01:55,045][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:01:55,045][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:01:55,045][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:01:55,045][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:01:55,045][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:01:55,045][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:01:55,045][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:01:55,045][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:02:50,384][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:02:50,384][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:02:50,384][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:02:50,384][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:02:50,384][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:02:50,384][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:02:50,384][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:02:50,384][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:02:50,384][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:02:50,384][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:02:50,384][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:02:50,384][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:02:50,384][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:02:50,384][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:02:50,386][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:02:50,386][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:02:50,386][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:02:50,386][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:02:50,386][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:02:50,386][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:02:50,386][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:02:50,386][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:02:50,386][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:02:50,386][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:02:50,386][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:02:50,386][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:02:50,386][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:02:50,386][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:13:10,039][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:13:10,041][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:14:17,910][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:15:10,274][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:15:10,274][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:15:10,276][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:15:10,276][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:17:55,660][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:17:55,660][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:18:41,234][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:18:41,234][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:18:41,234][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:18:41,235][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:18:41,235][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:18:41,235][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:19:57,502][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:19:57,502][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:19:57,502][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:20:43,882][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:20:43,882][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:20:43,882][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:20:43,882][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:20:43,883][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:20:43,883][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:20:43,883][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:20:43,883][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:22:04,423][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:22:04,423][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:22:04,423][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:22:04,423][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:22:53,115][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:22:53,115][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:22:53,115][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:22:53,115][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:22:53,115][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:22:53,115][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:22:53,115][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:22:53,115][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:22:53,115][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:22:53,115][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:24:17,133][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:24:17,133][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:24:17,133][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:24:17,133][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:24:17,133][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:25:17,070][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:25:17,070][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:25:17,070][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:25:17,070][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:25:17,070][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:25:17,070][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:25:17,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:25:17,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:25:17,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:25:17,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:25:17,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:25:17,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:40:44,815][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:40:44,817][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:44:26,785][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:44:26,786][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:47:09,324][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:48:09,629][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:48:09,629][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:48:09,630][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:48:09,630][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:50:17,397][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:50:17,397][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:51:17,114][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:51:17,114][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:51:17,114][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:51:17,115][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:51:17,115][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:51:17,115][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:52:39,997][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:52:39,997][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:52:39,997][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:53:39,498][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:53:39,498][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:53:39,498][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:53:39,498][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:53:39,499][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:53:39,499][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:53:39,499][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:53:39,499][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:55:02,087][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:55:02,087][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:55:02,087][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:55:02,087][INFO][solver][run_plan] Spins finished.
+[2025-10-24 20:56:23,003][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:56:23,003][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:56:23,003][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:56:23,003][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:56:23,003][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 20:56:23,005][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:56:23,005][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:56:23,005][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:56:23,005][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 20:56:23,005][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:00:20,457][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:00:20,457][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:00:20,457][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:00:20,457][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:00:20,457][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:01:25,969][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:01:25,969][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:01:25,969][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:01:25,969][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:01:25,969][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:01:25,969][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:01:25,971][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:01:25,971][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:01:25,971][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:01:25,971][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:01:25,971][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:01:25,971][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:02:34,098][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:02:34,098][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:02:34,098][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:02:34,098][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:02:34,098][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:02:34,098][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:03:39,313][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:03:39,313][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:03:39,313][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:03:39,313][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:03:39,313][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:03:39,313][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:03:39,313][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:03:39,314][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:03:39,314][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:03:39,314][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:03:39,314][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:03:39,314][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:03:39,314][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:03:39,314][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:04:39,774][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:04:39,774][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:04:39,774][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:04:39,774][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:04:39,774][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:04:39,774][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:04:39,774][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:05:52,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:05:52,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:05:52,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:05:52,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:05:52,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:05:52,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:05:52,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:05:52,049][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:05:52,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:05:52,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:05:52,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:05:52,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:05:52,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:05:52,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:05:52,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:05:52,050][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:07:45,506][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:07:45,506][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:07:45,506][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:07:45,506][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:07:45,506][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:07:45,506][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:07:45,506][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:07:45,506][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:08:54,955][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:08:54,955][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:08:54,955][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:08:54,955][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:08:54,955][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:08:54,955][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:08:54,955][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:08:54,955][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:08:54,955][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:08:54,957][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:08:54,957][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:08:54,957][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:08:54,957][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:08:54,957][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:08:54,957][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:08:54,957][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:08:54,957][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:08:54,957][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:10:08,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:10:08,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:10:08,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:10:08,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:10:08,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:10:08,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:10:08,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:10:08,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:10:08,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:11:25,192][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:11:25,192][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:11:25,192][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:11:25,192][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:11:25,192][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:11:25,192][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:11:25,192][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:11:25,192][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:11:25,192][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:11:25,192][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:11:25,194][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:11:25,194][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:11:25,194][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:11:25,194][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:11:25,194][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:11:25,194][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:11:25,194][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:11:25,194][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:11:25,194][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:11:25,194][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:13:30,773][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:13:30,773][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:13:30,773][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:13:30,773][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:13:30,773][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:13:30,773][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:13:30,773][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:13:30,773][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:13:30,773][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:13:30,773][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:14:50,909][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:14:50,909][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:14:50,909][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:14:50,909][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:14:50,909][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:14:50,909][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:14:50,909][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:14:50,909][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:14:50,909][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:14:50,909][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:14:50,909][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:14:50,910][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:14:50,910][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:14:50,910][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:14:50,910][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:14:50,910][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:14:50,910][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:14:50,910][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:14:50,910][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:14:50,910][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:14:50,910][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:14:50,910][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:16:28,985][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:16:28,985][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:16:28,985][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:16:28,985][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:16:28,985][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:16:28,985][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:16:28,985][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:16:28,985][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:16:28,985][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:16:28,985][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:16:28,985][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:17:47,833][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:17:47,833][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:17:47,833][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:17:47,833][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:17:47,833][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:17:47,833][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:17:47,833][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:17:47,833][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:17:47,833][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:17:47,833][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:17:47,833][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:17:47,833][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:17:47,834][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:17:47,834][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:17:47,834][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:17:47,834][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:17:47,834][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:17:47,834][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:17:47,834][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:17:47,834][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:17:47,834][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:17:47,834][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:17:47,834][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:17:47,834][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:18:52,587][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:18:52,587][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:18:52,587][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:18:52,587][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:18:52,587][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:18:52,587][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:18:52,587][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:18:52,587][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:18:52,587][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:18:52,587][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:18:52,587][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:18:52,587][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:20:15,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:20:15,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:20:15,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:20:15,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:20:15,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:20:15,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:20:15,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:20:15,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:20:15,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:20:15,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:20:15,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:20:15,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:20:15,456][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:20:15,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:20:15,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:20:15,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:20:15,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:20:15,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:20:15,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:20:15,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:20:15,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:20:15,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:20:15,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:20:15,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:20:15,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:20:15,458][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:21:57,494][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:21:57,494][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:21:57,494][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:21:57,494][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:21:57,494][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:21:57,494][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:21:57,494][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:21:57,494][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:21:57,494][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:21:57,494][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:21:57,494][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:21:57,494][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:21:57,494][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:23:18,478][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:23:18,478][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:23:18,478][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:23:18,478][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:23:18,478][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:23:18,478][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:23:18,478][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:23:18,478][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:23:18,478][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:23:18,478][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:23:18,478][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:23:18,478][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:23:18,478][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:23:18,478][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:23:18,479][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:23:18,479][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:23:18,479][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:23:18,479][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:23:18,479][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:23:18,479][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:23:18,479][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:23:18,479][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:23:18,479][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:23:18,479][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:23:18,479][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:23:18,479][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:23:18,479][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:23:18,479][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:24:19,704][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:24:19,704][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:24:19,704][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:24:19,704][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:24:19,704][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:24:19,704][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:24:19,704][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:24:19,704][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:24:19,704][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:24:19,704][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:24:19,704][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:24:19,704][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:24:19,704][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:24:19,704][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,108][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:25:48,109][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:27:59,442][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,376][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:29:23,378][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:30:27,042][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,071][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:31:54,072][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:33:17,040][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,864][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:34:45,865][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:35:56,673][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,410][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:37:28,411][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:39:05,633][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,080][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:40:58,082][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:43:57,202][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,321][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:45:33,323][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:46:23,438][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,627][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:48:07,629][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:49:53,333][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,081][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:51:45,083][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:54:22,181][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,488][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:56:14,489][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:58:04,413][INFO][solver][run_plan] Spins finished.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,578][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 21:59:56,580][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:01:32,331][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,249][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:03:22,250][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:04:13,644][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,781][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:06:12,783][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:07:34,283][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,681][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:09:27,682][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:10:33,888][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,600][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:12:33,601][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:14:08,360][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,025][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:16:12,027][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:18:03,092][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,282][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:20:13,284][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:22:17,581][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,725][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:24:30,727][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:26:26,970][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,051][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:28:33,053][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:29:28,988][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,973][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:31:36,975][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:32:39,520][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,183][INFO][solver][run_plan] Setting up workspace.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:34:58,184][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-24 22:37:24,079][INFO][solver][run_plan] Spins finished.
+[2025-10-25 11:36:32,178][INFO][solver][run_plan] Setting up workspace.
+[2025-10-25 11:36:32,180][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-25 11:39:16,656][INFO][solver][run_plan] Spins finished.
+[2025-10-25 11:49:18,777][INFO][solver][run_plan] Setting up workspace.
+[2025-10-25 11:49:18,780][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-25 11:51:59,889][INFO][solver][run_plan] Spins finished.
+[2025-10-25 12:00:57,728][INFO][solver][run_plan] Setting up workspace.
+[2025-10-25 12:00:57,730][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-25 12:03:41,736][INFO][solver][run_plan] Spins finished.
+[2025-10-25 15:49:55,322][INFO][solver][run_plan] Setting up workspace.
+[2025-10-25 15:49:55,333][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-25 16:45:59,226][INFO][solver][run_plan] Setting up workspace.
+[2025-10-25 16:45:59,227][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-25 16:58:34,352][INFO][solver][run_plan] Spins finished.
+[2025-10-25 17:17:08,332][INFO][solver][run_plan] Setting up workspace.
+[2025-10-25 17:17:08,332][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-10-25 17:29:42,028][INFO][solver][run_plan] Spins finished.
+[2025-11-02 21:26:17,266][INFO][solver][run_plan] Setting up workspace.
+[2025-11-02 21:26:17,277][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-11-02 21:32:22,804][INFO][solver][run_plan] Setting up workspace.
+[2025-11-02 21:32:22,815][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-11-02 21:45:09,899][INFO][solver][run_plan] Spins finished.
+[2025-11-02 22:56:20,180][INFO][solver][run_plan] Setting up workspace.
+[2025-11-02 22:56:20,191][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-11-02 23:11:17,751][INFO][solver][run_plan] Spins finished.
+[2025-11-02 23:56:22,625][INFO][solver][run_plan] Setting up workspace.
+[2025-11-02 23:56:22,626][INFO][solver][run_plan] Running transformation opt_cont.
+[2025-11-03 02:15:44,812][INFO][solver][run_plan] Setting up workspace.
+[2025-11-03 02:15:44,814][INFO][solver][run_plan] Running transformation opt_cont.

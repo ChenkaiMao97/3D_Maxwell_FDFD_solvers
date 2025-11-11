@@ -63,6 +63,8 @@ def simulate(
     psi=0,
     ln_R=-10,
     m=4,
+    res_th = 1e-4,
+    max_iters = 40000,
     plot=False
 ):
     # a temporary solution: save the eps to the output folder, which maxwell-b will read and run the simulation
@@ -77,7 +79,7 @@ def simulate(
     sim_space = create_sim_space(eps.shape, pml_layers, dL=dL)
 
     # Setup the objectives and all values that should be recorded (monitors).
-    dummy_obj, dummy_monitors = create_objective(sim_space, wavelength, source=source, store_dir = output_data_folder, theta=theta, psi=psi, ln_R=ln_R, m=m)
+    dummy_obj, dummy_monitors = create_objective(sim_space, wavelength, source=source, store_dir = output_data_folder, theta=theta, psi=psi, ln_R=ln_R, m=m, res_th=res_th, max_iters=max_iters)
     trans_list = create_transformations(dummy_obj, dummy_monitors, sim_space)
     plan = optplan.OptimizationPlan(transformations=trans_list)
 
@@ -158,7 +160,7 @@ def create_sim_space(
     )
 
 
-def create_objective(sim_space: optplan.SimulationSpace, wavelength, source=None, store_dir = None, theta=0, psi=0, ln_R=-10, m=4) -> Tuple[optplan.Function, List[optplan.Monitor]]:
+def create_objective(sim_space: optplan.SimulationSpace, wavelength, source=None, store_dir = None, theta=0, psi=0, ln_R=-10, m=4, res_th=1e-4, max_iters=40000) -> Tuple[optplan.Function, List[optplan.Monitor]]:
     if source is None:
         # raise NotImplementedError("source is not implemented yet")
         source = optplan.PlaneWaveSource(
@@ -198,7 +200,9 @@ def create_objective(sim_space: optplan.SimulationSpace, wavelength, source=None
         epsilon=epsilon,
         bloch_vector=bloch_vector,
         ln_R=ln_R,
-        m=m
+        m=m,
+        res_th=res_th,
+        max_iters=max_iters
     )
 
     dummy_overlap = optplan.ImportOverlap(
@@ -257,15 +261,25 @@ def create_transformations(
 
     return [trans]
 
-def get_results(store_dir, plot=False):
-    Ex = torch.from_numpy(np.load(store_dir+'0.0001Ex.npy'))
-    Ey = torch.from_numpy(np.load(store_dir+'0.0001Ey.npy'))
-    Ez = torch.from_numpy(np.load(store_dir+'0.0001Ez.npy'))
+def get_results(store_dir, plot=False, eth=1e-4):
+    Ex = torch.from_numpy(np.load(os.path.join(store_dir, f'{eth}Ex.npy')))
+    Ey = torch.from_numpy(np.load(os.path.join(store_dir, f'{eth}Ey.npy')))
+    Ez = torch.from_numpy(np.load(os.path.join(store_dir, f'{eth}Ez.npy')))
 
     if plot:
         plot_3slices(Ex.real.numpy(), os.path.join(store_dir, "Ex.png"), my_cmap = plt.cm.seismic, cm_zero_center=True, title=None)
         
     return torch.cat((torch.view_as_real(Ex), torch.view_as_real(Ey), torch.view_as_real(Ez)), dim=-1)
+
+def get_residual(store_dir, plot=False):
+    with open(os.path.join(store_dir, 'solver_info.txt'), 'r') as f:
+        time = float(f.readline().split(':')[-1].strip())
+
+        line = f.readline().strip()
+
+    line = line.strip("[]")           # remove brackets
+    residuals = [float(x) for x in line.split(",")]
+    return time, residuals
 
 def get_waveguide_source(wavelength, dL, pml_layers, eps, src_direction, src_slice, mode_num=0, power=1.0, ln_R=-10):
     # direction: e.g. [0,0,1], [0,-1,0]

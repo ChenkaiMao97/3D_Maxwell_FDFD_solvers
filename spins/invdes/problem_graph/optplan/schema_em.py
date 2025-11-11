@@ -474,6 +474,8 @@ class FdfdSimulation(optplan.Function):
     bloch_vector = types.ListType(types.FloatType())
     ln_R = types.FloatType(default=-16)
     m = types.FloatType(default=4)
+    res_th = types.FloatType(default=1e-4)
+    max_iters = types.IntType(default=40000)
 
 
 @optplan.register_node_type()

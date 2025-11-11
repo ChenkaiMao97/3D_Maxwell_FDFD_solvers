@@ -1,10 +1,11 @@
 import src.solvers.NN_solver
 
 NN_solver.model_path = '/media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_30_pml_small-10_16_25T15_21_04'
-NN_solver.max_iter = 100
-NN_solver.tol = 1e-3
+
+NN_solver.max_iter = 300
+NN_solver.tol = 1e-4
 NN_solver.verbose = True
-NN_solver.restart = 0
+NN_solver.restart = 25
 
 NN_solver.save_intermediate = False # logging
 

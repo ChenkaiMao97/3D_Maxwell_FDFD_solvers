@@ -459,7 +459,7 @@ class FdfdSimulation(problem.OptimizationFunction):
         return "Simulation({})".format(self._wlen)
 
 
-def _create_solver(solver_name: str, simspace: SimulationSpace, ln_R: float = -16, m: float = 4) -> Callable:
+def _create_solver(solver_name: str, simspace: SimulationSpace, ln_R: float = -16, m: float = 4, res_th: float = 1e-4, max_iters: int = 40000) -> Callable:
     """Instantiates a Maxwell solver.
 
     Args:
@@ -471,10 +471,10 @@ def _create_solver(solver_name: str, simspace: SimulationSpace, ln_R: float = -1
     """
     if solver_name == "maxwell_cg":
         from spins.fdfd_solvers.maxwell import MaxwellSolver
-        solver = MaxwellSolver(simspace.dims, solver="CG", ln_R=ln_R, m=m)
+        solver = MaxwellSolver(simspace.dims, solver="CG", ln_R=ln_R, m=m, err_thresh=res_th, max_iters=max_iters)
     elif solver_name == "maxwell_bicgstab":
         from spins.fdfd_solvers.maxwell import MaxwellSolver
-        solver = MaxwellSolver(simspace.dims, solver="biCGSTAB", ln_R=ln_R, m=m)
+        solver = MaxwellSolver(simspace.dims, solver="biCGSTAB", ln_R=ln_R, m=m, err_thresh=res_th, max_iters=max_iters)
     elif solver_name == "local_direct":
         solver = DIRECT_SOLVER
     else:
@@ -488,7 +488,7 @@ def create_fdfd_simulation(params: optplan.FdfdSimulation,
                            work: workspace.Workspace) -> FdfdSimulation:
     """Creates a `FdfdSimulation` object."""
     simspace = work.get_object(params.simulation_space)
-    solver = _create_solver(params.solver, simspace, ln_R=params.ln_R, m=params.m)
+    solver = _create_solver(params.solver, simspace, ln_R=params.ln_R, m=params.m, res_th=params.res_th, max_iters=params.max_iters)
     bloch_vector = params.get("bloch_vector", np.zeros(3))
 
     source = work.get_object(params.source)(simspace,
