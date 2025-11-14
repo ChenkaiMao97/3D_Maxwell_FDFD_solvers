@@ -4,8 +4,8 @@ import torch.nn.functional as F
 from src.utils.utils import get_pixels
 
 # Get super pixel sample from this file --> shape: [50, 1, 2000, 2000]
-loaded_data = np.load("/home/chenkaim/scripts/models/MAML_EM_simulation/data_gen/boundary_CG_ieterative_gen/shape_gen/freeform_gen_2000_2000_binary_tilted_50devices.npy")
-print(loaded_data.shape)  # (N, H, W)
+# loaded_data = np.load("/home/chenkaim/scripts/models/MAML_EM_simulation/data_gen/boundary_CG_ieterative_gen/shape_gen/freeform_gen_2000_2000_binary_tilted_50devices.npy")
+# print(loaded_data.shape)  # (N, H, W)
 
 def make_super_pixel_freeform(sim_shape, wl, dL, pmls, kwargs):
     """
@@ -32,22 +32,31 @@ def make_super_pixel_freeform(sim_shape, wl, dL, pmls, kwargs):
     eps[:,:,:substrate_thickness_pixel] = substrate_eps
 
     ### make the freeform super pixel cross-section in x,y:
-    cross = top_medium_eps + (meta_atom_eps - top_medium_eps) * loaded_data[mat_idx, 0, start_x:start_x + pattern_size[0], start_y:start_y + pattern_size[1]]
+    # cross = top_medium_eps + (meta_atom_eps - top_medium_eps) * loaded_data[mat_idx, 0, start_x:start_x + pattern_size[0], start_y:start_y + pattern_size[1]]
     cross = top_medium_eps * np.ones((pattern_size[0], pattern_size[1]))
     cross = torch.from_numpy(cross.astype(np.float32))
     pad_x = (sim_shape[0] - cross.shape[0]) // 2
     pad_y = (sim_shape[1] - cross.shape[1]) // 2
-    cross = F.pad(cross, (pad_x, pad_x, pad_y, pad_y), mode="constant", value=1)  # pad to the sim_shape
+    cross = F.pad(cross, (pad_x, pad_x, pad_y, pad_y), mode="constant", value=top_medium_eps)  # pad to the sim_shape
 
     eps[:,:,substrate_thickness_pixel:substrate_thickness_pixel + meta_atom_height_pixel] = cross[...,None]
 
-    src = torch.zeros((*sim_shape,6)) # source shape: (sx, sy, sz, 6), last dimension is src_x_real, src_x_imag, src_y_real, src_y_imag, src_z_real, src_z_imag
-    if source_polarization == 'x':
-        src[pad_x:-pad_x, pad_y:-pad_y, substrate_thickness_pixel - source_below_meta_pixel, 0] = 1
-    elif source_polarization == 'y':
-        src[pad_x:-pad_x, pad_y:-pad_y, substrate_thickness_pixel - source_below_meta_pixel, 2] = 1
-    elif source_polarization == 'z':
-        src[pad_x:-pad_x, pad_y:-pad_y, substrate_thickness_pixel - source_below_meta_pixel, 4] = 1
+    src = torch.zeros((*sim_shape,3), dtype=torch.complex64) # source shape: (sx, sy, sz, 6), last dimension is src_x_real, src_x_imag, src_y_real, src_y_imag, src_z_real, src_z_imag
+    kz = 2*np.pi*substrate_eps**.5/wl
+    # if source_polarization == 'x':
+    #     src[pad_x:-pad_x, pad_y:-pad_y, substrate_thickness_pixel - source_below_meta_pixel, 0] = 1
+    #     src[pad_x:-pad_x, pad_y:-pad_y, substrate_thickness_pixel - source_below_meta_pixel-1, 0] = -1*np.exp(-1j*kz*dL)
+    # elif source_polarization == 'y':
+    #     src[pad_x:-pad_x, pad_y:-pad_y, substrate_thickness_pixel - source_below_meta_pixel, 1] = 1
+    #     src[pad_x:-pad_x, pad_y:-pad_y, substrate_thickness_pixel - source_below_meta_pixel-1, 1] = -1*np.exp(-1j*kz*dL)
+    # elif source_polarization == 'z':
+    #     src[pad_x:-pad_x, pad_y:-pad_y, substrate_thickness_pixel - source_below_meta_pixel, 2] = 1
+    #     src[pad_x:-pad_x, pad_y:-pad_y, substrate_thickness_pixel - source_below_meta_pixel-1, 2] = -1*np.exp(-1j*kz*dL)
+
+    # src[sim_shape[0]//2-5:sim_shape[0]//2+6, sim_shape[1]//2-5:sim_shape[1]//2+6, sim_shape[2]//2-5:sim_shape[2]//2+6, 2] = 1
+    src[sim_shape[0]//2, sim_shape[1]//2, sim_shape[2]//2, 2] = 1e9
+
+    src = torch.view_as_real(src).reshape(*sim_shape, 6)
 
     return eps[None], src[None] # add a batch dimension
 

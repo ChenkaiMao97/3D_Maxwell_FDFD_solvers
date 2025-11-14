@@ -22,15 +22,15 @@ model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_30_
 output_path: ./figs_super_pixel_freeform/ # change this to a different drive if you need to save big files
 
 ########## parameters for the physical simulation ##########
-sim_shape: [156, 156, 124] # number of pixels in x, y, z
+sim_shape: [200, 200, 200] # number of pixels in x, y, z
 wavelength: 800 # in nm
 dL: 25 # simulation resolution, in nm
 pmls: [30, 30, 30, 30, 30, 30] # number of pixels of PML for x_start, x_end, y_start, y_end, z_start, z_end
 
 kwargs: # key word arguments for constructing the problem, defined in the super_pixel_freeform.py file
-  substrate_eps: 2.1025 # 1.45**2
+  substrate_eps: 4 # 1.45**2
   meta_atom_eps: 5.76 # 2.4**2
-  top_medium_eps: 1.0 # 1.0**2
+  top_medium_eps: 4.0 # 1.0**2
   substrate_thickness_nm: 1200 # in nm
   meta_atom_height_nm: 800 # in nm
   source_below_meta_nm: 200 # in nm
@@ -43,12 +43,12 @@ kwargs: # key word arguments for constructing the problem, defined in the super_
 
 ########## parameters for the GMRES solver ##########
 max_iter: 500
-tol: 1e-4 # relative residual target
+tol: 1e-5 # relative residual target
 verbose: True
-restart: 0 # if == 0, no restart, otherwise, run restarted GMRES
+restart: 12 # if == 0, no restart, otherwise, run restarted GMRES
 
 ########## other configs ##########
 spins_verification: 0 # if 1, run simulation in spins as well to verify the results
-save_fields: 0 # if 1, save the field distributions
+save_fields: 1 # if 1, save the field distributions
 plot_farfield: 1 # if 1, plot far-field patterns using Stratton-Chu
 physics_verification: 1 # if 1, run physics verification tests

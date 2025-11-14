@@ -1,0 +1,91 @@
+import bin.inverse_design
+import src.invde.base_challenge
+import src.invde.utils.utils
+import src.problems.base_problem
+import src.problems.superpixel
+
+import src.invde.opt
+import src.invde.step_fn
+import src.invde.filter_proj
+import src.invde.constraints
+import src.invde.utils.jax_utils
+
+#### (1) design problem and backend
+run_inverse_design.design_challenge = "superpixel"
+BaseProblem._backend = "NN"
+
+#### (2) setup dL, wl and simulation / optimization sizes
+SuperpixelChallenge.wavelengths = [800]
+SuperpixelChallenge.dL = 20
+SuperpixelChallenge.pmls = (30,30,30,30,30,30)
+
+BaseProblem.design_region_size = (1600, 1600, 400) # same unit as dL
+BaseProblem.surrounding_sizes = (600, 600, 600, 600, 400, 400) # same unit as dL
+
+#### (3) define material index
+max_eps = 8
+BaseProblem.eps_design_max = %max_eps
+BaseProblem.eps_design_min = 1
+BaseProblem.eps_background = 1
+BaseProblem.eps_substrate = 2.25
+
+#### (4) define source localtion, polarization and profile
+get_superpixel_challenge.source_substrate_spacing = 200
+get_superpixel_challenge.source_pml_spacing = 200
+get_superpixel_challenge.source_angles = (0, 0) # theta, phi
+get_superpixel_challenge.source_pol = 'x'
+get_superpixel_challenge.global_frame_coordinate = (0,0,0) # used for setting the global phase reference when designing a full metasurface
+
+#### (5) define optimization targets:
+get_superpixel_challenge.target_angles = [30,90] # theta, phi 
+get_superpixel_challenge.target_angle_ranges = [5,10] # d_theta, d_phi
+get_superpixel_challenge.SC_pml_space = 200
+
+#### (6) define optimizer args:
+
+############################ optimization args ###################################
+length_scale_pixel = 3
+Designer.length_scale_pixel = %length_scale_pixel
+
+Designer.save_bin = True
+Designer.step_fn = @ccsa_step_fn
+Designer.latent_bounds = (0, 1)
+Designer.final_step_discretization = 'binary'
+
+_get_default_initializer.mean=0.5
+_get_default_initializer.stddev=0.001
+_get_default_initializer.length_scale = %length_scale_pixel
+
+Designer.steps_per_beta = 15
+Designer.steps_per_beta_during_constraint = 30
+Designer.beta_schedule  = [128,256,512]
+
+Designer.constraint_tolerance_schedule = [0,0,0] # used for nlopt
+# Designer.constraint_weight_schedule = [0,0,1] # used for optax
+
+Designer.opt_type = 'nlopt'
+# Designer.opt_type = 'optax'
+
+# Designer.load_latent_path='/media/ps3/chenkaim/checkpoints/3D_Maxwell_FDFD_solvers/invde_waveguide_bend-10_23_25T01_28_38/logs/step_40.h5'
+
+Designer.lr = 1e-2
+Designer.end_lr = 1e-3
+
+############################ decode filter project ################################
+Designer.projection_fn = @tanh_projection
+Designer.decode_fn = @identity_op
+Designer.filter_fn = @conic_filter
+
+############################ constraint functions #################################
+eta_e = 0.75
+eta_d = 0.25 # 1 - eta_e
+indicator_c = 1e4
+
+constraint_solid_decode.eta_e = %eta_e
+constraint_solid_decode.indicator_c = %indicator_c
+constraint_void_decode.eta_d = %eta_d
+constraint_void_decode.indicator_c = %indicator_c
+
+constraints_function.solid_contraints_fn = @constraint_solid_decode
+constraints_function.void_contraints_fn = @constraint_void_decode
+Designer.constraints_function = @constraints_function

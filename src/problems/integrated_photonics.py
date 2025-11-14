@@ -251,11 +251,8 @@ class IntegratedPhotonicsProblem(BaseProblem):
 
     def simulate(self, design_variable):
         fields = [None] * len(self.wavelengths)
-        epsilon_r_bg = self.epsilon_r_bg()
 
         def _simulate(wavelength):
-            k0 = 2 * jnp.pi * self.eps_background**.5 / wavelength
-
             epsilon_r = self.epsilon_r(design_variable)
 
             source = self._ports[self.excite_port_idx].source(
@@ -282,7 +279,6 @@ class IntegratedPhotonicsProblem(BaseProblem):
     def simulate_adjoint(self, design_variable, forward_output, grad_outputs):
         assert self._backend == 'NN'
         epsilon_r = self.epsilon_r(design_variable)
-        epsilon_r_bg = self.epsilon_r_bg()
 
         def _adjoint_simulate(wavelength, forward_E, grad_E):
             source_torch = torch.conj(grad_E).to(torch.complex64).resolve_conj()  # adjoint source
@@ -337,17 +333,6 @@ class IntegratedPhotonicsProblem(BaseProblem):
             input_grads = list(executor.map(worker, tasks))
 
         return (sum(input_grads)/len(self.wavelengths), ) # tuple of gradients for each input variable
-    
-    def make_torch_epsilon_r(
-        self,
-        design_variable: torch.Tensor
-    ) -> torch.Tensor:
-        # both density_bg and design_variable have value between 0 and 1
-        # design_variable requires grad, while density_bg does not
-        destination_ = torch.from_numpy(self.density_bg).requires_grad_(False).to(torch.float32)
-        destination_[self.design_region_x_start:self.design_region_x_end, self.design_region_y_start:self.design_region_y_end, self.design_region_z_start:self.design_region_z_end] = design_variable[:,:,None]
-        epsilon_r = destination_ * (self.eps_design_max - self.eps_design_min) + self.eps_design_min
-        return epsilon_r
 
 @gin.configurable
 class IntegratedPhotonicsChallenge(BaseChallenge):

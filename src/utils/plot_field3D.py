@@ -1,3 +1,4 @@
+import torch
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -215,7 +216,7 @@ def plot_3slices(data, fname=None, stride = 1, my_cmap = plt.cm.binary, cm_zero_
         # ax.grid(False)
 
     plt.tight_layout()
-    plt.subplots_adjust(wspace=-0.5)
+    # plt.subplots_adjust(wspace=-0.5)
 
     if title:
         plt.title(title)
@@ -502,6 +503,85 @@ def plot_full_farfield(data, fname, plot_batch_idx=0):
     ax.set_title(f"target theta, phi: {theta_val*180/np.pi:.1f}, {phi_val*180/np.pi:.1f}\nmax output theta, phi: {max_dir_theta*180/np.pi:.1f}, {max_dir_phi*180/np.pi:.1f}")
     
     plt.savefig(fname, dpi=100, bbox_inches='tight')
+    plt.close()
+
+def plot_poynting_radial_scatter(u0, E, H, fname, plot_batch_idx=0, normalize=True, point_size=8):
+    """
+    Scatter plot on the sphere for the radial component of the Poynting vector.
+    Radius ∝ |Re(S_r)| where S = 0.5 * Re(E × H*), r̂ = u0.
+
+    Args:
+        u0 : torch.Tensor, shape (3, Nt, Np) or (1,3,Nt,Np). Unit vectors on the sphere.
+        E  : torch.Tensor, shape (B,3,Nt,Np) or (3,Nt,Np). Complex far-field E.
+        H  : torch.Tensor, shape (B,3,Nt,Np) or (3,Nt,Np). Complex far-field H.
+        fname : str. Output image path.
+        plot_batch_idx : int. Which batch to plot if E/H have batch dim.
+        normalize : bool. If True, radius is normalized to [0,1].
+        point_size : int. Scatter point size.
+    """
+    # ---- unify shapes ----
+    if u0.dim() == 4:       # (1,3,Nt,Np)
+        u0 = u0[0]
+    if E.dim() == 3:        # (3,Nt,Np) -> add batch
+        E = E.unsqueeze(0)
+    if H.dim() == 3:
+        H = H.unsqueeze(0)
+
+    # pick batch and move to CPU numpy
+    Eb = E[plot_batch_idx]               # (3,Nt,Np), complex
+    Hb = H[plot_batch_idx]               # (3,Nt,Np), complex
+    print(f"Eb.shape: {Eb.shape}, Hb.shape: {Hb.shape}")
+
+    # (Nt,Np,3)
+    E3 = Eb.permute(1, 2, 0)
+    H3 = Hb.permute(1, 2, 0)
+    U3 = u0.permute(1, 2, 0)             # r̂
+
+    # S = 0.5 * Re(E × H*)
+    S3 = 0.5 * torch.real(torch.linalg.cross(E3, torch.conj(H3), dim=-1))  # (Nt,Np,3), real
+
+    # radial component S_r = S · r̂
+    Sr = torch.sum(S3 * U3, dim=-1)      # (Nt,Np), real
+    val = torch.abs(Sr)                  # |Re(S_r)|
+    # val = torch.sum(torch.conj(H3[...,0:1]) * H3[...,0:1], dim=-1).real
+
+    # S_norm = torch.sum(torch.conj(S3) * S3, dim=-1).real**.5
+    # Sr_norm = torch.sum(torch.conj(Sr) * Sr, dim=-1).real**.5
+    # S_tan = torch.cross(S3, U3, dim=-1)
+    # S_tan_norm = torch.sum(torch.conj(S_tan) * S_tan, dim=-1).real**.5
+    # print("mean S_norm: ", torch.mean(S_norm), "mean Sr norm:", torch.mean(Sr_norm), "mean S_tan_norm:", torch.mean(S_tan_norm))
+
+
+    # radius
+    if normalize:
+        vmax = torch.clamp(val.max(), min=1e-12)
+        r = val / vmax
+    else:
+        r = val
+
+    # Cartesian coords: r * r̂
+    x = r * U3[..., 0]
+    y = r * U3[..., 1]
+    z = r * U3[..., 2]
+
+    # to numpy
+    x, y, z, c = (t.detach().cpu().numpy().reshape(-1) for t in (x, y, z, val))
+
+    # plot
+    fig = plt.figure(figsize=(9, 9))
+    ax = fig.add_subplot(111, projection='3d')
+    sc = ax.scatter(x, y, z, c=c, s=point_size, cmap='viridis')
+
+    R = 1.05 * (np.max(r.detach().cpu().numpy()) if normalize else np.max(np.abs([x, y, z])))
+    R = 1.0 if not np.isfinite(R) or R == 0 else R
+    ax.set_xlim(-R, R); ax.set_ylim(-R, R); ax.set_zlim(-R, R)
+    ax.set_box_aspect([1, 1, 1])
+    ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z')
+    cb = fig.colorbar(sc, ax=ax, shrink=0.6, aspect=18, pad=0.02)
+    cb.set_label(r'$|\,\mathrm{Re}(S_r)\,|$')
+    ax.set_title(r'Radial Poynting Component: $|\,\mathrm{Re}(S_r)\,|$ (radius ∝ value)')
+    plt.tight_layout()
+    plt.savefig(fname, dpi=120, bbox_inches='tight')
     plt.close()
 
 

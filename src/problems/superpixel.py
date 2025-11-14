@@ -1,110 +1,266 @@
-import torch
+import functools
+import jax.tree_util
+import jax.numpy as jnp
 import numpy as np
-from src.utils.utils import get_pixels
-
-# import src.simulator
-from src.utils.PML_utils import make_dxes_numpy
-from src.utils.physics import eps_to_yee
-import scipy.sparse as sparse
-
+import torch
+from typing import Sequence, Union, Callable, Optional, Tuple, Any, Dict
+from dataclasses import dataclass
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-def ellipse_supersample(h, w, cx, cy, rx, ry, theta=0.0, ss=8, dtype=np.float32):
+import concurrent.futures
+
+from src.problems.base_problem import BaseProblem
+from src.problems.base_challenge import BaseChallenge
+
+from src.utils.physics import residue_E
+from src.utils.utils import resolve, printc, c2r, r2c
+from src.utils.stratton_chu_jax import strattonChu3D_full_sphere_GPU, E_to_H
+from src.utils.PML_utils import apply_scpml
+
+import gin
+
+_DENSITY_LABEL = 'density'
+
+@gin.configurable
+class SuperpixelSpec:
     """
-    Per-pixel coverage for an ellipse centered at (cx, cy) with radii (rx, ry),
-    rotated by angle 'theta' (radians, counterclockwise). Pixel centers are at
-    integer coords (i, j). Returns a HxW Torch tensor in [0,1].
-
-    ss: supersamples per axis (e.g., 4, 8). Higher = smoother/more accurate.
+    Attributes:
+    source_substrate_spacing: the spacing between the source and the substrate
+    source_pml_spacing: the spacing between the source and the PML
+    source_pol: the polarization of the source
     """
+    def __init__(
+        self,
+        source_substrate_spacing,
+        source_pml_spacing,
+        source_angles,
+        source_pol, # ('x', 'y', 'lcp', 'rcp')
+        global_frame_coordinate,
+    ):
+        self.source_substrate_spacing = source_substrate_spacing
+        self.source_pml_spacing = source_pml_spacing
+        self.source_angles = source_angles
+        self.source_pol = source_pol
+        self.global_frame_coordinate = global_frame_coordinate
+        self.ln_R = -10
 
-    # pixel grid
-    y = np.arange(h)[:, None]           # (H, 1)
-    x = np.arange(w)[None, :]           # (1, W)
+    def __post_init__(self):
+        assert self.source_substrate_spacing > 0, "source_substrate_spacing must be greater than 0"
+        assert self.source_pml_spacing > 0, "source_pml_spacing must be greater than 0"
 
-    # stratified subpixel offsets in [0,1)
-    ofs = (np.arange(ss) + 0.5) / ss
-    oy, ox = np.meshgrid(ofs, ofs, indexing="ij")  # (ss, ss)
+@gin.configurable
+class SuperpixelProblem(BaseProblem):
+    def __init__(self, *args, spec: SuperpixelSpec, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.spec = spec
 
-    # sample coordinates (broadcast to HxW)
-    X = x[..., None, None] + ox         # (H, W, ss, ss)
-    Y = y[..., None, None] + oy         # (H, W, ss, ss)
-
-    # move to ellipse-centered coordinates
-    Xc = X - cx
-    Yc = Y - cy
-
-    # un-rotate points by -theta so ellipse is axis-aligned
-    c, s = np.cos(theta), np.sin(theta)
-    Xr =  c * Xc + s * Yc
-    Yr = -s * Xc + c * Yc
-
-    # inside test for axis-aligned ellipse: (x/rx)^2 + (y/ry)^2 <= 1
-    # (guard against zero radii)
-    rx = max(rx, 1e-12)
-    ry = max(ry, 1e-12)
-    inside = (Xr / rx) ** 2 + (Yr / ry) ** 2 <= 1.0
-
-    # average over subpixels → coverage in [0,1]
-    cov = inside.mean(axis=(-1, -2)).astype(dtype)  # (H, W)
-    return torch.from_numpy(cov)
-
-def make_meta_atom(xy_map, pmls):
-    """
-    makes a single meta atom
-    """
-    count = 0
-    while True:
-        rx = np.random.randint(8, 9)
-        ry = np.random.randint(16, 17)
-        radius = max(rx, ry)
-        cx = np.random.randint(pmls[0] + 1 + radius, xy_map.shape[0] - pmls[1]-1 - radius)
-        cy = np.random.randint(pmls[2] + 1 + radius, xy_map.shape[1] - pmls[3]-1 - radius)
-        theta = np.random.rand() * np.pi
-        meta_atom = ellipse_supersample(xy_map.shape[0], xy_map.shape[1], cx, cy, rx, ry, theta)
-        if torch.max(xy_map + meta_atom) > 1.0 and count < 20:
-            count += 1
-            continue
-        break
-    xy_map += meta_atom
-    xy_map = xy_map.clamp(0, 1)
-    return xy_map
-
-def make_superpixel(sim_shape, wl, dL, pmls, kwargs):
-    """
-    assumes that the waveguide bend is centered in x,y,z, source is parallel to xz plane, propagating in y direction
-    """
-    # shape, pmls, eps_sub=2.25, eps_meta_max=8.0, meta_height_pixels = 10, width = 10, radius=10):
-    eps_sub = kwargs['substrate_eps']
-    eps_meta = kwargs['meta_eps']
-    eps_top = kwargs['top_medium_eps']
-    ln_R = kwargs['ln_R']
-    source_polarization = kwargs['source_polarization']
-    num_meta_atoms = kwargs['num_meta_atoms']
-
-    meta_height = get_pixels(kwargs, 'meta_height_nm', dL)
-    source_below_meta = get_pixels(kwargs, 'source_below_meta_nm', dL)
-    st = round(sim_shape[2]/2-meta_height/2) # substrate thickness in pixels
-    source_z = st - source_below_meta
+    def init(self, shape_only=False):
+        self._waveguides = []
+        self.make_sources()
     
-    eps = eps_top * torch.ones(sim_shape, dtype=torch.float32)
-    eps[:,:,:st] = eps_sub
+    def make_sources(self):
+        source_substrate_spacing = resolve(self.spec.source_substrate_spacing, self.dL)
+        source_pml_spacing = resolve(self.spec.source_pml_spacing, self.dL)
+        source_angles = self.spec.source_angles
+        source_pol = self.spec.source_pol
+        global_frame_coordinate = self.spec.global_frame_coordinate
 
-    # make the curved portion
-    xy_map = torch.zeros(sim_shape[0], sim_shape[1], dtype=torch.float32) 
-    for i in range(num_meta_atoms):
-        xy_map = make_meta_atom(xy_map, pmls)
-    xy_map = xy_map * (eps_meta - eps_top) + eps_top
-    
-    eps[:,:,st:st + meta_height] = xy_map[:,:,None]
-    
-    ############### (2) plane wave source #############
-    src = torch.zeros((*sim_shape,6)) # source shape: (sx, sy, sz, 6), last dimension is src_x_real, src_x_imag, src_y_real, src_y_imag, src_z_real, src_z_imag
-    if source_polarization == 'x':
-        src[pmls[0] + 1:sim_shape[0] - pmls[1]-1, pmls[2] + 1:sim_shape[1] - pmls[3]-1, source_z, 0] = 1
-    elif source_polarization == 'y':
-        src[pmls[0] + 1:sim_shape[0] - pmls[1]-1, pmls[2] + 1:sim_shape[1] - pmls[3]-1, source_z, 2] = 1
-    elif source_polarization == 'z':
-        src[pmls[0] + 1:sim_shape[0] - pmls[1]-1, pmls[2] + 1:sim_shape[1] - pmls[3]-1, source_z, 4] = 1
+        self.source_xs = (self.pmls[0] + source_pml_spacing, self.grid_shape[0]-self.pmls[1]-source_pml_spacing + 1) 
+        self.source_ys = (self.pmls[2] + source_pml_spacing, self.grid_shape[1]-self.pmls[3]-source_pml_spacing + 1) 
+        self.source_zs = (self.pmls[4] + self.surrounding_spaces[4] - source_substrate_spacing - 1, self.pmls[4] + self.surrounding_spaces[4] - source_substrate_spacing+1) 
+        assert self.source_zs[1] - self.source_zs[0] == 2, "source in z direction should be 2 pixel thick"
 
-    return eps[None], src[None]
+        self.sources = {}
+        for wl in self.wavelengths:
+            # kz = 2 * jnp.pi * self.eps_background**.5 / wl
+            sx = self.source_xs[1]-self.source_xs[0]
+            sy = self.source_ys[1]-self.source_ys[0]
+            sz = self.source_zs[1]-self.source_zs[0]
+            source = torch.zeros((sx, sy, sz, 3), dtype=torch.complex128)
+
+            theta, phi = source_angles
+            kx = 2*np.pi * self.eps_substrate**.5 / wl * np.sin(theta) * np.cos(phi)
+            ky = 2*np.pi * self.eps_substrate**.5 / wl * np.sin(theta) * np.sin(phi)
+            kz = 2*np.pi * self.eps_substrate**.5 / wl * np.cos(theta)
+
+            x = torch.linspace(self.source_xs[0]*self.dL, (self.source_xs[1]-1)*self.dL, sx) + global_frame_coordinate[0]
+            y = torch.linspace(self.source_ys[0]*self.dL, (self.source_ys[1]-1)*self.dL, sy) + global_frame_coordinate[1]
+            z = torch.linspace(self.source_zs[0]*self.dL, (self.source_zs[1]-1)*self.dL, sz) + global_frame_coordinate[2]
+            
+            x, y = torch.meshgrid(x,y,indexing='ij')
+            map1 = torch.exp(-1j*(kx*x+ky*y+kz*z[1]))
+            map2 = -torch.exp(-1j*(kx*x+ky*y+kz*z[0]))
+                
+            if source_pol == 'x':
+                source[:,:,1,0] = map1
+                source[:,:,0,0] = map2
+            elif source_pol == 'y':
+                source[:,:,1,1] = map1
+                source[:,:,0,1] = map2
+            elif source_pol == 'z':
+                source[:,:,1,2] = map1
+                source[:,:,0,2] = map2
+            elif source_pol == 'lcp':
+                source[:,:,1,0] = map1
+                source[:,:,1,1] = torch.exp(1j*np.pi/2) * map1
+                source[:,:,0,0] = map2
+                source[:,:,0,1] = torch.exp(1j*np.pi/2) * map2
+            elif source_pol == 'rcp':
+                source[:,:,1,0] = map1
+                source[:,:,1,1] = torch.exp(-1j*np.pi/2) * map1
+                source[:,:,0,0] = map2
+                source[:,:,0,1] = torch.exp(-1j*np.pi/2) * map2
+            self.sources[wl] = source
+
+    def simulate(self, design_variable):
+        fields = [None] * len(self.wavelengths)
+        epsilon_r_bg = self.epsilon_r_bg()
+
+        def _simulate(wavelength):
+            epsilon_r = self.epsilon_r(design_variable)
+            source = np.zeros(epsilon_r.shape + (3,), dtype=np.complex128)
+            source[self.source_xs[0]:self.source_xs[1], self.source_ys[0]:self.source_ys[1], self.source_zs[0]:self.source_zs[1]] = self.sources[wavelength].numpy()
+            E = self.compute_FDFD(wavelength, epsilon_r, source, 'forward')
+            return wavelength, E
+
+        tasks = []
+        for wavelength in self.wavelengths:
+            tasks.append(wavelength)
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_gpus) as executor:
+            simulate_results = list(executor.map(_simulate, tasks))
+
+        for wavelength, E in simulate_results:
+            wl_idx = self.wavelengths.index(wavelength)
+            fields[wl_idx] = E
+
+        return fields
+
+    def simulate_adjoint(self, design_variable, forward_output, grad_outputs):
+        assert self._backend == 'NN'
+        epsilon_r = self.epsilon_r(design_variable)
+
+        def _adjoint_simulate(wavelength, forward_E, grad_E):
+            source_torch = torch.conj(grad_E).to(torch.complex64).resolve_conj()  # adjoint source
+
+            adjoint_E = self.compute_FDFD(wavelength, epsilon_r, source_torch, 'adjoint')
+
+            design_variable_torch = design_variable.clone().detach().requires_grad_(True)
+            epsilon_for_residual = self.make_torch_epsilon_r(design_variable_torch)[None]
+            forward_E = c2r(forward_E[None].detach())
+
+            # forward_source = self._ports[self.excite_port_idx].source(wavelength)
+            forward_source = torch.zeros(epsilon_r.shape + (3,), dtype=torch.complex128)
+            forward_source[self.source_xs[0]:self.source_xs[1], self.source_ys[0]:self.source_ys[1], self.source_zs[0]:self.source_zs[1]] = self.sources[wavelength]
+            forward_source = c2r(forward_source[None].detach())
+
+            residual = self.residual_fn(
+                forward_E,
+                epsilon_for_residual,
+                forward_source,
+                self.pmls,
+                self.dL,
+                wavelength,
+                # bloch_vector=None,
+                # batched_compute=False,
+                # input_yee=False,
+                # Aop=False,
+                # ln_R=-10,
+                # scale_PML=False,
+            )
+
+            input_grad = torch.autograd.grad(r2c(residual)[0], design_variable_torch, grad_outputs=torch.conj(adjoint_E))[0]
+
+            return input_grad
+
+        input_grads = []
+        forward_Es = forward_output # shape (num_wavelengths, height, width, depth)
+        grad_output_E = grad_outputs # shape (num_wavelengths, )
+        # map jobs to all available GPUs
+        def worker(wavelength):
+            wavelength_idx = self.wavelengths.index(wavelength)
+
+            return _adjoint_simulate(
+                wavelength,
+                forward_Es[wavelength_idx],
+                grad_output_E[wavelength_idx],
+            )
+
+        tasks = []
+        for wavelength in self.wavelengths:
+            tasks.append(wavelength)
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_gpus) as executor:
+            input_grads = list(executor.map(worker, tasks))
+
+        return (sum(input_grads)/len(self.wavelengths), ) # tuple of gradients for each input variable
+    
+
+@gin.configurable
+class SuperpixelChallenge(BaseChallenge):
+    def __init__(self, *args, target_angles, target_angle_ranges, SC_pml_space, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.target_angles = target_angles
+        self.target_angle_ranges = target_angle_ranges  
+        self.SC_pml_space = resolve(SC_pml_space, self.problem.dL)
+
+        # compute the box size for the SC transformation
+        p = self.problem
+        self.Rx = (p.grid_shape[0]-p.pmls[0] - p.pmls[1] - 2*self.SC_pml_space)//2
+        self.Ry = (p.grid_shape[1]-p.pmls[2] - p.pmls[3] - 2*self.SC_pml_space)//2
+        self.Rz = (p.grid_shape[2]-p.pmls[4] - p.pmls[5] - 2*self.SC_pml_space)//2
+        self.dxes = ([np.array([p.dL]*p.grid_shape[0]), np.array([p.dL]*p.grid_shape[1]), np.array([p.dL]*p.grid_shape[2])], [np.array([p.dL]*p.grid_shape[0]), np.array([p.dL]*p.grid_shape[1]), np.array([p.dL]*p.grid_shape[2])])
+            
+
+    def response(self, params):
+        density = params[_DENSITY_LABEL].density
+        return self._jax_sim_fn(density)
+
+    def loss(self, response, plot_farfield=False):
+        loss = 0.
+        aux = {}
+        for wavelength in self._wavelengths:
+            wl_idx = self._wavelengths.index(wavelength)
+            omega = 2*np.pi/wavelength # narutal unit with C_0 as 1
+            E = response[wl_idx]
+            Ex = E[:,:,:,0]
+            Ey = E[:,:,:,1]
+            Ez = E[:,:,:,2]
+
+            dxes = apply_scpml(self.dxes, self.problem.pmls, omega, ln_R=self.problem.spec.ln_R)
+            dxes = [[jnp.array(i) for i in dxes[0]], [jnp.array(i) for i in dxes[1]]]
+
+            # near to farfield transformation based on stratton-chu:
+            Hx, Hy, Hz = E_to_H(Ex, Ey, Ez, dxes, omega, bloch_vector=None)
+            thetas, phis, u0, far_E, far_H = strattonChu3D_full_sphere_GPU(
+                dl=self.dL,
+                xc=Ex.shape[1]//2,
+                yc=Ex.shape[2]//2,
+                zc=Ex.shape[3]//2,
+                Rx=self.Rx,
+                Ry=self.Ry,
+                Rz=self.Rz,
+                lambda_val=wavelength,
+                Ex_OBJ=Ex,
+                Ey_OBJ=Ey,
+                Ez_OBJ=Ez,
+                Hx_OBJ=Hx,
+                Hy_OBJ=Hy,
+                Hz_OBJ=Hz,
+                device=E.device,
+                bs=1
+                )
+            print("Full sphere case shapes", thetas.shape, phis.shape, u0.shape, far_E.shape, far_H.shape)
+            if plot_farfield:
+                plot_poynting_radial_scatter(u0, far_E, far_H, fname=os.path.join(config['output_path'], 'poynting_radial_scatter.png'),
+                                plot_batch_idx=0, normalize=True, point_size=8)
+            
+            t_theta, t_phi = self.target_angles
+            d_theta, d_phi = self.target_angle_ranges
+            target_region = u0[t_theta - int(d_theta/2):t_theta + int(d_theta/2), t_phi - int(d_phi/2):t_phi + int(d_phi/2)]
+            
+            loss += - jnp.sum(jnp.abs(target_region) ** 2) / jnp.sum(jnp.abs(u0) ** 2)
+            aux[wavelength] = loss
+
+        return loss, aux

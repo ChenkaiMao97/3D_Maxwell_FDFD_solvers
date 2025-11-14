@@ -9,9 +9,9 @@ import numpy as onp
 from bin.run_job_utils import ExperimentConfig, seeding
 
 from src.invde.opt import Designer
-from src.invde.utils.utils import get_integrated_photonics_challenge, get_metasurface_challenge, get_coupling_challenge
+from src.invde.utils.utils import get_integrated_photonics_challenge, get_superpixel_challenge, get_coupling_challenge
 
-design_schemes = ["integrated_photonics", 'metasurface', 'coupling']
+design_schemes = ["integrated_photonics", 'superpixel', 'coupling']
 
 @gin.configurable
 def run_inverse_design(
@@ -34,9 +34,9 @@ def run_inverse_design(
         design_scheme_kwargs = {
                 "challenge": get_integrated_photonics_challenge(key=key)
             }
-    elif design_challenge == 'metasurface':
+    elif design_challenge == 'superpixel':
         design_scheme_kwargs = {
-                "challenge": get_metasurface_challenge(key=key)
+                "challenge": get_superpixel_challenge(key=key)
             }
     elif design_challenge == 'coupling':
         design_scheme_kwargs = {

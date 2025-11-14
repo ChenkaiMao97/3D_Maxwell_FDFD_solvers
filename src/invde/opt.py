@@ -346,6 +346,8 @@ class Designer:
     def log_step(self, my_grad, params, response, aux):
         if self.log_fn_type == "integrated_photonics":
             self.log_step_integrated_photonics(my_grad, params, response, aux)
+        elif self.log_fn_type == "superpixel":
+            self.log_step_superpixel(my_grad, params, response, aux)
         else:
             raise ValueError(f"Invalid log_fn_type: {self.log_fn_type}")
 
@@ -503,6 +505,8 @@ class Designer:
     def log_final_loss_and_response(self, response, aux, params):
         if self.log_fn_type == "integrated_photonics":
             self.log_final_integrated_photonics(response, aux, params)
+        elif self.log_fn_type == "superpixel":
+            self.log_final_superpixel(response, aux, params)
         else:
             raise ValueError(f"Invalid log_fn_type: {self.log_fn_type}")
 
@@ -585,4 +589,15 @@ class Designer:
     #     onp.save(os.path.join(self.log_dir, f"final_latent.npy"), self.state.latents["density"].density)
     #     onp.save(os.path.join(self.log_dir, f"final_params.npy"), params)
     #     onp.save(os.path.join(self.log_dir, f"final_fields.npy"), aux["fields_ez"])
-    
+    def log_step_superpixel(self, my_grad, params, response, aux):
+        # log step
+        print("scattering efficiency: ", aux)
+        if self.log_dir is not None:
+            os.makedirs(self.log_dir, exist_ok=True)
+
+            num_wls = len(self.challenge._wavelengths)
+            plt.figure(figsize=((num_wls+3)*4, 4))
+            plt.subplot(1,num_wls+3,1)
+            plt.imshow(onp.rot90(self.state.latents["density"].density), cmap="binary")
+            plt.title("latent")
+            plt.xticks([])

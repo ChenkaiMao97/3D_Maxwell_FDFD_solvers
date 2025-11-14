@@ -122,7 +122,7 @@ def check_data_distribution(eps, pmls, wl, dL, dummy_trainer, dummy_ds):
 
     lambda_in_pixels = wl/dL
     if lambda_in_pixels < dummy_ds.lambda_in_pixel_range[0] or lambda_in_pixels > dummy_ds.lambda_in_pixel_range[1]:
-        printc(f"Warning: the simulation wavelength/dL {(wl/dL):.2)f} is not within the training data distribution {dummy_ds.lambda_in_pixel_range[0]} and {dummy_ds.lambda_in_pixel_range[1]}", 'r')
+        printc(f"Warning: the simulation wavelength/dL {(wl/dL):.2f} is not within the training data distribution {dummy_ds.lambda_in_pixel_range[0]} and {dummy_ds.lambda_in_pixel_range[1]}", 'r')
     
     if torch.min(eps) < dummy_ds.eps_min or torch.max(eps) > dummy_ds.eps_max:
         printc(f"Warning: the simulation eps min {torch.min(eps):.2f} and max {torch.max(eps):.2f} are not within the training data distribution {dummy_ds.eps_min} and {dummy_ds.eps_max}", 'r')
