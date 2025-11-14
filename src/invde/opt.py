@@ -14,7 +14,7 @@ from tqdm import tqdm
 
 from src.invde.utils.utils import DesignState
 from src.problems.base_challenge import BaseChallenge
-from src.utils.plot_field3D import plot_3slices
+from src.utils.plot_field3D import plot_3slices, plot_Sr_subplot
 
 import matplotlib.pyplot as plt
 
@@ -409,6 +409,38 @@ class Designer:
                     f["grad"] = my_grad["density"].density
                     f["ez"] = onp.stack(response)[...,-1]
                     f["eps"] = self.challenge.problem.epsilon_r(params["density"].density)
+    
+    def log_step_superpixel(self, my_grad, params, response, aux):
+        # log step
+        print("scattering efficiency: ", aux)
+        if self.log_dir is not None:
+            os.makedirs(self.log_dir, exist_ok=True)
+
+            num_wls = len(self.challenge._wavelengths)
+            plt.figure(figsize=((num_wls+1)*4, 4))
+            plt.subplot(1,num_wls+1,1)
+            plt.imshow(onp.rot90(self.state.latents["density"].density), cmap="binary")
+            plt.title("latent")
+            plt.colorbar()
+            for wl, data in aux.items():
+                u0, Sr = data
+                ax = plt.subplot(1,num_wls+1,wl+2, projection='3d')
+                plot_Sr_subplot(u0, Sr, ax=ax, normalize=True, point_size=8)
+                plt.title(f"Sr for wl {wl}")
+
+            plt.tight_layout()
+            plt.savefig(os.path.join(self.log_dir, f"step_{self.state.step}.png"))
+            plt.close()
+
+            if self.save_bin and self.state.step % 10 == 0:
+                with h5py.File(os.path.join(self.log_dir, f"step_{self.state.step}.h5"), "w") as f:
+                    f["latent"] = self.state.latents["density"].density
+                    f["params"] = params["density"].density
+                    f["grad"] = my_grad["density"].density
+                    f["ez"] = onp.stack(response)[...,-1]
+                    f["eps"] = self.challenge.problem.epsilon_r(params["density"].density)
+    
+
 
     # def log_step_gc(self, my_grad, params, response, aux):
     #     # log step
@@ -589,15 +621,3 @@ class Designer:
     #     onp.save(os.path.join(self.log_dir, f"final_latent.npy"), self.state.latents["density"].density)
     #     onp.save(os.path.join(self.log_dir, f"final_params.npy"), params)
     #     onp.save(os.path.join(self.log_dir, f"final_fields.npy"), aux["fields_ez"])
-    def log_step_superpixel(self, my_grad, params, response, aux):
-        # log step
-        print("scattering efficiency: ", aux)
-        if self.log_dir is not None:
-            os.makedirs(self.log_dir, exist_ok=True)
-
-            num_wls = len(self.challenge._wavelengths)
-            plt.figure(figsize=((num_wls+3)*4, 4))
-            plt.subplot(1,num_wls+3,1)
-            plt.imshow(onp.rot90(self.state.latents["density"].density), cmap="binary")
-            plt.title("latent")
-            plt.xticks([])

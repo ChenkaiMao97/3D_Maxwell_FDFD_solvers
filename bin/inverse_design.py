@@ -3,13 +3,16 @@ import os
 import shutil
 
 import gin
-import jax
 import numpy as onp
+import multiprocessing as mp
+mp.set_start_method("spawn", force=True)
 
 from bin.run_job_utils import ExperimentConfig, seeding
 
 from src.invde.opt import Designer
 from src.invde.utils.utils import get_integrated_photonics_challenge, get_superpixel_challenge, get_coupling_challenge
+
+import jax
 
 design_schemes = ["integrated_photonics", 'superpixel', 'coupling']
 

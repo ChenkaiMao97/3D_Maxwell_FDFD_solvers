@@ -1,8 +1,6 @@
 import h5py
 
 from typing import List, Tuple, Dict, Any, Union, Callable, Sequence, Optional
-import jax
-import jax.numpy as jnp
 import numpy as onp
 
 from dataclasses import dataclass, field
@@ -14,6 +12,8 @@ from src.problems.coupling import CouplingChallenge
 
 from numpy.random import choice
 import math
+import jax
+import jax.numpy as jnp
 
 import gin
 

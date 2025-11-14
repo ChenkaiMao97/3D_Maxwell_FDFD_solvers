@@ -234,33 +234,43 @@ class SuperpixelChallenge(BaseChallenge):
             # near to farfield transformation based on stratton-chu:
             Hx, Hy, Hz = E_to_H(Ex, Ey, Ez, dxes, omega, bloch_vector=None)
             thetas, phis, u0, far_E, far_H = strattonChu3D_full_sphere_GPU(
-                dl=self.dL,
-                xc=Ex.shape[1]//2,
-                yc=Ex.shape[2]//2,
-                zc=Ex.shape[3]//2,
+                dl=self.problem.dL,
+                xc=Ex.shape[0]//2,
+                yc=Ex.shape[1]//2,
+                zc=Ex.shape[2]//2,
                 Rx=self.Rx,
                 Ry=self.Ry,
                 Rz=self.Rz,
                 lambda_val=wavelength,
-                Ex_OBJ=Ex,
-                Ey_OBJ=Ey,
-                Ez_OBJ=Ez,
-                Hx_OBJ=Hx,
-                Hy_OBJ=Hy,
-                Hz_OBJ=Hz,
-                device=E.device,
-                bs=1
-                )
-            print("Full sphere case shapes", thetas.shape, phis.shape, u0.shape, far_E.shape, far_H.shape)
+                eps_background=self.problem.eps_background,
+                Ex_OBJ=Ex[None],
+                Ey_OBJ=Ey[None],
+                Ez_OBJ=Ez[None],
+                Hx_OBJ=Hx[None],
+                Hy_OBJ=Hy[None],
+                Hz_OBJ=Hz[None]
+            )
             if plot_farfield:
                 plot_poynting_radial_scatter(u0, far_E, far_H, fname=os.path.join(config['output_path'], 'poynting_radial_scatter.png'),
                                 plot_batch_idx=0, normalize=True, point_size=8)
             
             t_theta, t_phi = self.target_angles
             d_theta, d_phi = self.target_angle_ranges
-            target_region = u0[t_theta - int(d_theta/2):t_theta + int(d_theta/2), t_phi - int(d_phi/2):t_phi + int(d_phi/2)]
+
+            assert far_E.shape == 4 and far_E.shape[0] == 1, "for now, far_E should be a 3D tensor with batch dimension 1"
+            E3 = far_E[0].permute(1, 2, 0) # (Nt,Np,3)
+            H3 = far_H[0].permute(1, 2, 0) # (Nt,Np,3)
+            U3 = u0[0].permute(1, 2, 0)    # (Nt,Np,3)
+            # S = 0.5 * Re(E × H*)
+            S3 = 0.5 * jnp.real(jnp.cross(E3, jnp.conj(H3), axis=-1))  # (Nt,Np,3), real
+
+            # radial component S_r = S · r̂
+            Sr = jnp.sum(S3 * U3, axis=-1)      # (Nt,Np), real
+            eff = jnp.abs(Sr)          
+
+            target_region = eff[t_theta - int(d_theta/2):t_theta + int(d_theta/2), t_phi - int(d_phi/2):t_phi + int(d_phi/2)]
             
-            loss += - jnp.sum(jnp.abs(target_region) ** 2) / jnp.sum(jnp.abs(u0) ** 2)
-            aux[wavelength] = loss
+            loss += - jnp.sum(jnp.abs(target_region) ** 2) / jnp.sum(jnp.abs(eff) ** 2)
+            aux[wavelength] = (u0, Sr)
 
         return loss, aux

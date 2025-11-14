@@ -54,7 +54,7 @@ def make_super_pixel_freeform(sim_shape, wl, dL, pmls, kwargs):
     #     src[pad_x:-pad_x, pad_y:-pad_y, substrate_thickness_pixel - source_below_meta_pixel-1, 2] = -1*np.exp(-1j*kz*dL)
 
     # src[sim_shape[0]//2-5:sim_shape[0]//2+6, sim_shape[1]//2-5:sim_shape[1]//2+6, sim_shape[2]//2-5:sim_shape[2]//2+6, 2] = 1
-    src[sim_shape[0]//2, sim_shape[1]//2, sim_shape[2]//2, 2] = 1e9
+    src[sim_shape[0]//2, sim_shape[1]//2, sim_shape[2]//2, 0] = 1e6
 
     src = torch.view_as_real(src).reshape(*sim_shape, 6)
 

@@ -47,30 +47,53 @@ def E_to_Hz(Ex, Ey, dxes, omega, bloch_vector=None):
     return Hz
 
 
+def reduce_border(data):
+    d = data.copy()
+    if len(d.shape) == 3:
+        d = d.at[:,:1,:].set(d[:,:1,:] / 2)
+        d = d.at[:,-1:,:].set(d[:,-1:,:] / 2)
+        d = d.at[:,:,:1].set(d[:,:,:1] / 2)
+        d = d.at[:,:,-1:].set(d[:,:,-1:] / 2)
+    else:
+        assert len(d.shape) == 2
+        d = d.at[:1,:].set(d[:1,:] / 2)
+        d = d.at[-1:,:].set(d[-1:,:] / 2)
+        d = d.at[:,:1].set(d[:,:1] / 2)
+        d = d.at[:,-1:].set(d[:,-1:] / 2)
+    return d
+
+
 def strattonChu3D_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ, Ey_OBJ, Ez_OBJ, Hx_OBJ, Hy_OBJ, Hz_OBJ,
-                      device='cuda', t_theta=0, t_phi=0, bs=1):
+                      t_theta=0, t_phi=0, eps_background=1.0):
+    assert len(Ex_OBJ.shape) == 4
+    bs = Ex_OBJ.shape[0]
+    
     k0 = 2 * jnp.pi / lambda_val
     ds = dl * dl
-    r_obs = 10000 * lambda_val
+    r_obs = 1e3 * lambda_val
 
     x_back = int(xc - Rx)
-    x_front = int(xc + Rx - 1)
+    x_front = int(xc + Rx + 1)
     y_left = int(yc - Ry)
-    y_right = int(yc + Ry - 1)
+    y_right = int(yc + Ry + 1)
     z_bottom = int(zc - Rz)
-    z_top = int(zc + Rz)
+    z_top = int(zc + Rz + 1)
+
+    ### yee grid correction:
+    Ex_OBJ = 1/2* (Ex_OBJ + jnp.roll(Ex_OBJ, shifts=1, axis=1))
+    Ey_OBJ = 1/2* (Ey_OBJ + jnp.roll(Ey_OBJ, shifts=1, axis=2))
+    Ez_OBJ = 1/2* (Ez_OBJ + jnp.roll(Ez_OBJ, shifts=1, axis=3))
+    Hx_OBJ = 1/4* (Hx_OBJ + jnp.roll(Hx_OBJ, shifts=1, axis=2) + jnp.roll(Hx_OBJ, shifts=1, axis=3) + jnp.roll(Hx_OBJ, shifts=(1,1), axis=(2,3)))
+    Hy_OBJ = 1/4* (Hy_OBJ + jnp.roll(Hy_OBJ, shifts=1, axis=1) + jnp.roll(Hy_OBJ, shifts=1, axis=3) + jnp.roll(Hy_OBJ, shifts=(1,1), axis=(1,3)))
+    Hz_OBJ = 1/4* (Hz_OBJ + jnp.roll(Hz_OBJ, shifts=1, axis=1) + jnp.roll(Hz_OBJ, shifts=1, axis=2) + jnp.roll(Hz_OBJ, shifts=(1,1), axis=(1,2)))
 
     ##################### Prepare the normal vector of the data points on 6 faces #####################
-    n_null = jnp.zeros((1, 3), dtype=jnp.complex64)
     n_back = jnp.tile(jnp.array([[-1, 0, 0]]), ((y_right - y_left)*(z_top - z_bottom), 1))
     n_front = jnp.tile(jnp.array([[1, 0, 0]]), ((y_right - y_left)*(z_top - z_bottom), 1))
     n_left = jnp.tile(jnp.array([[0, -1, 0]]), ((x_front - x_back)*(z_top - z_bottom), 1))
     n_right = jnp.tile(jnp.array([[0, 1, 0]]), ((x_front - x_back)*(z_top - z_bottom), 1))
     n_bottom = jnp.tile(jnp.array([[0, 0, -1]]), ((x_front - x_back)*(y_right - y_left), 1))
     n_top = jnp.tile(jnp.array([[0, 0, 1]]), ((x_front - x_back)*(y_right - y_left), 1))
-
-    n = jnp.concatenate([n_null, n_back, n_front, n_left, n_right, n_bottom, n_top], axis=0)
-    n = jnp.broadcast_to(n[jnp.newaxis, ...], (bs, *n.shape))  # (bs, N_total, 3)
 
     ##################### Prepare the coordinates of the data points on 6 faces #####################
     y = jnp.arange(y_left, y_right)
@@ -100,60 +123,57 @@ def strattonChu3D_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ, Ey_OBJ, Ez
     Xt, Yt = jnp.meshgrid(x, y, indexing="ij")
     Zt = jnp.full_like(Xt, z_top)
     xyz_top = jnp.stack([(Xt - xc)*dl, (Yt - yc)*dl, (Zt - zc)*dl], axis=-1).reshape(-1, 3)
-
-    xyz_null = jnp.zeros((1, 3), dtype=jnp.float32)
-
-    xyz = jnp.concatenate([xyz_null, xyz_back, xyz_front, xyz_left, xyz_right, xyz_bottom, xyz_top], axis=0)  # (N_total, 3)
-
     ##################### Prepare the fields on the six faces #####################
 
-    E_null = jnp.zeros((bs, 1, 3), dtype=jnp.complex64)
-    H_null = jnp.zeros((bs, 1, 3), dtype=jnp.complex64)
+    E_back = jnp.stack([reduce_border(Ex_OBJ[:, x_back, y_left:y_right, z_bottom:z_top]),
+                        reduce_border(Ey_OBJ[:, x_back, y_left:y_right, z_bottom:z_top]),
+                        reduce_border(Ez_OBJ[:, x_back, y_left:y_right, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
+    H_back = jnp.stack([reduce_border(Hx_OBJ[:, x_back, y_left:y_right, z_bottom:z_top]),
+                        reduce_border(Hy_OBJ[:, x_back, y_left:y_right, z_bottom:z_top]),
+                        reduce_border(Hz_OBJ[:, x_back, y_left:y_right, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
 
-    E_back = jnp.stack([Ex_OBJ[:, x_back, y_left:y_right, z_bottom:z_top],
-                          Ey_OBJ[:, x_back, y_left:y_right, z_bottom:z_top],
-                          Ez_OBJ[:, x_back, y_left:y_right, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
-    H_back = jnp.stack([Hx_OBJ[:, x_back, y_left:y_right, z_bottom:z_top],
-                          Hy_OBJ[:, x_back, y_left:y_right, z_bottom:z_top],
-                          Hz_OBJ[:, x_back, y_left:y_right, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
+    E_front = jnp.stack([reduce_border(Ex_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top]),
+                         reduce_border(Ey_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top]),
+                         reduce_border(Ez_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
+    H_front = jnp.stack([reduce_border(Hx_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top]),
+                         reduce_border(Hy_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top]),
+                         reduce_border(Hz_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
 
-    E_front = jnp.stack([Ex_OBJ[:, x_front, y_left:y_right, z_bottom:z_top],
-                           Ey_OBJ[:, x_front, y_left:y_right, z_bottom:z_top],
-                           Ez_OBJ[:, x_front, y_left:y_right, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
-    H_front = jnp.stack([Hx_OBJ[:, x_front, y_left:y_right, z_bottom:z_top],
-                           Hy_OBJ[:, x_front, y_left:y_right, z_bottom:z_top],
-                           Hz_OBJ[:, x_front, y_left:y_right, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
+    E_left = jnp.stack([reduce_border(Ex_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]),
+                        reduce_border(Ey_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]),
+                        reduce_border(Ez_OBJ[:, x_back:x_front, y_left, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
+    H_left = jnp.stack([reduce_border(Hx_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]),
+                        reduce_border(Hy_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]),
+                        reduce_border(Hz_OBJ[:, x_back:x_front, y_left, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
 
-    E_left = jnp.stack([Ex_OBJ[:, x_back:x_front, y_left, z_bottom:z_top],
-                          Ey_OBJ[:, x_back:x_front, y_left, z_bottom:z_top],
-                          Ez_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
-    H_left = jnp.stack([Hx_OBJ[:, x_back:x_front, y_left, z_bottom:z_top],
-                          Hy_OBJ[:, x_back:x_front, y_left, z_bottom:z_top],
-                          Hz_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
+    E_right = jnp.stack([reduce_border(Ex_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top]),
+                         reduce_border(Ey_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top]),
+                         reduce_border(Ez_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
+    H_right = jnp.stack([reduce_border(Hx_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top]),
+                         reduce_border(Hy_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top]),
+                         reduce_border(Hz_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
 
-    E_right = jnp.stack([Ex_OBJ[:, x_back:x_front, y_right, z_bottom:z_top],
-                           Ey_OBJ[:, x_back:x_front, y_right, z_bottom:z_top],
-                           Ez_OBJ[:, x_back:x_front, y_right, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
-    H_right = jnp.stack([Hx_OBJ[:, x_back:x_front, y_right, z_bottom:z_top],
-                           Hy_OBJ[:, x_back:x_front, y_right, z_bottom:z_top],
-                           Hz_OBJ[:, x_back:x_front, y_right, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
+    E_bottom = jnp.stack([reduce_border(Ex_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]),
+                          reduce_border(Ey_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]),
+                          reduce_border(Ez_OBJ[:, x_back:x_front, y_left:y_right, z_bottom])], axis=3).reshape(bs, -1, 3)
+    H_bottom = jnp.stack([reduce_border(Hx_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]),
+                          reduce_border(Hy_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]),
+                          reduce_border(Hz_OBJ[:, x_back:x_front, y_left:y_right, z_bottom])], axis=3).reshape(bs, -1, 3)
 
-    E_bottom = jnp.stack([Ex_OBJ[:, x_back:x_front, y_left:y_right, z_bottom],
-                            Ey_OBJ[:, x_back:x_front, y_left:y_right, z_bottom],
-                            Ez_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]], axis=3).reshape(bs, -1, 3)
-    H_bottom = jnp.stack([Hx_OBJ[:, x_back:x_front, y_left:y_right, z_bottom],
-                            Hy_OBJ[:, x_back:x_front, y_left:y_right, z_bottom],
-                            Hz_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]], axis=3).reshape(bs, -1, 3)
+    E_top = jnp.stack([reduce_border(Ex_OBJ[:, x_back:x_front, y_left:y_right, z_top-1]),
+                       reduce_border(Ey_OBJ[:, x_back:x_front, y_left:y_right, z_top-1]),
+                       reduce_border(Ez_OBJ[:, x_back:x_front, y_left:y_right, z_top-1])], axis=3).reshape(bs, -1, 3)
+    H_top = jnp.stack([reduce_border(Hx_OBJ[:, x_back:x_front, y_left:y_right, z_top-1]),
+                       reduce_border(Hy_OBJ[:, x_back:x_front, y_left:y_right, z_top-1]),
+                       reduce_border(Hz_OBJ[:, x_back:x_front, y_left:y_right, z_top-1])], axis=3).reshape(bs, -1, 3)
 
-    E_top = jnp.stack([Ex_OBJ[:, x_back:x_front, y_left:y_right, z_top],
-                         Ey_OBJ[:, x_back:x_front, y_left:y_right, z_top],
-                         Ez_OBJ[:, x_back:x_front, y_left:y_right, z_top]], axis=3).reshape(bs, -1, 3)
-    H_top = jnp.stack([Hx_OBJ[:, x_back:x_front, y_left:y_right, z_top],
-                         Hy_OBJ[:, x_back:x_front, y_left:y_right, z_top],
-                         Hz_OBJ[:, x_back:x_front, y_left:y_right, z_top]], axis=3).reshape(bs, -1, 3)
+    n = jnp.concatenate([n_back, n_front, n_left, n_right, n_bottom, n_top], axis=0)
+    n = jnp.broadcast_to(n[jnp.newaxis, ...], (bs, *n.shape))  # (bs, N_total, 3)
 
-    E = jnp.concatenate([E_null, E_back, E_front, E_left, E_right, E_bottom, E_top], axis=1)
-    H = jnp.concatenate([H_null, H_back, H_front, H_left, H_right, H_bottom, H_top], axis=1)
+    xyz = jnp.concatenate([xyz_back, xyz_front, xyz_left, xyz_right, xyz_bottom, xyz_top], axis=0)  # (N_total, 3)
+
+    E = jnp.concatenate([E_back, E_front, E_left, E_right, E_bottom, E_top], axis=1)
+    H = jnp.concatenate([H_back, H_front, H_left, H_right, H_bottom, H_top], axis=1)
 
     t_theta = jnp.array(t_theta) * jnp.pi/ 180
     t_phi = jnp.array(t_phi) * jnp.pi/ 180
@@ -173,7 +193,7 @@ def strattonChu3D_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ, Ey_OBJ, Ez
     uz = (r_obs * uz_0 - xyz[:, 2]) / r_rs
     t_u = jnp.stack([ux, uy, uz], axis=1)
     t_u = jnp.array(t_u, dtype=jnp.complex64)
-    t_coe = 1j * k0 * ds * jnp.exp(-1j * k0 * r_rs) / (4 * jnp.pi * r_rs)
+    t_coe = 1j * k0 * eps_background**.5 * ds * jnp.exp(-1j * k0 * eps_background**.5 * r_rs) / (4 * jnp.pi * r_rs)
     t_coe = jnp.stack([t_coe, t_coe, t_coe], axis=1)
     t_n = n
 
@@ -181,12 +201,12 @@ def strattonChu3D_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ, Ey_OBJ, Ez
     t_coe = jnp.expand_dims(t_coe, axis=0).repeat(bs, axis=0)
 
     far_E = t_coe * (
-            -C_0 * MU_0 * jnp.cross(t_n, H, axis=-1)
+            - 1 / eps_background**.5 * jnp.cross(t_n, H, axis=-1)
             + jnp.cross(jnp.cross(t_n, E, axis=-1), t_u, axis=-1)
             + jnp.sum(t_n * E, axis=-1, keepdims=True) * t_u
     )
     far_H = t_coe * (
-            C_0 * EPSILON_0 * jnp.cross(t_n, E, axis=-1)
+            eps_background**.5 * jnp.cross(t_n, E, axis=-1)
             + jnp.cross(jnp.cross(t_n, H, axis=-1), t_u, axis=-1)
             + jnp.sum(t_n * H, axis=-1, keepdims=True) * t_u
     )
@@ -198,30 +218,28 @@ def strattonChu3D_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ, Ey_OBJ, Ez
     return u0, tg_E_sum, tg_H_sum
 
 
-def strattonChu3D_full_sphere_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ, Ey_OBJ, Ez_OBJ, Hx_OBJ, Hy_OBJ, Hz_OBJ,
-                                  device='cuda', bs=1):
+def strattonChu3D_full_sphere_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ, Ey_OBJ, Ez_OBJ, Hx_OBJ, Hy_OBJ, Hz_OBJ, eps_background=1.0):
+    assert len(Ex_OBJ.shape) == 4
+    bs = Ex_OBJ.shape[0]
+
     k0 = 2 * jnp.pi / lambda_val
     ds = dl * dl
-    r_obs = 10000 * lambda_val
+    r_obs = 1e3 * lambda_val
     
     x_back = int(xc - Rx)
-    x_front = int(xc + Rx - 1)
+    x_front = int(xc + Rx + 1)
     y_left = int(yc - Ry)
-    y_right = int(yc + Ry - 1)
+    y_right = int(yc + Ry + 1)
     z_bottom = int(zc - Rz)
-    z_top = int(zc + Rz)
+    z_top = int(zc + Rz + 1)
 
     ##################### Prepare the normal vector of the data points on 6 faces #####################
-    n_null = jnp.zeros((1, 3), dtype=jnp.complex64)
     n_back = jnp.tile(jnp.array([[-1, 0, 0]]), ((y_right - y_left)*(z_top - z_bottom), 1))
     n_front = jnp.tile(jnp.array([[1, 0, 0]]), ((y_right - y_left)*(z_top - z_bottom), 1))
     n_left = jnp.tile(jnp.array([[0, -1, 0]]), ((x_front - x_back)*(z_top - z_bottom), 1))
     n_right = jnp.tile(jnp.array([[0, 1, 0]]), ((x_front - x_back)*(z_top - z_bottom), 1))
     n_bottom = jnp.tile(jnp.array([[0, 0, -1]]), ((x_front - x_back)*(y_right - y_left), 1))
     n_top = jnp.tile(jnp.array([[0, 0, 1]]), ((x_front - x_back)*(y_right - y_left), 1))
-
-    n = jnp.concatenate([n_null, n_back, n_front, n_left, n_right, n_bottom, n_top], axis=0)
-    n = jnp.broadcast_to(n[jnp.newaxis, ...], (bs, *n.shape))  # (bs, N_total, 3)
 
     ##################### Prepare the coordinates of the data points on 6 faces #####################
     y = jnp.arange(y_left, y_right)
@@ -252,59 +270,57 @@ def strattonChu3D_full_sphere_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ
     Zt = jnp.full_like(Xt, z_top)
     xyz_top = jnp.stack([(Xt - xc)*dl, (Yt - yc)*dl, (Zt - zc)*dl], axis=-1).reshape(-1, 3)
 
-    xyz_null = jnp.zeros((1, 3), dtype=jnp.float32)
+    ##################### Prepare the fields on the six faces #####################
+    E_back = jnp.stack([reduce_border(Ex_OBJ[:, x_back, y_left:y_right, z_bottom:z_top]),
+                        reduce_border(Ey_OBJ[:, x_back, y_left:y_right, z_bottom:z_top]),
+                        reduce_border(Ez_OBJ[:, x_back, y_left:y_right, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
+    H_back = jnp.stack([reduce_border(Hx_OBJ[:, x_back, y_left:y_right, z_bottom:z_top]),
+                        reduce_border(Hy_OBJ[:, x_back, y_left:y_right, z_bottom:z_top]),
+                        reduce_border(Hz_OBJ[:, x_back, y_left:y_right, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
 
-    xyz = jnp.concatenate([xyz_null, xyz_back, xyz_front, xyz_left, xyz_right, xyz_bottom, xyz_top], axis=0)  # (N_total, 3)
+    E_front = jnp.stack([reduce_border(Ex_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top]),
+                         reduce_border(Ey_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top]),
+                         reduce_border(Ez_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
+    H_front = jnp.stack([reduce_border(Hx_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top]),
+                         reduce_border(Hy_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top]),
+                         reduce_border(Hz_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
+
+    E_left = jnp.stack([reduce_border(Ex_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]),
+                        reduce_border(Ey_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]),
+                        reduce_border(Ez_OBJ[:, x_back:x_front, y_left, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
+    H_left = jnp.stack([reduce_border(Hx_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]),
+                        reduce_border(Hy_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]),
+                        reduce_border(Hz_OBJ[:, x_back:x_front, y_left, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
+
+    E_right = jnp.stack([reduce_border(Ex_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top]),
+                         reduce_border(Ey_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top]),
+                         reduce_border(Ez_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
+    H_right = jnp.stack([reduce_border(Hx_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top]),
+                         reduce_border(Hy_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top]),
+                         reduce_border(Hz_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top])], axis=3).reshape(bs, -1, 3)
+
+    E_bottom = jnp.stack([reduce_border(Ex_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]),
+                          reduce_border(Ey_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]),
+                          reduce_border(Ez_OBJ[:, x_back:x_front, y_left:y_right, z_bottom])], axis=3).reshape(bs, -1, 3)
+    H_bottom = jnp.stack([reduce_border(Hx_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]),
+                          reduce_border(Hy_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]),
+                          reduce_border(Hz_OBJ[:, x_back:x_front, y_left:y_right, z_bottom])], axis=3).reshape(bs, -1, 3)
+
+    E_top = jnp.stack([reduce_border(Ex_OBJ[:, x_back:x_front, y_left:y_right, z_top-1]),
+                       reduce_border(Ey_OBJ[:, x_back:x_front, y_left:y_right, z_top-1]),
+                       reduce_border(Ez_OBJ[:, x_back:x_front, y_left:y_right, z_top-1])], axis=3).reshape(bs, -1, 3)
+    H_top = jnp.stack([reduce_border(Hx_OBJ[:, x_back:x_front, y_left:y_right, z_top-1]),
+                       reduce_border(Hy_OBJ[:, x_back:x_front, y_left:y_right, z_top-1]),
+                       reduce_border(Hz_OBJ[:, x_back:x_front, y_left:y_right, z_top-1])], axis=3).reshape(bs, -1, 3)
+
+    n = jnp.concatenate([n_back, n_front, n_left, n_right, n_bottom, n_top], axis=0)
+    n = jnp.broadcast_to(n[jnp.newaxis, ...], (bs, *n.shape))  # (bs, N_total, 3)
+
+    xyz = jnp.concatenate([xyz_back, xyz_front, xyz_left, xyz_right, xyz_bottom, xyz_top], axis=0)  # (N_total, 3)
     xyz = jnp.broadcast_to(xyz[jnp.newaxis, ...], (bs, *xyz.shape))  # (bs, N_total, 3)
 
-    ##################### Prepare the fields on the six faces #####################
-    E_null = jnp.zeros((bs, 1, 3), dtype=jnp.complex64)
-    H_null = jnp.zeros((bs, 1, 3), dtype=jnp.complex64)
-
-    E_back = jnp.stack([Ex_OBJ[:, x_back, y_left:y_right, z_bottom:z_top],
-                          Ey_OBJ[:, x_back, y_left:y_right, z_bottom:z_top],
-                          Ez_OBJ[:, x_back, y_left:y_right, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
-    H_back = jnp.stack([Hx_OBJ[:, x_back, y_left:y_right, z_bottom:z_top],
-                          Hy_OBJ[:, x_back, y_left:y_right, z_bottom:z_top],
-                          Hz_OBJ[:, x_back, y_left:y_right, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
-
-    E_front = jnp.stack([Ex_OBJ[:, x_front, y_left:y_right, z_bottom:z_top],
-                           Ey_OBJ[:, x_front, y_left:y_right, z_bottom:z_top],
-                           Ez_OBJ[:, x_front, y_left:y_right, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
-    H_front = jnp.stack([Hx_OBJ[:, x_front, y_left:y_right, z_bottom:z_top],
-                           Hy_OBJ[:, x_front, y_left:y_right, z_bottom:z_top],
-                           Hz_OBJ[:, x_front, y_left:y_right, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
-
-    E_left = jnp.stack([Ex_OBJ[:, x_back:x_front, y_left, z_bottom:z_top],
-                          Ey_OBJ[:, x_back:x_front, y_left, z_bottom:z_top],
-                          Ez_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
-    H_left = jnp.stack([Hx_OBJ[:, x_back:x_front, y_left, z_bottom:z_top],
-                          Hy_OBJ[:, x_back:x_front, y_left, z_bottom:z_top],
-                          Hz_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
-
-    E_right = jnp.stack([Ex_OBJ[:, x_back:x_front, y_right, z_bottom:z_top],
-                           Ey_OBJ[:, x_back:x_front, y_right, z_bottom:z_top],
-                           Ez_OBJ[:, x_back:x_front, y_right, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
-    H_right = jnp.stack([Hx_OBJ[:, x_back:x_front, y_right, z_bottom:z_top],
-                           Hy_OBJ[:, x_back:x_front, y_right, z_bottom:z_top],
-                           Hz_OBJ[:, x_back:x_front, y_right, z_bottom:z_top]], axis=3).reshape(bs, -1, 3)
-
-    E_bottom = jnp.stack([Ex_OBJ[:, x_back:x_front, y_left:y_right, z_bottom],
-                            Ey_OBJ[:, x_back:x_front, y_left:y_right, z_bottom],
-                            Ez_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]], axis=3).reshape(bs, -1, 3)
-    H_bottom = jnp.stack([Hx_OBJ[:, x_back:x_front, y_left:y_right, z_bottom],
-                            Hy_OBJ[:, x_back:x_front, y_left:y_right, z_bottom],
-                            Hz_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]], axis=3).reshape(bs, -1, 3)
-
-    E_top = jnp.stack([Ex_OBJ[:, x_back:x_front, y_left:y_right, z_top],
-                         Ey_OBJ[:, x_back:x_front, y_left:y_right, z_top],
-                         Ez_OBJ[:, x_back:x_front, y_left:y_right, z_top]], axis=3).reshape(bs, -1, 3)
-    H_top = jnp.stack([Hx_OBJ[:, x_back:x_front, y_left:y_right, z_top],
-                         Hy_OBJ[:, x_back:x_front, y_left:y_right, z_top],
-                         Hz_OBJ[:, x_back:x_front, y_left:y_right, z_top]], axis=3).reshape(bs, -1, 3)
-
-    E = jnp.concatenate([E_null, E_back, E_front, E_left, E_right, E_bottom, E_top], axis=1) # (bs, N_total, 3)
-    H = jnp.concatenate([H_null, H_back, H_front, H_left, H_right, H_bottom, H_top], axis=1) # (bs, N_total, 3)
+    E = jnp.concatenate([E_back, E_front, E_left, E_right, E_bottom, E_top], axis=1) # (bs, N_total, 3)
+    H = jnp.concatenate([H_back, H_front, H_left, H_right, H_bottom, H_top], axis=1) # (bs, N_total, 3)
 
     theta_step = 1
     theta_min, theta_max = theta_step, 90 - theta_step
@@ -334,7 +350,7 @@ def strattonChu3D_full_sphere_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ
     uy = (r_obs * uy_0[None] - xyz[:, 1, None, None]) / r_rs
     uz = (r_obs * uz_0[None] - xyz[:, 2, None, None]) / r_rs
     t_u = jnp.stack([ux, uy, uz], axis=1).astype(jnp.complex64) # (N_total, 3, N_theta, N_phi)
-    t_coe = 1j * k0 * ds * jnp.exp(-1j * k0 * r_rs) / (4 * jnp.pi * r_rs) # (N_total, N_theta, N_phi)
+    t_coe = 1j * k0 * eps_background**.5 * ds * jnp.exp(-1j * k0 * eps_background**.5 * r_rs) / (4 * jnp.pi * r_rs) # (N_total, N_theta, N_phi)
     
     t_n = n[...,None] # (bs, N_total, 3, 1)
     t_u = jnp.expand_dims(t_u, axis=0).repeat(bs, axis=0) # (bs, N_total, 3, N_theta, N_phi)
@@ -347,12 +363,12 @@ def strattonChu3D_full_sphere_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ
     tg_H_sum = jnp.zeros((bs, 3, N_theta, N_phi), dtype=jnp.complex64)
     for theta_idx in range(N_theta):
         far_E = t_coe[:,:,:,theta_idx,:] * (
-                -C_0 * MU_0 * jnp.cross(t_n, H[...,None], axis=2)
+                - 1 / eps_background**.5 * jnp.cross(t_n, H[...,None], axis=2)
                 + jnp.cross(jnp.cross(t_n, E[...,None], axis=2), t_u[:,:,:,theta_idx,:], axis=2)
                 + jnp.sum(t_n * E[...,None], axis=2, keepdims=True) * t_u[:,:,:,theta_idx,:]
         )
         far_H = t_coe[:,:,:,theta_idx,:] * (
-                C_0 * EPSILON_0 * jnp.cross(t_n, E[...,None], axis=2)
+                eps_background**.5 * jnp.cross(t_n, E[...,None], axis=2)
                 + jnp.cross(jnp.cross(t_n, H[...,None], axis=2), t_u[:,:,:,theta_idx,:], axis=2)
                 + jnp.sum(t_n * H[...,None], axis=2, keepdims=True) * t_u[:,:,:,theta_idx,:]
         )

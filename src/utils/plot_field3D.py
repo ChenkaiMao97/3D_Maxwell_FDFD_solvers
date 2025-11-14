@@ -505,7 +505,7 @@ def plot_full_farfield(data, fname, plot_batch_idx=0):
     plt.savefig(fname, dpi=100, bbox_inches='tight')
     plt.close()
 
-def plot_poynting_radial_scatter(u0, E, H, fname, plot_batch_idx=0, normalize=True, point_size=8):
+def plot_poynting_radial_scatter(u0, E, H, fname=None, plot_batch_idx=0, normalize=True, point_size=8):
     """
     Scatter plot on the sphere for the radial component of the Poynting vector.
     Radius ∝ |Re(S_r)| where S = 0.5 * Re(E × H*), r̂ = u0.
@@ -543,14 +543,6 @@ def plot_poynting_radial_scatter(u0, E, H, fname, plot_batch_idx=0, normalize=Tr
     # radial component S_r = S · r̂
     Sr = torch.sum(S3 * U3, dim=-1)      # (Nt,Np), real
     val = torch.abs(Sr)                  # |Re(S_r)|
-    # val = torch.sum(torch.conj(H3[...,0:1]) * H3[...,0:1], dim=-1).real
-
-    # S_norm = torch.sum(torch.conj(S3) * S3, dim=-1).real**.5
-    # Sr_norm = torch.sum(torch.conj(Sr) * Sr, dim=-1).real**.5
-    # S_tan = torch.cross(S3, U3, dim=-1)
-    # S_tan_norm = torch.sum(torch.conj(S_tan) * S_tan, dim=-1).real**.5
-    # print("mean S_norm: ", torch.mean(S_norm), "mean Sr norm:", torch.mean(Sr_norm), "mean S_tan_norm:", torch.mean(S_tan_norm))
-
 
     # radius
     if normalize:
@@ -580,10 +572,60 @@ def plot_poynting_radial_scatter(u0, E, H, fname, plot_batch_idx=0, normalize=Tr
     cb = fig.colorbar(sc, ax=ax, shrink=0.6, aspect=18, pad=0.02)
     cb.set_label(r'$|\,\mathrm{Re}(S_r)\,|$')
     ax.set_title(r'Radial Poynting Component: $|\,\mathrm{Re}(S_r)\,|$ (radius ∝ value)')
-    plt.tight_layout()
-    plt.savefig(fname, dpi=120, bbox_inches='tight')
-    plt.close()
 
+    if fname:
+        plt.tight_layout()
+        plt.savefig(fname, dpi=120, bbox_inches='tight')
+        plt.close()
+    else:
+        return fig
+
+def plot_Sr_subplot(u0, Sr, ax, normalize=True, point_size=8):
+    """
+    Scatter plot on the sphere for the radial component of the Poynting vector.
+    Radius ∝ |Re(S_r)| where S = 0.5 * Re(E × H*), r̂ = u0.
+
+    Args:
+        u0 : torch.Tensor, shape (3, Nt, Np) or (1,3,Nt,Np). Unit vectors on the sphere.
+        Sr : torch.Tensor, shape (Nt,Np). Radial component of the Poynting vector.
+        ax : matplotlib.axes.Axes. Subplot to plot on.
+        normalize : bool. If True, radius is normalized to [0,1].
+        point_size : int. Scatter point size.
+    """
+    # ---- unify shapes ----
+    assert len(u0.shape) == 3
+    assert len(Sr.shape) == 2
+    U3 = u0.permute(1, 2, 0) # (Nt,Np,3) 
+
+    val = torch.abs(Sr) 
+
+    # radius
+    if normalize:
+        vmax = torch.clamp(val.max(), min=1e-12)
+        r = val / vmax
+    else:
+        r = val
+
+    # Cartesian coords: r * r̂
+    x = r * U3[..., 0]
+    y = r * U3[..., 1]
+    z = r * U3[..., 2]
+    # to numpy
+    x, y, z, c = (t.detach().cpu().numpy().reshape(-1) for t in (x, y, z, val))
+
+    # plot
+    sc = ax.scatter(x, y, z, c=c, s=point_size, cmap='viridis')
+
+    R = 1.05 * (np.max(r.detach().cpu().numpy()) if normalize else np.max(np.abs([x, y, z])))
+    R = 1.0 if not np.isfinite(R) or R == 0 else R
+    ax.set_xlim(-R, R); ax.set_ylim(-R, R); ax.set_zlim(-R, R)
+    ax.set_box_aspect([1, 1, 1])
+    ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z')
+    cb = ax.figure.colorbar(mappable, ax=ax, shrink=0.5, aspect=5)
+    cb.set_label(r'$|\,\mathrm{Re}(S_r)\,|$')
+    # ax.set_title(r'Radial Poynting Component: $|\,\mathrm{Re}(S_r)\,|$ (radius ∝ value)')
+    
+    return 
 
 # plot helper for 2d test cases:
 def plot_2d(data, fname=None, stride = 1, my_cmap = plt.cm.binary, cm_zero_center=True, title=None):

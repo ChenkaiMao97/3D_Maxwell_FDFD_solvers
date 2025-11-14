@@ -22,6 +22,19 @@ class NN_solver:
         output_dir = None,
         gpu_id = None,
     ):
+        print("NN_solver init")
+        print("model path: ", model_path)
+        print("sim shape: ", sim_shape)
+        print("wl: ", wl)
+        print("dL: ", dL)
+        print("pmls: ", pmls)
+        print("max_iter: ", max_iter)
+        print("tol: ", tol)
+        print("verbose: ", verbose)
+        print("restart: ", restart)
+        print("gpu_id: ", gpu_id)
+        print("save_intermediate: ", save_intermediate)
+        print("output_dir: ", output_dir)
         self.model_path = model_path
         self.sim_shape = sim_shape
         self.wl = wl
@@ -39,6 +52,7 @@ class NN_solver:
 
     def init(self):
         sys.path.append(self.model_path)
+        print("model path: ", self.model_path)
         for file in os.listdir(self.model_path):
             if file.endswith(".gin"):
                 gin.parse_config_file(os.path.join(self.model_path, file))
