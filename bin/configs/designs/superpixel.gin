@@ -13,7 +13,7 @@ import src.invde.utils.jax_utils
 #### (1) design problem and backend
 run_inverse_design.design_challenge = "superpixel"
 Designer.log_fn_type = "superpixel"
-BaseProblem._backend = "NN"
+BaseProblem._backend = "lineax"
 
 #### (2) setup dL, wl and simulation / optimization sizes
 SuperpixelChallenge.wavelengths = [800]

@@ -12,7 +12,7 @@ import concurrent.futures
 from functools import cached_property
 
 from src.utils.GPU_worker_utils import solver_worker
-from src.utils.physics import E_to_H
+from src.utils.physics import E_to_H, src2rhs, r2c, c2r, residue_E
 
 import gin
 
@@ -142,6 +142,14 @@ class BaseProblem:
         print("all process and threads stopped")
     
     def compute_FDFD(self, wl, epsilon_r, source, mode):
+        if self._backend == 'NN':
+            return self.compute_FDFD_NN(wl, epsilon_r, source, mode)
+        elif self._backend == 'lineax':
+            return self.compute_FDFD_lineax(wl, epsilon_r, source, mode)
+        else:
+            raise ValueError(f"invalid backend: {self._backend}")
+    
+    def compute_FDFD_NN(self, wl, epsilon_r, source, mode):
         assert mode in ['forward', 'adjoint'], f"mode must be 'forward' or 'adjoint'"
 
         assert wl in self.wavelengths, f"wavelength {wl} is not in the list of wavelengths: {self.wavelengths}"
@@ -176,6 +184,14 @@ class BaseProblem:
             self.last_adjoint_E[wl] = e
         
         return e[0]
+    
+    def compute_FDFD_lineax(self, wl, epsilon_r, source, mode):
+        assert mode in ['forward', 'adjoint'], f"mode must be 'forward' or 'adjoint'"
+        assert wl in self.wavelengths, f"wavelength {wl} is not in the list of wavelengths: {self.wavelengths}"
+
+        rhs = r2c(src2rhs(source, self.dL, wl))
+        Aop = residue_E
+        
     
     def simulate(self):
         raise NotImplementedError("This method must be implemented in the subclass")
