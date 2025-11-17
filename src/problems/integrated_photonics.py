@@ -99,7 +99,6 @@ class IntegratedPhotonicsProblem(BaseProblem):
             if len(specs) == 0:
                 return
 
-            print("making waveguides and ports for side: ", loc)
             # The first port on the left side will be the excitation port (with largest y coord), so all ports have coordinates sorted from max to min
             previous_front = self.design_region_y_start if loc in ['l', 'r'] else self.design_region_x_start
             for idx, wg_spec in enumerate(specs):
@@ -155,7 +154,6 @@ class IntegratedPhotonicsProblem(BaseProblem):
                     assert port_y < y_end, "waveguide not long enough, port is inside design region"
                 else:
                     raise ValueError("loc needs to be in 'tblr'")
-                print("wg_min, wg_max, previous_front: ", wg_min, wg_max, previous_front)
                 assert wg_min>=previous_front # check waveguide spacing, and also within design region extent
                 previous_front = wg_max + resolve(s.wg_min_separation, self.dL)
 
@@ -224,30 +222,30 @@ class IntegratedPhotonicsProblem(BaseProblem):
                     precompute_source=True if port == self._ports[s.excite_port_idx] else False
                 )
                 # debugging plot for mode:
-                plt.figure(figsize=(10, 12))
-                overlap_e = port.overlap_e(self.wavelengths[0])
-                overlap_e_plot = overlap_e[:,:,round(1/2*(overlap_e.shape[2]-1))]
-                plt.subplot(3,2,1)
-                plt.imshow(overlap_e_plot[...,0].real, cmap="seismic")
-                plt.colorbar()
-                plt.subplot(3,2,2)
-                plt.imshow(overlap_e_plot[...,0].imag, cmap="seismic")
-                plt.colorbar()
-                plt.subplot(3,2,3)
-                plt.imshow(overlap_e_plot[...,1].real, cmap="seismic")
-                plt.colorbar()
-                plt.subplot(3,2,4)
-                plt.imshow(overlap_e_plot[...,1].imag, cmap="seismic")
-                plt.colorbar()
-                plt.subplot(3,2,5)
-                plt.imshow(overlap_e_plot[...,2].real, cmap="seismic")
-                plt.colorbar()
-                plt.subplot(3,2,6)
-                plt.imshow(overlap_e_plot[...,2].imag, cmap="seismic")
-                plt.colorbar()
-                plt.savefig(f"debug_overlap_e_port_{idx}_order_{port.order}.png", dpi=300)
-                plt.close()
-                idx += 1
+                # plt.figure(figsize=(10, 12))
+                # overlap_e = port.overlap_e(self.wavelengths[0])
+                # overlap_e_plot = overlap_e[:,:,round(1/2*(overlap_e.shape[2]-1))]
+                # plt.subplot(3,2,1)
+                # plt.imshow(overlap_e_plot[...,0].real, cmap="seismic")
+                # plt.colorbar()
+                # plt.subplot(3,2,2)
+                # plt.imshow(overlap_e_plot[...,0].imag, cmap="seismic")
+                # plt.colorbar()
+                # plt.subplot(3,2,3)
+                # plt.imshow(overlap_e_plot[...,1].real, cmap="seismic")
+                # plt.colorbar()
+                # plt.subplot(3,2,4)
+                # plt.imshow(overlap_e_plot[...,1].imag, cmap="seismic")
+                # plt.colorbar()
+                # plt.subplot(3,2,5)
+                # plt.imshow(overlap_e_plot[...,2].real, cmap="seismic")
+                # plt.colorbar()
+                # plt.subplot(3,2,6)
+                # plt.imshow(overlap_e_plot[...,2].imag, cmap="seismic")
+                # plt.colorbar()
+                # plt.savefig(f"debug_overlap_e_port_{idx}_order_{port.order}.png", dpi=300)
+                # plt.close()
+                # idx += 1
 
     def simulate(self, design_variable):
         fields = [None] * len(self.wavelengths)

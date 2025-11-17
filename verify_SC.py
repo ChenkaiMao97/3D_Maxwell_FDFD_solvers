@@ -5,9 +5,8 @@ from src.utils.utils import *
 from src.utils.plot_field3D import plot_3slices, plot_poynting_radial_scatter
 
 from src.utils.physics import E_to_H_batch as E_to_H
-from src.utils.stratton_chu import strattonChu3D_full_sphere_GPU
-
-# from src.utils.stratton_chu_jax import strattonChu3D_GPU, strattonChu3D_full_sphere_GPU, E_to_H
+# from src.utils.stratton_chu import strattonChu3D_full_sphere_GPU
+from src.utils.stratton_chu_jax import strattonChu3D_full_sphere_GPU, E_to_H
 
 import matplotlib.pyplot as plt
 import yaml
@@ -39,8 +38,8 @@ def main(solution, eps, config):
 
     dxes = ([np.array([config['dL']]*eps.shape[1]), np.array([config['dL']]*eps.shape[2]), np.array([config['dL']]*eps.shape[3])], [np.array([config['dL']]*eps.shape[1]), np.array([config['dL']]*eps.shape[2]), np.array([config['dL']]*eps.shape[3])])    
     dxes = apply_scpml(dxes, config['pmls'], omega, ln_R=ln_R)
-    dxes = [[torch.tensor(i).to(solution.device).to(torch.complex64) for i in dxes[0]], [torch.tensor(i).to(solution.device).to(torch.complex64) for i in dxes[1]]]
-    # dxes = [[jnp.array(i) for i in dxes[0]], [jnp.array(i) for i in dxes[1]]]
+    # dxes = [[torch.tensor(i).to(solution.device).to(torch.complex64) for i in dxes[0]], [torch.tensor(i).to(solution.device).to(torch.complex64) for i in dxes[1]]]
+    dxes = [[jnp.array(i) for i in dxes[0]], [jnp.array(i) for i in dxes[1]]]
 
     if config['plot_farfield']:
         Ex = solution[:,:,:,:,0]
@@ -49,7 +48,9 @@ def main(solution, eps, config):
         # Ex = jnp.array(solution[:,:,:,:,0].detach().cpu().numpy())
         # Ey = jnp.array(solution[:,:,:,:,1].detach().cpu().numpy())
         # Ez = jnp.array(solution[:,:,:,:,2].detach().cpu().numpy())
-        Hx, Hy, Hz = E_to_H(Ex, Ey, Ez, dxes, omega, bloch_vector=None)
+
+        # Hx, Hy, Hz = E_to_H(Ex, Ey, Ez, dxes, omega, bloch_vector=None)
+        Hx, Hy, Hz = E_to_H(Ex[0].numpy(), Ey[0].numpy(), Ez[0].numpy(), dxes, omega, bloch_vector=None)
 
         # plot_3slices(Hx[0,:,:,:].detach().cpu().numpy().real, fname=os.path.join(config['output_path'], 'H_xr.png'), my_cmap=plt.cm.seismic)
         # plot_3slices(Hx[0,:,:,:].detach().cpu().numpy().imag, fname=os.path.join(config['output_path'], 'H_xi.png'), my_cmap=plt.cm.seismic)
@@ -91,40 +92,51 @@ def main(solution, eps, config):
             Rz=20,
             lambda_val=lambda_val,
             eps_background = config['kwargs']['top_medium_eps'],
-            Ex_OBJ=Ex,
-            Ey_OBJ=Ey,
-            Ez_OBJ=Ez,
-            Hx_OBJ=Hx,
-            Hy_OBJ=Hy,
-            Hz_OBJ=Hz,
-            device=solution.device,
-            bs=1
+            Ex_OBJ=jnp.array(Ex.numpy()),
+            Ey_OBJ=jnp.array(Ey.numpy()),
+            Ez_OBJ=jnp.array(Ez.numpy()),
+            Hx_OBJ=jnp.array(Hx[None]),
+            Hy_OBJ=jnp.array(Hy[None]),
+            Hz_OBJ=jnp.array(Hz[None]),
+            N_points_on_sphere = 2000,
+            # device=solution.device,
+            # bs=1
         )
         print("Full sphere case shapes", thetas.shape, phis.shape, u0.shape, far_E.shape, far_H.shape)
+        thetas = torch.from_numpy(np.array(thetas))
+        phis = torch.from_numpy(np.array(phis))
+        u0 = torch.from_numpy(np.array(u0))
+        far_E = torch.from_numpy(np.array(far_E))
+        far_H = torch.from_numpy(np.array(far_H))
         # plot_poynting_radial_scatter(torch.from_numpy(np.array(u0)), torch.from_numpy(np.array(far_E)), torch.from_numpy(np.array(far_H)), fname=os.path.join(config['output_path'], 'poynting_radial_scatter.png'),
         #                      plot_batch_idx=0, normalize=True, point_size=8)
 
+        # Convert spherical → Cartesian
+        x = np.sin(thetas) * np.cos(phis)
+        y = np.sin(thetas) * np.sin(phis)
+        z = np.cos(thetas)
+
         # sanity plot
-        plt.figure(figsize=(18, 10))
-        plt.subplot(2, 3, 1)
-        plt.imshow(far_E[0,0,:,:].abs(), cmap='seismic')
-        plt.colorbar()
-        plt.subplot(2, 3, 2)
-        plt.imshow(far_E[0,1,:,:].abs(), cmap='seismic')
-        plt.colorbar()
-        plt.subplot(2, 3, 3)
-        plt.imshow(far_E[0,2,:,:].abs(), cmap='seismic')
-        plt.colorbar()
-        plt.subplot(2, 3, 4)
-        plt.imshow(far_H[0,0,:,:].abs(), cmap='seismic')
-        plt.colorbar()
-        plt.subplot(2, 3, 5)
-        plt.imshow(far_H[0,1,:,:].abs(), cmap='seismic')
-        plt.colorbar()
-        plt.subplot(2, 3, 6)
-        plt.imshow(far_H[0,2,:,:].abs(), cmap='seismic')
-        plt.colorbar()
-        plt.savefig(os.path.join(config['output_path'], 'far_field_patterns.png'))
+        fig = plt.figure(figsize=(18, 10))
+        ax = plt.subplot(2, 3, 1, projection='3d')
+        sc = ax.scatter(x, y, z, c=far_E[0,0,:].abs(), cmap='seismic', s=10, edgecolor='none')
+        fig.colorbar(sc, ax=ax)
+        ax = plt.subplot(2, 3, 2, projection='3d')
+        sc = ax.scatter(x, y, z, c=far_E[0,1,:].abs(), cmap='seismic', s=10, edgecolor='none')
+        fig.colorbar(sc, ax=ax)
+        ax = plt.subplot(2, 3, 3, projection='3d')
+        sc = ax.scatter(x, y, z, c=far_E[0,2,:].abs(), cmap='seismic', s=10, edgecolor='none')
+        fig.colorbar(sc, ax=ax)
+        ax = plt.subplot(2, 3, 4, projection='3d')
+        sc = ax.scatter(x, y, z, c=far_H[0,0,:].abs(), cmap='seismic', s=10, edgecolor='none')
+        fig.colorbar(sc, ax=ax)
+        ax = plt.subplot(2, 3, 5, projection='3d')
+        sc = ax.scatter(x, y, z, c=far_H[0,1,:].abs(), cmap='seismic', s=10, edgecolor='none')
+        fig.colorbar(sc, ax=ax)
+        ax = plt.subplot(2, 3, 6, projection='3d')
+        sc = ax.scatter(x, y, z, c=far_H[0,2,:].abs(), cmap='seismic', s=10, edgecolor='none')
+        fig.colorbar(sc, ax=ax)
+        plt.savefig(os.path.join(config['output_path'], 'far_field_patterns_sphere.png'))
         plt.close()
 
         # compute analytical farfield expression:
@@ -146,33 +158,30 @@ def main(solution, eps, config):
         far_E_analytical = far_E_fn(thetas, phis, 1e2*lambda_val, 2 * torch.pi / (lambda_val/np.sqrt(config['kwargs']['top_medium_eps'])))
         far_H_analytical = far_H_fn(thetas, phis, 1e2*lambda_val, 2 * torch.pi / (lambda_val/np.sqrt(config['kwargs']['top_medium_eps'])))
         print("far_E_analytical shape:", far_E_analytical.shape, "far_H_analytical shape:", far_H_analytical.shape)
-        plt.figure(figsize=(18, 10))
-        plt.subplot(2, 3, 1)
-        plt.imshow(far_E_analytical[0,:,:].abs(), cmap='seismic')
-        plt.colorbar()
-        plt.subplot(2, 3, 2)
-        plt.imshow(far_E_analytical[1,:,:].abs(), cmap='seismic')
-        plt.colorbar()
-        plt.subplot(2, 3, 3)
-        plt.imshow(far_E_analytical[2,:,:].abs(), cmap='seismic')
-        plt.colorbar()
-        plt.subplot(2, 3, 4)
-        plt.imshow(far_H_analytical[0,:,:].abs(), cmap='seismic')
-        plt.colorbar()
-        plt.subplot(2, 3, 5)
-        plt.imshow(far_H_analytical[1,:,:].abs(), cmap='seismic')
-        plt.colorbar()
-        plt.subplot(2, 3, 6)
-        plt.imshow(far_H_analytical[2,:,:].abs(), cmap='seismic')
-        plt.colorbar()
-        plt.savefig(os.path.join(config['output_path'], 'far_field_patterns_analytical.png'))
+        fig = plt.figure(figsize=(18, 10))
+        ax = plt.subplot(2, 3, 1, projection='3d')
+        sc = ax.scatter(x, y, z, c=far_E_analytical[0,:].abs(), cmap='seismic', s=10, edgecolor='none')
+        fig.colorbar(sc, ax=ax)
+        ax = plt.subplot(2, 3, 2, projection='3d')
+        sc = ax.scatter(x, y, z, c=far_E_analytical[1,:].abs(), cmap='seismic', s=10, edgecolor='none')
+        fig.colorbar(sc, ax=ax)
+        ax = plt.subplot(2, 3, 3, projection='3d')
+        sc = ax.scatter(x, y, z, c=far_E_analytical[2,:].abs(), cmap='seismic', s=10, edgecolor='none')
+        fig.colorbar(sc, ax=ax)
+        ax = plt.subplot(2, 3, 4, projection='3d')
+        sc = ax.scatter(x, y, z, c=far_H_analytical[0,:].abs(), cmap='seismic', s=10, edgecolor='none')
+        fig.colorbar(sc, ax=ax)
+        ax = plt.subplot(2, 3, 5, projection='3d')
+        sc = ax.scatter(x, y, z, c=far_H_analytical[1,:].abs(), cmap='seismic', s=10, edgecolor='none')
+        fig.colorbar(sc, ax=ax)
+        ax = plt.subplot(2, 3, 6, projection='3d')
+        sc = ax.scatter(x, y, z, c=far_H_analytical[2,:].abs(), cmap='seismic', s=10, edgecolor='none')
+        fig.colorbar(sc, ax=ax)
+        plt.savefig(os.path.join(config['output_path'], 'far_field_patterns_analytical_sphere.png'))
         plt.close()
-        
 
         plot_poynting_radial_scatter(u0, far_E, far_H, fname=os.path.join(config['output_path'], 'poynting_radial_scatter.png'),
                              plot_batch_idx=0, normalize=False, point_size=8)
-
-    
 
 if __name__ == "__main__":
     config_path = sys.argv[1]

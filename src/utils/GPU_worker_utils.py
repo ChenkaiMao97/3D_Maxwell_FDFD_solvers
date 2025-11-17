@@ -1,12 +1,15 @@
 import torch
 from src.solvers.NN_solver import NN_solver
+import gin
 
 def solver_worker(device_id, init_kwargs, task_queue, result_queue):
     """
     starts a worker process that listens for tasks from a queue and returns results to a result queue
     """
-    torch.cuda.set_device(device_id)
+    solver_config = init_kwargs.pop('solver_config')
+    gin.parse_config_file(solver_config)
 
+    torch.cuda.set_device(device_id)
     # initialize the solver
     solver = NN_solver(**init_kwargs, gpu_id=device_id)  # your class with model on GPU
     solver.init()

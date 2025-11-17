@@ -260,8 +260,8 @@ def strattonChu3D_full_sphere_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ
     H_back = torch.stack([reduce_border(Hx_OBJ[:, x_back, y_left:y_right, z_bottom:z_top]),
                           reduce_border(Hy_OBJ[:, x_back, y_left:y_right, z_bottom:z_top]),
                           reduce_border(Hz_OBJ[:, x_back, y_left:y_right, z_bottom:z_top])], dim=3).reshape(bs, -1, 3)
-    sanity_plot_field_plane(reduce_border(Ex_OBJ[0, x_back, y_left:y_right, z_bottom:z_top]), reduce_border(Ey_OBJ[0, x_back, y_left:y_right, z_bottom:z_top]), reduce_border(Ez_OBJ[0, x_back, y_left:y_right, z_bottom:z_top]), 'debug_E_back.png')
-    sanity_plot_field_plane(reduce_border(Hx_OBJ[0, x_back, y_left:y_right, z_bottom:z_top]), reduce_border(Hy_OBJ[0, x_back, y_left:y_right, z_bottom:z_top]), reduce_border(Hz_OBJ[0, x_back, y_left:y_right, z_bottom:z_top]), 'debug_H_back.png')
+    # sanity_plot_field_plane(reduce_border(Ex_OBJ[0, x_back, y_left:y_right, z_bottom:z_top]), reduce_border(Ey_OBJ[0, x_back, y_left:y_right, z_bottom:z_top]), reduce_border(Ez_OBJ[0, x_back, y_left:y_right, z_bottom:z_top]), 'debug_E_back.png')
+    # sanity_plot_field_plane(reduce_border(Hx_OBJ[0, x_back, y_left:y_right, z_bottom:z_top]), reduce_border(Hy_OBJ[0, x_back, y_left:y_right, z_bottom:z_top]), reduce_border(Hz_OBJ[0, x_back, y_left:y_right, z_bottom:z_top]), 'debug_H_back.png')
 
     E_front = torch.stack([reduce_border(Ex_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top]),
                            reduce_border(Ey_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top]),
@@ -269,8 +269,8 @@ def strattonChu3D_full_sphere_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ
     H_front = torch.stack([reduce_border(Hx_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top]),
                            reduce_border(Hy_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top]),
                            reduce_border(Hz_OBJ[:, x_front-1, y_left:y_right, z_bottom:z_top])], dim=3).reshape(bs, -1, 3)
-    sanity_plot_field_plane(reduce_border(Ex_OBJ[0, x_front-1, y_left:y_right, z_bottom:z_top]), reduce_border(Ey_OBJ[0, x_front-1, y_left:y_right, z_bottom:z_top]), reduce_border(Ez_OBJ[0, x_front-1, y_left:y_right, z_bottom:z_top]), 'debug_E_front.png')
-    sanity_plot_field_plane(reduce_border(Hx_OBJ[0, x_front-1, y_left:y_right, z_bottom:z_top]), reduce_border(Hy_OBJ[0, x_front-1, y_left:y_right, z_bottom:z_top]), reduce_border(Hz_OBJ[0, x_front-1, y_left:y_right, z_bottom:z_top]), 'debug_H_front.png')
+    # sanity_plot_field_plane(reduce_border(Ex_OBJ[0, x_front-1, y_left:y_right, z_bottom:z_top]), reduce_border(Ey_OBJ[0, x_front-1, y_left:y_right, z_bottom:z_top]), reduce_border(Ez_OBJ[0, x_front-1, y_left:y_right, z_bottom:z_top]), 'debug_E_front.png')
+    # sanity_plot_field_plane(reduce_border(Hx_OBJ[0, x_front-1, y_left:y_right, z_bottom:z_top]), reduce_border(Hy_OBJ[0, x_front-1, y_left:y_right, z_bottom:z_top]), reduce_border(Hz_OBJ[0, x_front-1, y_left:y_right, z_bottom:z_top]), 'debug_H_front.png')
     
     E_left = torch.stack([reduce_border(Ex_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]),
                           reduce_border(Ey_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]),
@@ -278,8 +278,8 @@ def strattonChu3D_full_sphere_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ
     H_left = torch.stack([reduce_border(Hx_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]),
                           reduce_border(Hy_OBJ[:, x_back:x_front, y_left, z_bottom:z_top]),
                           reduce_border(Hz_OBJ[:, x_back:x_front, y_left, z_bottom:z_top])], dim=3).reshape(bs, -1, 3)
-    sanity_plot_field_plane(reduce_border(Ex_OBJ[0, x_back:x_front, y_left, z_bottom:z_top]), reduce_border(Ey_OBJ[0, x_back:x_front, y_left, z_bottom:z_top]), reduce_border(Ez_OBJ[0, x_back:x_front, y_left, z_bottom:z_top]), 'debug_E_left.png')
-    sanity_plot_field_plane(reduce_border(Hx_OBJ[0, x_back:x_front, y_left, z_bottom:z_top]), reduce_border(Hy_OBJ[0, x_back:x_front, y_left, z_bottom:z_top]), reduce_border(Hz_OBJ[0, x_back:x_front, y_left, z_bottom:z_top]), 'debug_H_left.png')
+    # sanity_plot_field_plane(reduce_border(Ex_OBJ[0, x_back:x_front, y_left, z_bottom:z_top]), reduce_border(Ey_OBJ[0, x_back:x_front, y_left, z_bottom:z_top]), reduce_border(Ez_OBJ[0, x_back:x_front, y_left, z_bottom:z_top]), 'debug_E_left.png')
+    # sanity_plot_field_plane(reduce_border(Hx_OBJ[0, x_back:x_front, y_left, z_bottom:z_top]), reduce_border(Hy_OBJ[0, x_back:x_front, y_left, z_bottom:z_top]), reduce_border(Hz_OBJ[0, x_back:x_front, y_left, z_bottom:z_top]), 'debug_H_left.png')
     
     E_right = torch.stack([reduce_border(Ex_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top]),
                            reduce_border(Ey_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top]),
@@ -287,8 +287,8 @@ def strattonChu3D_full_sphere_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ
     H_right = torch.stack([reduce_border(Hx_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top]),
                            reduce_border(Hy_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top]),
                            reduce_border(Hz_OBJ[:, x_back:x_front, y_right-1, z_bottom:z_top])], dim=3).reshape(bs, -1, 3)
-    sanity_plot_field_plane(reduce_border(Ex_OBJ[0, x_back:x_front, y_right-1, z_bottom:z_top]), reduce_border(Ey_OBJ[0, x_back:x_front, y_right-1, z_bottom:z_top]), reduce_border(Ez_OBJ[0, x_back:x_front, y_right-1, z_bottom:z_top]), 'debug_E_right.png')
-    sanity_plot_field_plane(reduce_border(Hx_OBJ[0, x_back:x_front, y_right-1, z_bottom:z_top]), reduce_border(Hy_OBJ[0, x_back:x_front, y_right-1, z_bottom:z_top]), reduce_border(Hz_OBJ[0, x_back:x_front, y_right-1, z_bottom:z_top]), 'debug_H_right.png')
+    # sanity_plot_field_plane(reduce_border(Ex_OBJ[0, x_back:x_front, y_right-1, z_bottom:z_top]), reduce_border(Ey_OBJ[0, x_back:x_front, y_right-1, z_bottom:z_top]), reduce_border(Ez_OBJ[0, x_back:x_front, y_right-1, z_bottom:z_top]), 'debug_E_right.png')
+    # sanity_plot_field_plane(reduce_border(Hx_OBJ[0, x_back:x_front, y_right-1, z_bottom:z_top]), reduce_border(Hy_OBJ[0, x_back:x_front, y_right-1, z_bottom:z_top]), reduce_border(Hz_OBJ[0, x_back:x_front, y_right-1, z_bottom:z_top]), 'debug_H_right.png')
     
     E_bottom = torch.stack([reduce_border(Ex_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]),
                             reduce_border(Ey_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]),
@@ -296,8 +296,8 @@ def strattonChu3D_full_sphere_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ
     H_bottom = torch.stack([reduce_border(Hx_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]),
                             reduce_border(Hy_OBJ[:, x_back:x_front, y_left:y_right, z_bottom]),
                             reduce_border(Hz_OBJ[:, x_back:x_front, y_left:y_right, z_bottom])], dim=3).reshape(bs, -1, 3)
-    sanity_plot_field_plane(reduce_border(Ex_OBJ[0, x_back:x_front, y_left:y_right, z_bottom]), reduce_border(Ey_OBJ[0, x_back:x_front, y_left:y_right, z_bottom]), reduce_border(Ez_OBJ[0, x_back:x_front, y_left:y_right, z_bottom]), 'debug_E_bottom.png')
-    sanity_plot_field_plane(reduce_border(Hx_OBJ[0, x_back:x_front, y_left:y_right, z_bottom]), reduce_border(Hy_OBJ[0, x_back:x_front, y_left:y_right, z_bottom]), reduce_border(Hz_OBJ[0, x_back:x_front, y_left:y_right, z_bottom]), 'debug_H_bottom.png')
+    # sanity_plot_field_plane(reduce_border(Ex_OBJ[0, x_back:x_front, y_left:y_right, z_bottom]), reduce_border(Ey_OBJ[0, x_back:x_front, y_left:y_right, z_bottom]), reduce_border(Ez_OBJ[0, x_back:x_front, y_left:y_right, z_bottom]), 'debug_E_bottom.png')
+    # sanity_plot_field_plane(reduce_border(Hx_OBJ[0, x_back:x_front, y_left:y_right, z_bottom]), reduce_border(Hy_OBJ[0, x_back:x_front, y_left:y_right, z_bottom]), reduce_border(Hz_OBJ[0, x_back:x_front, y_left:y_right, z_bottom]), 'debug_H_bottom.png')
     
     E_top = torch.stack([reduce_border(Ex_OBJ[:, x_back:x_front, y_left:y_right, z_top-1]),
                          reduce_border(Ey_OBJ[:, x_back:x_front, y_left:y_right, z_top-1]),
@@ -305,8 +305,8 @@ def strattonChu3D_full_sphere_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ
     H_top = torch.stack([reduce_border(Hx_OBJ[:, x_back:x_front, y_left:y_right, z_top-1]),
                          reduce_border(Hy_OBJ[:, x_back:x_front, y_left:y_right, z_top-1]),
                          reduce_border(Hz_OBJ[:, x_back:x_front, y_left:y_right, z_top-1])], dim=3).reshape(bs, -1, 3)
-    sanity_plot_field_plane(reduce_border(Ex_OBJ[0, x_back:x_front, y_left:y_right, z_top-1]), reduce_border(Ey_OBJ[0, x_back:x_front, y_left:y_right, z_top-1]), reduce_border(Ez_OBJ[0, x_back:x_front, y_left:y_right, z_top-1]), 'debug_E_top.png')
-    sanity_plot_field_plane(reduce_border(Hx_OBJ[0, x_back:x_front, y_left:y_right, z_top-1]), reduce_border(Hy_OBJ[0, x_back:x_front, y_left:y_right, z_top-1]), reduce_border(Hz_OBJ[0, x_back:x_front, y_left:y_right, z_top-1]), 'debug_H_top.png')
+    # sanity_plot_field_plane(reduce_border(Ex_OBJ[0, x_back:x_front, y_left:y_right, z_top-1]), reduce_border(Ey_OBJ[0, x_back:x_front, y_left:y_right, z_top-1]), reduce_border(Ez_OBJ[0, x_back:x_front, y_left:y_right, z_top-1]), 'debug_E_top.png')
+    # sanity_plot_field_plane(reduce_border(Hx_OBJ[0, x_back:x_front, y_left:y_right, z_top-1]), reduce_border(Hy_OBJ[0, x_back:x_front, y_left:y_right, z_top-1]), reduce_border(Hz_OBJ[0, x_back:x_front, y_left:y_right, z_top-1]), 'debug_H_top.png')
     
     # assemble the variables
     n = torch.cat([n_back, n_front, n_left, n_right, n_bottom, n_top], dim=0)

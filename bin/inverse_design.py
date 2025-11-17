@@ -35,15 +35,15 @@ def run_inverse_design(
     design_scheme_kwargs = {}
     if design_challenge == 'integrated_photonics':
         design_scheme_kwargs = {
-                "challenge": get_integrated_photonics_challenge(key=key)
+                "challenge": get_integrated_photonics_challenge(key=key, solver_config=config.solver_config)
             }
     elif design_challenge == 'superpixel':
         design_scheme_kwargs = {
-                "challenge": get_superpixel_challenge(key=key)
+                "challenge": get_superpixel_challenge(key=key, solver_config=config.solver_config)
             }
     elif design_challenge == 'coupling':
         design_scheme_kwargs = {
-                "challenge": get_coupling_challenge(key=key)
+                "challenge": get_coupling_challenge(key=key, solver_config=config.solver_config)
             }
     designer = Designer(log_dir=config.log_dir, **design_scheme_kwargs)
     # build the design

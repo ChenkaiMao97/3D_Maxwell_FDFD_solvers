@@ -59,12 +59,12 @@ jupyter notebook --port 8888 --no-browsers
 5. Inverse design:
 Integrated Photonics -- waveguide bend
 ```bash
-python -m bin.launch_job --pipeline="inverse_design" --solver-config="bin/configs/solvers/aperiodic_large_model.gin" --design-config="bin/configs/designs/waveguide_bend.gin" --experiment-name="invde_waveguide_bend"
+XLA_PYTHON_CLIENT_PREALLOCATE=false python -m bin.launch_job --pipeline="inverse_design" --solver-config="bin/configs/solvers/aperiodic_large_model.gin" --design-config="bin/configs/designs/waveguide_bend.gin" --experiment-name="invde_waveguide_bend"
 ```
 
 Superpixel deflector
 ```bash
-python -m bin.launch_job --pipeline="inverse_design" --solver-config="bin/configs/solvers/aperiodic_large_model.gin" --design-config="bin/configs/designs/superpixel.gin" --experiment-name="invde_superpixel"
+XLA_PYTHON_CLIENT_PREALLOCATE=false python -m bin.launch_job --pipeline="inverse_design" --solver-config="bin/configs/solvers/aperiodic_large_model.gin" --design-config="bin/configs/designs/superpixel.gin" --experiment-name="invde_superpixel"
 ```
 
 6. For spins, it works by first starting a local maxwells-b docker server, which accepts simulations. To check if the maxwells-b docker is running, run "docker container ls". If it is not running, you can start it by running this bash script: "/home/chenkaim/scripts/spins/maxwell-b/run_docker"

@@ -520,51 +520,37 @@ def plot_poynting_radial_scatter(u0, E, H, fname=None, plot_batch_idx=0, normali
         point_size : int. Scatter point size.
     """
     # ---- unify shapes ----
-    if u0.dim() == 4:       # (1,3,Nt,Np)
+    if u0.dim() == 3: # (bs,3,N_points_on_sphere)
         u0 = u0[0]
-    if E.dim() == 3:        # (3,Nt,Np) -> add batch
-        E = E.unsqueeze(0)
-    if H.dim() == 3:
-        H = H.unsqueeze(0)
-
-    # pick batch and move to CPU numpy
-    Eb = E[plot_batch_idx]               # (3,Nt,Np), complex
-    Hb = H[plot_batch_idx]               # (3,Nt,Np), complex
-    print(f"Eb.shape: {Eb.shape}, Hb.shape: {Hb.shape}")
-
-    # (Nt,Np,3)
-    E3 = Eb.permute(1, 2, 0)
-    H3 = Hb.permute(1, 2, 0)
-    U3 = u0.permute(1, 2, 0)             # r̂
+    if E.dim() == 3: # (bs,3,N_points_on_sphere)
+        E = E[0]
+    if H.dim() == 3: # (bs,3,N_points_on_sphere)
+        H = H[0]   
 
     # S = 0.5 * Re(E × H*)
-    S3 = 0.5 * torch.real(torch.linalg.cross(E3, torch.conj(H3), dim=-1))  # (Nt,Np,3), real
+    S = 0.5 * torch.real(torch.linalg.cross(E, torch.conj(H), dim=0))  # (bs,3,N_points_on_sphere), real
 
     # radial component S_r = S · r̂
-    Sr = torch.sum(S3 * U3, dim=-1)      # (Nt,Np), real
-    val = torch.abs(Sr)                  # |Re(S_r)|
+    Sr = torch.sum(S * u0, dim=0)      # (3,N_points_on_sphere), real
+    val = Sr # Re(S_r)
+    assert (val>0).all(), "val should be positive"
 
-    # radius
-    if normalize:
-        vmax = torch.clamp(val.max(), min=1e-12)
-        r = val / vmax
-    else:
-        r = val
+    r = val
 
     # Cartesian coords: r * r̂
-    x = r * U3[..., 0]
-    y = r * U3[..., 1]
-    z = r * U3[..., 2]
+    x = r * u0[0]
+    y = r * u0[1]
+    z = r * u0[2]
 
     # to numpy
-    x, y, z, c = (t.detach().cpu().numpy().reshape(-1) for t in (x, y, z, val))
+    x, y, z, c = (t.detach().cpu().numpy() for t in (x, y, z, val))
 
     # plot
     fig = plt.figure(figsize=(9, 9))
     ax = fig.add_subplot(111, projection='3d')
     sc = ax.scatter(x, y, z, c=c, s=point_size, cmap='viridis')
 
-    R = 1.05 * (np.max(r.detach().cpu().numpy()) if normalize else np.max(np.abs([x, y, z])))
+    R = 1.05 * np.max(np.abs([x, y, z]))
     R = 1.0 if not np.isfinite(R) or R == 0 else R
     ax.set_xlim(-R, R); ax.set_ylim(-R, R); ax.set_zlim(-R, R)
     ax.set_box_aspect([1, 1, 1])
@@ -580,7 +566,7 @@ def plot_poynting_radial_scatter(u0, E, H, fname=None, plot_batch_idx=0, normali
     else:
         return fig
 
-def plot_Sr_subplot(u0, Sr, ax, normalize=True, point_size=8):
+def plot_Sr_subplot(u0, Sr, ax, point_size=8):
     """
     Scatter plot on the sphere for the radial component of the Poynting vector.
     Radius ∝ |Re(S_r)| where S = 0.5 * Re(E × H*), r̂ = u0.
@@ -593,39 +579,151 @@ def plot_Sr_subplot(u0, Sr, ax, normalize=True, point_size=8):
         point_size : int. Scatter point size.
     """
     # ---- unify shapes ----
-    assert len(u0.shape) == 3
-    assert len(Sr.shape) == 2
-    U3 = u0.permute(1, 2, 0) # (Nt,Np,3) 
+    assert len(u0.shape) == 2
+    assert len(Sr.shape) == 1
 
-    val = torch.abs(Sr) 
-
+    val = Sr 
     # radius
-    if normalize:
-        vmax = torch.clamp(val.max(), min=1e-12)
-        r = val / vmax
-    else:
-        r = val
+    r = val
 
-    # Cartesian coords: r * r̂
-    x = r * U3[..., 0]
-    y = r * U3[..., 1]
-    z = r * U3[..., 2]
+    x = r * u0[0]
+    y = r * u0[1]
+    z = r * u0[2]
     # to numpy
-    x, y, z, c = (t.detach().cpu().numpy().reshape(-1) for t in (x, y, z, val))
+    x, y, z, c = (t for t in (x, y, z, val))
 
     # plot
     sc = ax.scatter(x, y, z, c=c, s=point_size, cmap='viridis')
 
-    R = 1.05 * (np.max(r.detach().cpu().numpy()) if normalize else np.max(np.abs([x, y, z])))
+    R = 1.05 * np.max(np.abs([x, y, z]))
     R = 1.0 if not np.isfinite(R) or R == 0 else R
     ax.set_xlim(-R, R); ax.set_ylim(-R, R); ax.set_zlim(-R, R)
     ax.set_box_aspect([1, 1, 1])
     ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z')
-    cb = ax.figure.colorbar(mappable, ax=ax, shrink=0.5, aspect=5)
-    cb.set_label(r'$|\,\mathrm{Re}(S_r)\,|$')
+    # plt.colorbar(shrink=0.5, aspect=5)
+    # cb.set_label(r'$|\,\mathrm{Re}(S_r)\,|$')
     # ax.set_title(r'Radial Poynting Component: $|\,\mathrm{Re}(S_r)\,|$ (radius ∝ value)')
     
-    return 
+    return sc
+
+# def plot_poynting_radial_scatter_old(u0, E, H, fname=None, plot_batch_idx=0, normalize=True, point_size=8):
+#     """
+#     Scatter plot on the sphere for the radial component of the Poynting vector.
+#     Radius ∝ |Re(S_r)| where S = 0.5 * Re(E × H*), r̂ = u0.
+
+#     Args:
+#         u0 : torch.Tensor, shape (3, Nt, Np) or (1,3,Nt,Np). Unit vectors on the sphere.
+#         E  : torch.Tensor, shape (B,3,Nt,Np) or (3,Nt,Np). Complex far-field E.
+#         H  : torch.Tensor, shape (B,3,Nt,Np) or (3,Nt,Np). Complex far-field H.
+#         fname : str. Output image path.
+#         plot_batch_idx : int. Which batch to plot if E/H have batch dim.
+#         normalize : bool. If True, radius is normalized to [0,1].
+#         point_size : int. Scatter point size.
+#     """
+#     # ---- unify shapes ----
+#     if u0.dim() == 4:       # (1,3,Nt,Np)
+#         u0 = u0[0]
+#     if E.dim() == 3:        # (3,Nt,Np) -> add batch
+#         E = E.unsqueeze(0)
+#     if H.dim() == 3:
+#         H = H.unsqueeze(0)
+
+#     # pick batch and move to CPU numpy
+#     Eb = E[plot_batch_idx]               # (3,Nt,Np), complex
+#     Hb = H[plot_batch_idx]               # (3,Nt,Np), complex
+#     print(f"Eb.shape: {Eb.shape}, Hb.shape: {Hb.shape}")
+
+#     # (Nt,Np,3)
+#     E3 = Eb.permute(1, 2, 0)
+#     H3 = Hb.permute(1, 2, 0)
+#     U3 = u0.permute(1, 2, 0)             # r̂
+
+#     # S = 0.5 * Re(E × H*)
+#     S3 = 0.5 * torch.real(torch.linalg.cross(E3, torch.conj(H3), dim=-1))  # (Nt,Np,3), real
+
+#     # radial component S_r = S · r̂
+#     Sr = torch.sum(S3 * U3, dim=-1)      # (Nt,Np), real
+#     # val = torch.abs(Sr)                  # |Re(S_r)|
+#     val = Sr
+#     assert (val>0).all(), "val should be positive"
+
+#     # radius
+#     if normalize:
+#         vmax = torch.clamp(val.max(), min=1e-12)
+#         r = val / vmax
+#     else:
+#         r = val
+
+#     # Cartesian coords: r * r̂
+#     x = r * U3[..., 0]
+#     y = r * U3[..., 1]
+#     z = r * U3[..., 2]
+
+#     # to numpy
+#     x, y, z, c = (t.detach().cpu().numpy().reshape(-1) for t in (x, y, z, val))
+
+#     # plot
+#     fig = plt.figure(figsize=(9, 9))
+#     ax = fig.add_subplot(111, projection='3d')
+#     sc = ax.scatter(x, y, z, c=c, s=point_size, cmap='viridis')
+
+#     R = 1.05 * (np.max(r.detach().cpu().numpy()) if normalize else np.max(np.abs([x, y, z])))
+#     R = 1.0 if not np.isfinite(R) or R == 0 else R
+#     ax.set_xlim(-R, R); ax.set_ylim(-R, R); ax.set_zlim(-R, R)
+#     ax.set_box_aspect([1, 1, 1])
+#     ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z')
+#     cb = fig.colorbar(sc, ax=ax, shrink=0.6, aspect=18, pad=0.02)
+#     cb.set_label(r'$|\,\mathrm{Re}(S_r)\,|$')
+#     ax.set_title(r'Radial Poynting Component: $|\,\mathrm{Re}(S_r)\,|$ (radius ∝ value)')
+
+#     if fname:
+#         plt.tight_layout()
+#         plt.savefig(fname, dpi=120, bbox_inches='tight')
+#         plt.close()
+#     else:
+#         return fig
+
+# def plot_Sr_subplot_old(u0, Sr, ax, point_size=8):
+#     """
+#     Scatter plot on the sphere for the radial component of the Poynting vector.
+#     Radius ∝ |Re(S_r)| where S = 0.5 * Re(E × H*), r̂ = u0.
+
+#     Args:
+#         u0 : torch.Tensor, shape (3, Nt, Np) or (1,3,Nt,Np). Unit vectors on the sphere.
+#         Sr : torch.Tensor, shape (Nt,Np). Radial component of the Poynting vector.
+#         ax : matplotlib.axes.Axes. Subplot to plot on.
+#         normalize : bool. If True, radius is normalized to [0,1].
+#         point_size : int. Scatter point size.
+#     """
+#     # ---- unify shapes ----
+#     assert len(u0.shape) == 3
+#     assert len(Sr.shape) == 2
+#     U3 = u0.transpose(1, 2, 0) # (Nt,Np,3) 
+
+#     val = np.abs(Sr) 
+
+#     # radius
+#     r = val
+
+#     x = r * U3[..., 0]
+#     y = r * U3[..., 1]
+#     z = r * U3[..., 2]
+#     # to numpy
+#     x, y, z, c = (t.reshape(-1) for t in (x, y, z, val))
+
+#     # plot
+#     sc = ax.scatter(x, y, z, c=c, s=point_size, cmap='viridis')
+
+#     R = 1.05 * np.max(np.abs([x, y, z]))
+#     R = 1.0 if not np.isfinite(R) or R == 0 else R
+#     ax.set_xlim(-R, R); ax.set_ylim(-R, R); ax.set_zlim(-R, R)
+#     ax.set_box_aspect([1, 1, 1])
+#     ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z')
+#     # plt.colorbar(shrink=0.5, aspect=5)
+#     # cb.set_label(r'$|\,\mathrm{Re}(S_r)\,|$')
+#     # ax.set_title(r'Radial Poynting Component: $|\,\mathrm{Re}(S_r)\,|$ (radius ∝ value)')
+    
+#     return 
 
 # plot helper for 2d test cases:
 def plot_2d(data, fname=None, stride = 1, my_cmap = plt.cm.binary, cm_zero_center=True, title=None):

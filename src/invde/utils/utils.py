@@ -22,6 +22,7 @@ design_schemes = ["integrated_photonics", 'metasurface', 'coupling']
 @gin.configurable
 def get_integrated_photonics_challenge(
     key,
+    solver_config,
     port_pml_offset,
     input_monitor_offset,
     wg_eps,
@@ -54,7 +55,8 @@ def get_integrated_photonics_challenge(
 
     return IntegratedPhotonicsChallenge(
         problem_constructor=constructor,
-        target_s_params=target_s_params
+        target_s_params=target_s_params,
+        solver_config=solver_config
     )
 
 @gin.configurable
@@ -63,11 +65,13 @@ def get_superpixel_challenge(
     source_substrate_spacing, 
     source_pml_spacing,
     target_angles,
-    target_angle_ranges,
+    target_angle_radius,
+    farfield_points,
     source_angles,
     source_pol,
     SC_pml_space,
     global_frame_coordinate,
+    solver_config,
 ):
     spec = SuperpixelSpec(
         source_substrate_spacing = source_substrate_spacing,
@@ -80,8 +84,10 @@ def get_superpixel_challenge(
     return SuperpixelChallenge(
         problem_constructor=constructor,
         target_angles=target_angles,
-        target_angle_ranges=target_angle_ranges,
-        SC_pml_space=SC_pml_space
+        target_angle_radius=target_angle_radius,
+        farfield_points=farfield_points,
+        SC_pml_space=SC_pml_space,
+        solver_config=solver_config
     )
 
 def get_coupling_challenge(key):

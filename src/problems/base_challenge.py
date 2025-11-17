@@ -36,6 +36,7 @@ class BaseChallenge:
         problem_constructor: Any,  # pyre-ignore[2]
         density_initializer = _get_default_initializer(),
         _backend: str = 'NN',
+        solver_config: str = None,
     ):
         """Initializes the challenge.
 
@@ -73,7 +74,7 @@ class BaseChallenge:
         # Construct the jax.grad compatible simulation function for the model.
         self._backend = _backend
         if _backend == 'NN':
-            self.problem.init_GPU_workers()
+            self.problem.init_GPU_workers(solver_config=solver_config)
         self._jax_sim_fn = self.construct_jax_sim_fn(self.problem)
 
     def construct_jax_sim_fn(self,

@@ -223,6 +223,39 @@ class Designer:
 
                         my_grad["density"].density += constraint_weight * grad_loss_mean / grad_const_s_mean * solid_g
                         my_grad["density"].density += constraint_weight * grad_loss_mean / grad_const_v_mean * void_g
+                    
+                    # sanity check for gradient using finite difference:
+                    # print("sanity check for gradient using finite difference:")
+                    # epsilon = 1e-3
+                    # new_latent = copy.deepcopy(self.state.latents)
+
+                    # key = jax.random.PRNGKey(0)
+                    # new_key, subkey = jax.random.split(key)
+                    # v = jax.random.normal(subkey, shape=new_latent["density"].density.shape, dtype=new_latent["density"].density.dtype)
+                    # dx = epsilon * v
+
+                    # mask1 = jnp.where(new_latent["density"].density + dx < 1, 1, 0)
+                    # mask2 = jnp.where(new_latent["density"].density - dx > 0, 1, 0)
+                    # dx = dx * mask1 * mask2
+                    # v = v * mask1 * mask2
+
+                    # new_latent["density"].density = new_latent["density"].density + dx
+                    # new_loss1, (response, aux, params) = loss_fn(
+                    #     latents=new_latent,
+                    #     challenge=self.challenge,
+                    #     latent_to_param_fn=self.latent_to_params,
+                    #     state=self.state
+                    # )
+                    # new_latent["density"].density = new_latent["density"].density - 2*dx
+                    # new_loss2, (response, aux, params) = loss_fn(
+                    #     latents=new_latent,
+                    #     challenge=self.challenge,
+                    #     latent_to_param_fn=self.latent_to_params,
+                    #     state=self.state
+                    # )
+                    # finite_difference_grad = (new_loss1 - new_loss2) / (2 * epsilon)
+                    # computed_grad = jnp.sum(v * my_grad["density"].density)
+                    # print(f'finite difference grad: {finite_difference_grad:.3f}, computed grad: {computed_grad:.3f}')
 
                     updates, opt_state = opt.update(my_grad, opt_state)
                     self.state.latents = optax.apply_updates(self.state.latents, updates)
@@ -412,21 +445,41 @@ class Designer:
     
     def log_step_superpixel(self, my_grad, params, response, aux):
         # log step
-        print("scattering efficiency: ", aux)
         if self.log_dir is not None:
             os.makedirs(self.log_dir, exist_ok=True)
 
             num_wls = len(self.challenge._wavelengths)
-            plt.figure(figsize=((num_wls+1)*4, 4))
-            plt.subplot(1,num_wls+1,1)
+            fig = plt.figure(figsize=((2*num_wls+3)*4, 4))
+            plt.subplot(1,2*num_wls+3,1)
             plt.imshow(onp.rot90(self.state.latents["density"].density), cmap="binary")
             plt.title("latent")
             plt.colorbar()
-            for wl, data in aux.items():
-                u0, Sr = data
-                ax = plt.subplot(1,num_wls+1,wl+2, projection='3d')
-                plot_Sr_subplot(u0, Sr, ax=ax, normalize=True, point_size=8)
+            plt.subplot(1,2*num_wls+3,2)
+            plt.imshow(onp.rot90(params["density"].density), cmap="binary")
+            plt.title(f"params\nstep: {self.state.step}")
+            plt.colorbar()
+            plt.subplot(1,2*num_wls+3,3)
+            vm = jnp.max(jnp.abs(my_grad["density"].density))
+            plt.imshow(onp.rot90(my_grad["density"].density), cmap="seismic", vmin=-vm, vmax=vm)
+            plt.title("grad")
+            plt.colorbar()
+
+            for idx, (wl, data) in enumerate(aux.items()):
+                u0, Sr, Ex, thetas, phis = data
+                # print("total Sr: ", onp.sum(onp.array(Sr)))
+                # assert (Sr>0).all(), "Sr should be positive"
+                # max_idx = jnp.argmax(Sr)
+                # max_th = thetas[max_idx] * 180 / jnp.pi
+                # max_phi = phis[max_idx] * 180 / jnp.pi
+
+                ax = plt.subplot(1,2*num_wls+3,4+2*idx, projection='3d')
+                # sc = plot_Sr_subplot(onp.array(u0), onp.array(Sr), ax=ax, point_size=8)
+                # fig.colorbar(sc, ax=ax)
                 plt.title(f"Sr for wl {wl}")
+                ax = plt.subplot(1,2*num_wls+3,4+2*idx+1)
+                plt.imshow(onp.rot90(Ex), cmap="seismic")
+                plt.colorbar()
+                # plt.title(f"Ex for wl {wl}\nmax_th: {max_th:.2f}, max_phi: {max_phi:.2f}")
 
             plt.tight_layout()
             plt.savefig(os.path.join(self.log_dir, f"step_{self.state.step}.png"))
@@ -533,7 +586,7 @@ class Designer:
     #                 f["params"] = params["density"].density
     #                 f["grad"] = my_grad["density"].density
     #                 f['ez'] = aux["fields_ez"]
-    
+
     def log_final_loss_and_response(self, response, aux, params):
         if self.log_fn_type == "integrated_photonics":
             self.log_final_integrated_photonics(response, aux, params)
@@ -542,7 +595,6 @@ class Designer:
         else:
             raise ValueError(f"Invalid log_fn_type: {self.log_fn_type}")
 
-    
     def log_final_integrated_photonics(self, response, aux, params):
         # log the final loss and response:
         os.makedirs(self.log_dir, exist_ok=True)
@@ -587,6 +639,51 @@ class Designer:
         onp.save(os.path.join(self.log_dir, f"final_latent.npy"), self.state.latents["density"].density)
         onp.save(os.path.join(self.log_dir, f"final_params.npy"), params["density"].density)
         onp.save(os.path.join(self.log_dir, f"final_fields.npy"), jnp.stack(response))
+
+    def log_final_superpixel(self, response, aux, params):
+        # log step
+        os.makedirs(self.log_dir, exist_ok=True)
+
+        num_wls = len(self.challenge._wavelengths)
+        plt.figure(figsize=((2*num_wls+3)*4, 4))
+        plt.subplot(1,2*num_wls+3,1)
+        plt.imshow(onp.rot90(self.state.latents["density"].density), cmap="binary")
+        plt.title("latent")
+        plt.colorbar()
+        plt.subplot(1,2*num_wls+3,2)
+        plt.imshow(onp.rot90(params["density"].density), cmap="binary")
+        plt.title(f"params\nstep: {self.state.step}")
+        plt.colorbar()
+        plt.subplot(1,2*num_wls+3,3)
+        vm = jnp.max(jnp.abs(my_grad["density"].density))
+        plt.imshow(onp.rot90(my_grad["density"].density), cmap="seismic", vmin=-vm, vmax=vm)
+        plt.title("grad")
+        plt.colorbar()
+
+        for idx, (wl, data) in enumerate(aux.items()):
+            u0, Sr, Ex, theta_range, phi_range = data
+            max_th_idx, max_phi_idx = jnp.unravel_index(jnp.argmax(jnp.abs(Sr)), Sr.shape)
+
+            max_th = theta_range[max_th_idx] * 180 / jnp.pi
+            max_phi = phi_range[max_phi_idx] * 180 / jnp.pi
+
+            ax = plt.subplot(1,2*num_wls+3,4+2*idx, projection='3d')
+            plot_Sr_subplot(onp.array(u0), onp.array(Sr), ax=ax, point_size=8)
+            plt.title(f"Sr for wl {wl}")
+            ax = plt.subplot(1,2*num_wls+3,4+2*idx+1)
+            plt.imshow(onp.rot90(Ex), cmap="seismic")
+            plt.colorbar()
+            plt.title(f"Ex for wl {wl}\nmax_th: {max_th:.2f}, max_phi: {max_phi:.2f}")
+
+        plt.tight_layout()
+        plt.savefig(os.path.join(self.log_dir, f"final_step.png"))
+        plt.close()
+
+        eps = self.challenge.problem.epsilon_r(params["density"].density)
+        onp.save(os.path.join(self.log_dir, f"final_eps.npy"), eps)
+        onp.save(os.path.join(self.log_dir, f"final_latent.npy"), self.state.latents["density"].density)
+        onp.save(os.path.join(self.log_dir, f"final_params.npy"), params["density"].density)
+        onp.save(os.path.join(self.log_dir, f"final_fields.npy"), onp.stack(response))
     
     # def log_final_gc(self, response, aux, params):
     #     # log the final loss and response:

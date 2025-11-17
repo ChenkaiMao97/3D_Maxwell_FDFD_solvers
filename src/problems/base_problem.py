@@ -85,7 +85,7 @@ class BaseProblem:
         self.last_forward_E = {}
         self.last_adjoint_E = {}
     
-    def init_GPU_workers(self):
+    def init_GPU_workers(self, solver_config):
         # init solvers on each GPU
         gpu_ids = list(range(len(self.wavelengths)))
         self.num_gpus = len(gpu_ids)
@@ -105,6 +105,7 @@ class BaseProblem:
                 'pmls': self.pmls,
                 'save_intermediate': False,
                 'output_dir': None,
+                'solver_config': solver_config
             }
             # p = mp.Process(target=solver_worker, args=(device_id, init_kwargs, self.task_queues[device_id], self.result_queue, self.init_queues[device_id]))
             p = mp.Process(target=solver_worker, args=(device_id, init_kwargs, self.task_queues[device_id], self.result_queue))

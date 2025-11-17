@@ -1,12 +1,16 @@
+import os
 import functools
 import jax.tree_util
 import jax.numpy as jnp
 import numpy as np
+from scipy.spatial import cKDTree
+import math
 import torch
 from typing import Sequence, Union, Callable, Optional, Tuple, Any, Dict
 from dataclasses import dataclass
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import gc
 
 import concurrent.futures
 
@@ -15,12 +19,51 @@ from src.problems.base_challenge import BaseChallenge
 
 from src.utils.physics import residue_E
 from src.utils.utils import resolve, printc, c2r, r2c
-from src.utils.stratton_chu_jax import strattonChu3D_full_sphere_GPU, E_to_H
+from src.utils.stratton_chu_jax import strattonChu3D_full_sphere_GPU, E_to_H, fibonacci_sphere
 from src.utils.PML_utils import apply_scpml
+from src.utils.plot_field3D import plot_3slices
 
 import gin
 
 _DENSITY_LABEL = 'density'
+
+def find_indices_in_range(sorted_data, low, high):
+    begin, end = None, None
+    for idx, i in enumerate(sorted_data):
+        if begin is None and i >= low:
+            begin = idx
+        if begin is not None and i > high:
+            end = idx
+            break
+    assert begin is not None and end is not None, f"begin and end indices not found, check again for range: data: {sorted_data}, low: {low}, high: {high}"
+    if begin == end:
+        print("warning: target angle range is too small, incrementing end")
+        end += 1
+    return begin, end
+
+def sph_to_cart(theta, phi):
+    sin_th = np.sin(theta)
+    return np.stack([
+        sin_th * np.cos(phi),
+        sin_th * np.sin(phi),
+        np.cos(theta)
+    ], axis=-1)
+
+class SphereGridKD:
+    def __init__(self, u0):
+        assert u0.shape[1] == 3, "u0 should be a 3D tensor"
+        self.u0 = u0
+        self.tree = cKDTree(u0)
+
+    def query_cone(self, theta_q, phi_q, angle_radius):
+        x, y, z = sph_to_cart(
+            np.array(theta_q),
+            np.array(phi_q)
+        )
+        q = np.array([x, y, z])
+        r = 2 * np.sin(angle_radius)
+        idx = self.tree.query_ball_point(q, r)
+        return np.array(idx)
 
 @gin.configurable
 class SuperpixelSpec:
@@ -54,6 +97,7 @@ class SuperpixelProblem(BaseProblem):
     def __init__(self, *args, spec: SuperpixelSpec, **kwargs):
         super().__init__(*args, **kwargs)
         self.spec = spec
+        self.residual_fn = residue_E
 
     def init(self, shape_only=False):
         self._waveguides = []
@@ -77,9 +121,11 @@ class SuperpixelProblem(BaseProblem):
             sx = self.source_xs[1]-self.source_xs[0]
             sy = self.source_ys[1]-self.source_ys[0]
             sz = self.source_zs[1]-self.source_zs[0]
-            source = torch.zeros((sx, sy, sz, 3), dtype=torch.complex128)
+            source = torch.zeros((sx, sy, sz, 3), dtype=torch.complex64)
 
             theta, phi = source_angles
+            theta = theta * np.pi / 180
+            phi = phi * np.pi / 180
             kx = 2*np.pi * self.eps_substrate**.5 / wl * np.sin(theta) * np.cos(phi)
             ky = 2*np.pi * self.eps_substrate**.5 / wl * np.sin(theta) * np.sin(phi)
             kz = 2*np.pi * self.eps_substrate**.5 / wl * np.cos(theta)
@@ -90,7 +136,7 @@ class SuperpixelProblem(BaseProblem):
             
             x, y = torch.meshgrid(x,y,indexing='ij')
             map1 = torch.exp(-1j*(kx*x+ky*y+kz*z[1]))
-            map2 = -torch.exp(-1j*(kx*x+ky*y+kz*z[0]))
+            map2 = -torch.exp(-1j*(kx*x+ky*y+kz*z[1])-1j*kz*self.dL)
                 
             if source_pol == 'x':
                 source[:,:,1,0] = map1
@@ -119,9 +165,15 @@ class SuperpixelProblem(BaseProblem):
 
         def _simulate(wavelength):
             epsilon_r = self.epsilon_r(design_variable)
-            source = np.zeros(epsilon_r.shape + (3,), dtype=np.complex128)
+            source = np.zeros(epsilon_r.shape + (3,), dtype=np.complex64)
             source[self.source_xs[0]:self.source_xs[1], self.source_ys[0]:self.source_ys[1], self.source_zs[0]:self.source_zs[1]] = self.sources[wavelength].numpy()
             E = self.compute_FDFD(wavelength, epsilon_r, source, 'forward')
+
+            # debug plot:
+            # plot_3slices(epsilon_r, cm_zero_center=False, fname=os.path.join('epsilon_r.png'))
+            # plot_3slices(E[...,0].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('forward_Ex.png'))
+            # plot_3slices(E[...,1].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('forward_Ey.png'))
+            # plot_3slices(E[...,2].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('forward_Ez.png'))
             return wavelength, E
 
         tasks = []
@@ -143,15 +195,22 @@ class SuperpixelProblem(BaseProblem):
 
         def _adjoint_simulate(wavelength, forward_E, grad_E):
             source_torch = torch.conj(grad_E).to(torch.complex64).resolve_conj()  # adjoint source
+            # source_torch = grad_E.to(torch.complex64)
+
+            # debug plot:
+            # print("source_torch shape: ", source_torch.shape)
+            # plot_3slices(source_torch[...,0].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('adj_sourcex.png'))
 
             adjoint_E = self.compute_FDFD(wavelength, epsilon_r, source_torch, 'adjoint')
+
+            # plot_3slices(adjoint_E[...,0].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('adjoint_Ex.png'))
 
             design_variable_torch = design_variable.clone().detach().requires_grad_(True)
             epsilon_for_residual = self.make_torch_epsilon_r(design_variable_torch)[None]
             forward_E = c2r(forward_E[None].detach())
 
             # forward_source = self._ports[self.excite_port_idx].source(wavelength)
-            forward_source = torch.zeros(epsilon_r.shape + (3,), dtype=torch.complex128)
+            forward_source = torch.zeros(epsilon_r.shape + (3,), dtype=torch.complex64)
             forward_source[self.source_xs[0]:self.source_xs[1], self.source_ys[0]:self.source_ys[1], self.source_zs[0]:self.source_zs[1]] = self.sources[wavelength]
             forward_source = c2r(forward_source[None].detach())
 
@@ -163,15 +222,15 @@ class SuperpixelProblem(BaseProblem):
                 self.dL,
                 wavelength,
                 # bloch_vector=None,
-                # batched_compute=False,
+                # batched_compute=True,
                 # input_yee=False,
                 # Aop=False,
                 # ln_R=-10,
                 # scale_PML=False,
             )
+            plot_3slices(residual[0,...,0].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('residual.png'))
 
             input_grad = torch.autograd.grad(r2c(residual)[0], design_variable_torch, grad_outputs=torch.conj(adjoint_E))[0]
-
             return input_grad
 
         input_grads = []
@@ -199,17 +258,24 @@ class SuperpixelProblem(BaseProblem):
 
 @gin.configurable
 class SuperpixelChallenge(BaseChallenge):
-    def __init__(self, *args, target_angles, target_angle_ranges, SC_pml_space, **kwargs):
+    def __init__(self, *args, target_angles, target_angle_radius, SC_pml_space, farfield_points, **kwargs):
         super().__init__(*args, **kwargs)
         self.target_angles = target_angles
-        self.target_angle_ranges = target_angle_ranges  
+        self.target_angle_radius = target_angle_radius
         self.SC_pml_space = resolve(SC_pml_space, self.problem.dL)
+        self.farfield_points = farfield_points
+        self.u0, self.thetas, self.phis = fibonacci_sphere(self.farfield_points)
+        self.sphere_grid_kd = SphereGridKD(np.array(self.u0).transpose(1, 0))
+
+        sss = resolve(self.problem.spec.source_substrate_spacing, self.problem.dL)
+        assert self.SC_pml_space + sss < self.problem.surrounding_spaces[4], "SC monitor needs to be outside of the source"
 
         # compute the box size for the SC transformation
         p = self.problem
         self.Rx = (p.grid_shape[0]-p.pmls[0] - p.pmls[1] - 2*self.SC_pml_space)//2
         self.Ry = (p.grid_shape[1]-p.pmls[2] - p.pmls[3] - 2*self.SC_pml_space)//2
         self.Rz = (p.grid_shape[2]-p.pmls[4] - p.pmls[5] - 2*self.SC_pml_space)//2
+        print("Rx, Ry, Rz: ", self.Rx, self.Ry, self.Rz)
         self.dxes = ([np.array([p.dL]*p.grid_shape[0]), np.array([p.dL]*p.grid_shape[1]), np.array([p.dL]*p.grid_shape[2])], [np.array([p.dL]*p.grid_shape[0]), np.array([p.dL]*p.grid_shape[1]), np.array([p.dL]*p.grid_shape[2])])
             
 
@@ -231,46 +297,64 @@ class SuperpixelChallenge(BaseChallenge):
             dxes = apply_scpml(self.dxes, self.problem.pmls, omega, ln_R=self.problem.spec.ln_R)
             dxes = [[jnp.array(i) for i in dxes[0]], [jnp.array(i) for i in dxes[1]]]
 
-            # near to farfield transformation based on stratton-chu:
-            Hx, Hy, Hz = E_to_H(Ex, Ey, Ez, dxes, omega, bloch_vector=None)
-            thetas, phis, u0, far_E, far_H = strattonChu3D_full_sphere_GPU(
-                dl=self.problem.dL,
-                xc=Ex.shape[0]//2,
-                yc=Ex.shape[1]//2,
-                zc=Ex.shape[2]//2,
-                Rx=self.Rx,
-                Ry=self.Ry,
-                Rz=self.Rz,
-                lambda_val=wavelength,
-                eps_background=self.problem.eps_background,
-                Ex_OBJ=Ex[None],
-                Ey_OBJ=Ey[None],
-                Ez_OBJ=Ez[None],
-                Hx_OBJ=Hx[None],
-                Hy_OBJ=Hy[None],
-                Hz_OBJ=Hz[None]
-            )
-            if plot_farfield:
-                plot_poynting_radial_scatter(u0, far_E, far_H, fname=os.path.join(config['output_path'], 'poynting_radial_scatter.png'),
-                                plot_batch_idx=0, normalize=True, point_size=8)
+            # (1) dipole near field within medium:
+            sx, sy, sz = Ex.shape
+            target = jnp.abs(Ex[sx//2, sy//2, sz//2])**2 + jnp.abs(Ey[sx//2, sy//2, sz//2])**2 + jnp.abs(Ez[sx//2, sy//2, sz//2])**2
+            loss += -target
+
+            Ex_plot = Ex[:,:, sz//2].real
+            aux[wavelength] = (None, None, Ex_plot, None, None)
+
+            # (2) near field above device:
+            # sx, sy, sz = Ex.shape
+            # target_z = -self.problem.pmls[5] - 5
+            # target = jnp.abs(Ex[sx//2, sy//2, target_z])**2 + jnp.abs(Ey[sx//2, sy//2, target_z])**2 + jnp.abs(Ez[sx//2, sy//2, target_z])**2
+            # loss += -target
+
+            # Ex_plot = Ex[:,sy//2, :].real
+            # aux[wavelength] = (None, None, Ex_plot, None, None)
+
+            # (3) farfield with straton-chu:
+            # Hx, Hy, Hz = E_to_H(Ex, Ey, Ez, dxes, omega, bloch_vector=None)
+            # thetas, phis, u0, far_E, far_H = strattonChu3D_full_sphere_GPU(
+            #     dl=self.problem.dL,
+            #     xc=Ex.shape[0]//2,
+            #     yc=Ex.shape[1]//2,
+            #     zc=Ex.shape[2]//2,
+            #     Rx=self.Rx,
+            #     Ry=self.Ry,
+            #     Rz=self.Rz,
+            #     lambda_val=wavelength,
+            #     eps_background=self.problem.eps_background,
+            #     Ex_OBJ=Ex[None],
+            #     Ey_OBJ=Ey[None],
+            #     Ez_OBJ=Ez[None],
+            #     Hx_OBJ=Hx[None],
+            #     Hy_OBJ=Hy[None],
+            #     Hz_OBJ=Hz[None],
+            #     N_points_on_sphere=self.farfield_points,
+            # )
+            # if plot_farfield:
+            #     plot_poynting_radial_scatter(u0, far_E, far_H, fname=os.path.join(config['output_path'], 'poynting_radial_scatter.png'),
+            #                     plot_batch_idx=0, normalize=True, point_size=8)
+
+            # t_theta, t_phi = self.target_angles
+            # idx = self.sphere_grid_kd.query_cone(t_theta * np.pi / 180, t_phi * np.pi / 180, self.target_angle_radius * np.pi / 180)
+
+            # # print("target thetas: ", thetas[idx]*180/np.pi, "target phis: ", phis[idx]*180/np.pi)
+
+            # S = 0.5 * jnp.real(jnp.cross(far_E[0], jnp.conj(far_H[0]), axis=0))  # (3,N_points_on_sphere), real
+            # Sr = jnp.sum(S * u0[0], axis=0)      # (N_points_on_sphere), real
             
-            t_theta, t_phi = self.target_angles
-            d_theta, d_phi = self.target_angle_ranges
+            # # eff = jnp.abs(Sr)
+            # eff = Sr
+            # assert (eff>0).all(), "eff should be positive"
 
-            assert far_E.shape == 4 and far_E.shape[0] == 1, "for now, far_E should be a 3D tensor with batch dimension 1"
-            E3 = far_E[0].permute(1, 2, 0) # (Nt,Np,3)
-            H3 = far_H[0].permute(1, 2, 0) # (Nt,Np,3)
-            U3 = u0[0].permute(1, 2, 0)    # (Nt,Np,3)
-            # S = 0.5 * Re(E × H*)
-            S3 = 0.5 * jnp.real(jnp.cross(E3, jnp.conj(H3), axis=-1))  # (Nt,Np,3), real
-
-            # radial component S_r = S · r̂
-            Sr = jnp.sum(S3 * U3, axis=-1)      # (Nt,Np), real
-            eff = jnp.abs(Sr)          
-
-            target_region = eff[t_theta - int(d_theta/2):t_theta + int(d_theta/2), t_phi - int(d_phi/2):t_phi + int(d_phi/2)]
+            # target_region = eff[idx]
+            # loss += 1 - jnp.sum(target_region) / jnp.sum(eff)
             
-            loss += - jnp.sum(jnp.abs(target_region) ** 2) / jnp.sum(jnp.abs(eff) ** 2)
-            aux[wavelength] = (u0, Sr)
+            # sx, sy, sz = Ex.shape
+            # Ex_plot = Ex[:,sy//2, :].real
+            # aux[wavelength] = (u0[0], Sr, Ex_plot, thetas, phis)
 
         return loss, aux
