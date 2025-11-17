@@ -1,0 +1,12 @@
+########## parameters for paths ##########
+model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_medium-10_14_25T17_27_10
+pmls: [0, 0, 0, 0, 10, 10]      # x_start, x_end, y_start, y_end, z_start, z_end (in pixels)
+
+########## parameters for the GMRES solver ##########
+max_iter: 1000
+tol: 1e-5
+verbose: true
+restart: 0
+
+########## other configs ##########
+spins_verification: 0

@@ -1,0 +1,46 @@
+# ---------------------------
+# Single nano-fin (TiO2 on glass, visible)
+# ---------------------------
+sim_type: nanofin
+
+########## parameters for paths ##########
+model_path: /media/ps3/chenkaim/checkpoints/copied_models/meta_atom_CondConv_30_pml_medium-10_16_25T15_18_59
+output_path: ./nano_fins  # change if saving large outputs
+
+########## parameters for the physical simulation ##########
+sim_shape: [40, 40, 256]        # number of pixels in x, y, z10.1562
+wavelength: 405                 # nm (visible; change if needed)
+dL: 5                        # nm per voxel
+pmls: [0, 0, 0, 0, 10, 10]      # x_start, x_end, y_start, y_end, z_start, z_end (in pixels)
+
+kwargs:
+  # materials 
+  substrate_material: "SiO2"
+  meta_atom_material: "TiO2"
+  top_medium_material: "Air"
+
+  # geometry (nm)
+  substrate_thickness_nm: 500
+  fin_height_nm: 600
+  fin_length_nm: 150
+  fin_width_nm: 40
+  fin_angle_deg: 0.0
+  corner_radius_nm: 0
+  use_rounded: false
+  unit_cell_period_nm: 200
+
+  # source placement (nm)
+  source_below_meta_nm: 160
+
+  # rendering / solver coupling
+  ss: 8                         # supersampling for smooth cross-sections
+  source_polarization: "RCP"
+
+########## parameters for the GMRES solver ##########
+max_iter: 1000
+tol: 1e-5
+verbose: true
+restart: 0
+
+########## other configs ##########
+spins_verification: 0

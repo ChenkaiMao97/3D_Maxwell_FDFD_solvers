@@ -1,0 +1,17 @@
+import waveynet3d.models
+from waveynet3d.trainers import iterative_trainer
+from waveynet3d.data import simulation_dataset
+from waveynet3d.gym import PML_utils
+
+### physical parameters ###
+IterativeTrainer.domain_sizes = (32,64,32,64,128,256)
+IterativeTrainer.paddings = (0,0,0)
+IterativeTrainer.pml_ranges = [0, 0, 0, 0, 5, 30]
+
+### physics loss ###
+IterativeTrainer.residual_type = 'SC-PML' # 'damping' or 'SC-PML' or 'helmholtz'
+IterativeTrainer.ln_R = -10 # for SC-PML
+
+### dataset ###
+SyntheticDataset_same_wl_dL_shape.eps_min = 1.0
+SyntheticDataset_same_wl_dL_shape.eps_max = 8.0

@@ -1,0 +1,49 @@
+{
+    "materials": {
+
+      "Air": {
+        "model": "constant",
+        "params": { "n": 1.00027 },
+        "k_model": "constant",
+        "k_params": { "k": 0.0 },
+        "range_um": [0.2, 20.0]
+      },
+      
+      "TiO2": {
+        "model": "ab_over_l2_minus_c",
+        "params": {
+          "A": 5.913,
+          "B": 0.2441,
+          "C": 0.0803
+        },
+        "k_model": "constant",
+        "k_params": { "k": 0.0 },
+        "Vd": 9.22,
+        "dn_dlambda": -0.98480,
+        "ng": 3.4890,
+        "GVD_fs2_per_mm": 2464.7,
+        "D_ps_per_nm_km": -13446,
+        "range_um": [0.4, 1.6]
+      },
+  
+      "SiO2": {
+        "model": "sellmeier_inv",
+        "params": {
+          "B1": 0.6961663,
+          "C1": 0.0684043,
+          "B2": 0.4079426,
+          "C2": 0.1162414,
+          "B3": 0.8974794,
+          "C3": 9.896161
+        },
+        "k_model": "constant",
+        "k_params": { "k": 0.0 },
+        "Vd": 67.98,
+        "dn_dlambda": -0.012726,
+        "ng": 1.4638,
+        "GVD_fs2_per_mm": -43.681,
+        "D_ps_per_nm_km": 28.471,
+        "range_um": [0.21, 2.0]
+      }
+    }
+  }
