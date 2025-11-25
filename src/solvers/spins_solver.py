@@ -5,8 +5,6 @@ from src.utils.utils import *
 import gin
 
 def spins_solve(config, eps, src, dL=None, wl=None, pmls=None, ln_R=-10):
-    model_path = config["model_path"]
-
     wl = float(config["wavelength"]) if wl is None else wl
     dL = float(config["dL"]) if dL is None else dL
     pmls = config["pmls"] if pmls is None else pmls

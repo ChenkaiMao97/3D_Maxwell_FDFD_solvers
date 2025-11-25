@@ -13,6 +13,7 @@ from functools import cached_property
 
 from src.utils.GPU_worker_utils import solver_worker
 from src.utils.physics import E_to_H
+from src.solvers.spins_solver import spins_solve
 
 import gin
 
@@ -158,29 +159,32 @@ class BaseProblem:
 
         assert wl in self.wavelengths, f"wavelength {wl} is not in the list of wavelengths: {self.wavelengths}"
 
-        wl_torch = torch.tensor([wl], dtype=torch.float32)
-        dl_torch = torch.tensor([self.dL], dtype=torch.float32)
-        if isinstance(epsilon_r, np.ndarray):
-            epsilon_r = torch.from_numpy(epsilon_r)
-        if isinstance(source, np.ndarray):
-            source = torch.from_numpy(source)
-        epsilon_r = epsilon_r[None].to(torch.float32)
-        source = c2r(source[None].to(torch.complex64))
+        if self._backend == 'NN':
+            wl_torch = torch.tensor([wl], dtype=torch.float32)
+            dl_torch = torch.tensor([self.dL], dtype=torch.float32)
+            if isinstance(epsilon_r, np.ndarray):
+                epsilon_r = torch.from_numpy(epsilon_r)
+            if isinstance(source, np.ndarray):
+                source = torch.from_numpy(source)
+            epsilon_r = epsilon_r[None].to(torch.float32)
+            source = c2r(source[None].to(torch.complex64))
 
-        # send task to GPU worker queue
-        task_id = self.task_id_counter
-        self.task_id_counter += 1
-        device_id = self.wavelengths.index(wl) # each device handles one omega, to reuse the precomputed PML 
-        
-        last_E = self.last_forward_E.get(wl, None) if mode == 'forward' else self.last_adjoint_E.get(wl, None)
+            # send task to GPU worker queue
+            task_id = self.task_id_counter
+            self.task_id_counter += 1
+            device_id = self.wavelengths.index(wl) # each device handles one omega, to reuse the precomputed PML 
+            
+            last_E = self.last_forward_E.get(wl, None) if mode == 'forward' else self.last_adjoint_E.get(wl, None)
 
-        self.task_queues[device_id].put((task_id, (epsilon_r, source, wl_torch, dl_torch, self.pmls, None, last_E)))
+            self.task_queues[device_id].put((task_id, (epsilon_r, source, wl_torch, dl_torch, self.pmls, None, last_E)))
 
-        # wait and fetch the result
-        with self.results_cond:
-            while task_id not in self.results:
-                self.results_cond.wait()
-        e = self.results.pop(task_id)
+            # wait and fetch the result
+            with self.results_cond:
+                while task_id not in self.results:
+                    self.results_cond.wait()
+            e = self.results.pop(task_id)
+        elif self._backend == 'spins':
+            e, spins_residual = spins_solve(None, epsilon_r, source, dL = self.dL, wl = wl, pmls=self.pmls)
 
         if mode == 'forward':
             self.last_forward_E[wl] = e
