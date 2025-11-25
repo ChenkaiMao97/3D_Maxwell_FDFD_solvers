@@ -30,6 +30,7 @@ class BaseProblem:
         eps_background,
         _backend='NN', # 'NN' or 'spins'
         density_dim = 2,
+        pml_pad_mode=True,
         eps_substrate = None
     ):
         """
@@ -64,12 +65,20 @@ class BaseProblem:
         self.pmls = pmls
         self.dL = dL
         self.wavelengths = wavelengths
+        self.pml_pad_mode = pml_pad_mode
         
-        self.grid_shape = (
-            self.design_variable_shape[0] + self.surrounding_spaces[0] + self.surrounding_spaces[1] + self.pmls[0] + self.pmls[1],
-            self.design_variable_shape[1] + self.surrounding_spaces[2] + self.surrounding_spaces[3] + self.pmls[2] + self.pmls[3],
-            self.design_variable_shape[2] + self.surrounding_spaces[4] + self.surrounding_spaces[5] + self.pmls[4] + self.pmls[5]
-        )
+        if pml_pad_mode:
+            self.grid_shape = (
+                self.design_variable_shape[0] + self.surrounding_spaces[0] + self.surrounding_spaces[1] + self.pmls[0] + self.pmls[1],
+                self.design_variable_shape[1] + self.surrounding_spaces[2] + self.surrounding_spaces[3] + self.pmls[2] + self.pmls[3],
+                self.design_variable_shape[2] + self.surrounding_spaces[4] + self.surrounding_spaces[5] + self.pmls[4] + self.pmls[5]
+            )
+        else:
+            self.grid_shape = (
+                self.design_variable_shape[0] + self.surrounding_spaces[0] + self.surrounding_spaces[1],
+                self.design_variable_shape[1] + self.surrounding_spaces[2] + self.surrounding_spaces[3],
+                self.design_variable_shape[2] + self.surrounding_spaces[4] + self.surrounding_spaces[5]
+            )
         printc(f"simulation with grid shape: {self.grid_shape}", "g")
 
         self.eps_design_max = eps_design_max
@@ -84,7 +93,10 @@ class BaseProblem:
 
         self.last_forward_E = {}
         self.last_adjoint_E = {}
-    
+
+        print("grid shape: ", self.grid_shape)
+        print("design region extent: ", self.design_region_x_start, self.design_region_x_end, self.design_region_y_start, self.design_region_y_end, self.design_region_z_start, self.design_region_z_end)
+        
     def init_GPU_workers(self, solver_config):
         # init solvers on each GPU
         gpu_ids = list(range(len(self.wavelengths)))
@@ -244,19 +256,37 @@ class BaseProblem:
     
     @cached_property
     def design_region_x_start(self):
-        return self.pmls[0] + self.surrounding_spaces[0]
+        if self.pml_pad_mode:
+            return self.pmls[0] + self.surrounding_spaces[0]
+        else:
+            return self.surrounding_spaces[0]
     @cached_property
     def design_region_x_end(self):
-        return self.grid_shape[0] - self.pmls[1] - self.surrounding_spaces[1]
+        if self.pml_pad_mode:
+            return self.grid_shape[0] - self.pmls[1] - self.surrounding_spaces[1]
+        else:
+            return self.grid_shape[0] - self.surrounding_spaces[1]
     @cached_property
     def design_region_y_start(self):
-        return self.pmls[2] + self.surrounding_spaces[2]
+        if self.pml_pad_mode:
+            return self.pmls[2] + self.surrounding_spaces[2]
+        else:
+            return self.surrounding_spaces[2]
     @cached_property
     def design_region_y_end(self):
-        return self.grid_shape[1] - self.pmls[3] - self.surrounding_spaces[3]
+        if self.pml_pad_mode:
+            return self.grid_shape[1] - self.pmls[3] - self.surrounding_spaces[3]
+        else:
+            return self.grid_shape[1] - self.surrounding_spaces[3]
     @cached_property
     def design_region_z_start(self):
-        return self.pmls[4] + self.surrounding_spaces[4]
+        if self.pml_pad_mode:
+            return self.pmls[4] + self.surrounding_spaces[4]
+        else:
+            return self.surrounding_spaces[4]
     @cached_property
     def design_region_z_end(self):
-        return self.grid_shape[2] - self.pmls[5] - self.surrounding_spaces[5]
+        if self.pml_pad_mode:
+            return self.grid_shape[2] - self.pmls[5] - self.surrounding_spaces[5]
+        else:
+            return self.grid_shape[2] - self.surrounding_spaces[5]

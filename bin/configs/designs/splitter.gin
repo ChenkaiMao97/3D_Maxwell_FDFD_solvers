@@ -2,7 +2,7 @@ import bin.inverse_design
 import src.invde.base_challenge
 import src.invde.utils.utils
 import src.problems.base_problem
-import src.problems.superpixel
+import src.problems.integrated_photonics
 
 import src.invde.opt
 import src.invde.step_fn
@@ -11,42 +11,43 @@ import src.invde.constraints
 import src.invde.utils.jax_utils
 
 #### (1) design problem and backend
-run_inverse_design.design_challenge = "superpixel"
-Designer.log_fn_type = "superpixel"
+run_inverse_design.design_challenge = "integrated_photonics"
 BaseProblem._backend = "NN"
 
 #### (2) setup dL, wl and simulation / optimization sizes
-SuperpixelChallenge.wavelengths = [800]
-SuperpixelChallenge.dL = 25
-SuperpixelChallenge.pmls = (30,30,30,30,30,30)
+IntegratedPhotonicsChallenge.wavelengths = [800]
+IntegratedPhotonicsChallenge.dL = 20
+IntegratedPhotonicsChallenge.pmls = (30,30,30,30,30,30)
 
-BaseProblem.design_region_size = (1600, 1600, 600) # same unit as dL
-BaseProblem.surrounding_sizes = (200, 200, 200, 200, 200, 200) # same unit as dL
+BaseProblem.design_region_size = (1200, 1200, 400) # same unit as dL
+BaseProblem.surrounding_sizes = (400, 400, 400, 400, 300, 300) # same unit as dL
 
 #### (3) define material index
 max_eps = 8
 BaseProblem.eps_design_max = %max_eps
 BaseProblem.eps_design_min = 1
 BaseProblem.eps_background = 1
-BaseProblem.eps_substrate = 1
+BaseProblem.eps_substrate = 2.25
 
-#### (4) define source localtion, polarization and profile
-get_superpixel_challenge.source_substrate_spacing = 100
-get_superpixel_challenge.source_pml_spacing = 200
-get_superpixel_challenge.source_angles = (0, 0) # theta, phi
-get_superpixel_challenge.source_pol = 'lcp'
-get_superpixel_challenge.global_frame_coordinate = (0,0,0) # used for setting the global phase reference when designing a full metasurface
+#### (4) define waveguide specs, for waveguide bend we have two waveguides, on left and bottom size of the design region
+get_integrated_photonics_challenge.port_pml_offset = 200
+get_integrated_photonics_challenge.input_monitor_offset = 40
+get_integrated_photonics_challenge.wg_eps = %max_eps
+get_integrated_photonics_challenge.wg_min_separation = 400
+get_integrated_photonics_challenge.wg_mode_padding = 100
+get_integrated_photonics_challenge.excite_port_idx = 0
+get_integrated_photonics_challenge.left_wg_specs = [(0,400,0)] # (center_offset, width, order)
+get_integrated_photonics_challenge.right_wg_specs = [(-400,400,0), (400,400,0)]
+get_integrated_photonics_challenge.top_wg_specs = []
+get_integrated_photonics_challenge.bottom_wg_specs = []
 
 #### (5) define optimization targets:
-get_superpixel_challenge.farfield_points = 500
-get_superpixel_challenge.target_angles = [20,180] # theta, phi
-get_superpixel_challenge.target_angle_radius = 3 # angular distance (radius) in degrees
-get_superpixel_challenge.SC_pml_space = 50
+get_integrated_photonics_challenge.target_s_params = [(0,1,0)] # zero-reflection and full transmission 
 
 #### (6) define optimizer args:
 
 ############################ optimization args ###################################
-length_scale_pixel = 1.0
+length_scale_pixel = 3
 Designer.length_scale_pixel = %length_scale_pixel
 
 Designer.save_bin = True
@@ -58,20 +59,20 @@ _get_default_initializer.mean=0.5
 _get_default_initializer.stddev=0.001
 _get_default_initializer.length_scale = %length_scale_pixel
 
-Designer.steps_per_beta = 20
+Designer.steps_per_beta = 15
 Designer.steps_per_beta_during_constraint = 30
-Designer.beta_schedule  = [32,64,128]
+Designer.beta_schedule  = [32,128,512]
 
 # Designer.constraint_tolerance_schedule = [0,0,0] # used for nlopt
-Designer.constraint_weight_schedule = [0,0,0] # used for optax
+Designer.constraint_weight_schedule = [0,0,1] # used for optax
 
 # Designer.opt_type = 'nlopt'
 Designer.opt_type = 'optax'
 
 # Designer.load_latent_path='/media/ps3/chenkaim/checkpoints/3D_Maxwell_FDFD_solvers/invde_waveguide_bend-10_23_25T01_28_38/logs/step_40.h5'
 
-Designer.lr = 1e-4
-Designer.end_lr = 1e-4
+Designer.lr = 3e-3
+Designer.end_lr = 3e-4
 
 ############################ decode filter project ################################
 Designer.projection_fn = @tanh_projection

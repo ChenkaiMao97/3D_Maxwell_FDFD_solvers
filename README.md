@@ -69,4 +69,10 @@ XLA_PYTHON_CLIENT_PREALLOCATE=false python -m bin.launch_job --pipeline="inverse
 
 6. For spins, it works by first starting a local maxwells-b docker server, which accepts simulations. To check if the maxwells-b docker is running, run "docker container ls". If it is not running, you can start it by running this bash script: "/home/chenkaim/scripts/spins/maxwell-b/run_docker"
 
+7. debugging:
+Adjoint gradient debugging:
+```bash
+XLA_PYTHON_CLIENT_PREALLOCATE=false python -m bin.launch_job --pipeline="inverse_design" --solver-config="bin/configs/solvers/periodic_small_model.gin" --design-config="bin/configs/designs/gradient_debug_thin_slab.gin" --experiment-name="debugging_slab_nearfield"
+```
+
 

@@ -61,7 +61,7 @@ _get_default_initializer.length_scale = %length_scale_pixel
 
 Designer.steps_per_beta = 15
 Designer.steps_per_beta_during_constraint = 30
-Designer.beta_schedule  = [8,16,32]
+Designer.beta_schedule  = [32,128,512]
 
 # Designer.constraint_tolerance_schedule = [0,0,0] # used for nlopt
 Designer.constraint_weight_schedule = [0,0,1] # used for optax

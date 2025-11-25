@@ -21,11 +21,19 @@ from src.utils.physics import residue_E
 from src.utils.utils import resolve, printc, c2r, r2c
 from src.utils.stratton_chu_jax import strattonChu3D_full_sphere_GPU, E_to_H, fibonacci_sphere
 from src.utils.PML_utils import apply_scpml
-from src.utils.plot_field3D import plot_3slices
+from src.utils.plot_field3D import plot_3slices, plot_poynting_radial_scatter
 
 import gin
 
 _DENSITY_LABEL = 'density'
+
+def debug_plot(field, name):
+    assert field.ndim == 2, "field should be a 2D tensor"
+    plt.figure(figsize=(5, 5))
+    plt.imshow(field.detach().cpu().numpy().real, cmap='seismic')
+    plt.colorbar()
+    plt.savefig(name)
+    plt.close()
 
 def find_indices_in_range(sorted_data, low, high):
     begin, end = None, None
@@ -110,10 +118,15 @@ class SuperpixelProblem(BaseProblem):
         source_pol = self.spec.source_pol
         global_frame_coordinate = self.spec.global_frame_coordinate
 
-        self.source_xs = (self.pmls[0] + source_pml_spacing, self.grid_shape[0]-self.pmls[1]-source_pml_spacing + 1) 
-        self.source_ys = (self.pmls[2] + source_pml_spacing, self.grid_shape[1]-self.pmls[3]-source_pml_spacing + 1) 
-        self.source_zs = (self.pmls[4] + self.surrounding_spaces[4] - source_substrate_spacing - 1, self.pmls[4] + self.surrounding_spaces[4] - source_substrate_spacing+1) 
+        self.source_xs = (self.pmls[0] + source_pml_spacing, self.grid_shape[0]-self.pmls[1]-source_pml_spacing-1) if self.pml_pad_mode \
+                    else (source_pml_spacing, self.grid_shape[0]-source_pml_spacing-1)
+        self.source_ys = (self.pmls[2] + source_pml_spacing, self.grid_shape[1]-self.pmls[3]-source_pml_spacing-1) if self.pml_pad_mode \
+                    else (source_pml_spacing, self.grid_shape[1]-source_pml_spacing-1)
+        self.source_zs = (self.pmls[4] + self.surrounding_spaces[4] - source_substrate_spacing - 1, self.pmls[4] + self.surrounding_spaces[4] - source_substrate_spacing + 1) if self.pml_pad_mode \
+                    else (self.surrounding_spaces[4] - source_substrate_spacing - 1, self.surrounding_spaces[4] - source_substrate_spacing + 1)
+
         assert self.source_zs[1] - self.source_zs[0] == 2, "source in z direction should be 2 pixel thick"
+        print("source extent: ", self.source_xs[0], self.source_xs[1], self.source_ys[0], self.source_ys[1], self.source_zs[0], self.source_zs[1])
 
         self.sources = {}
         for wl in self.wavelengths:
@@ -149,14 +162,14 @@ class SuperpixelProblem(BaseProblem):
                 source[:,:,0,2] = map2
             elif source_pol == 'lcp':
                 source[:,:,1,0] = map1
-                source[:,:,1,1] = torch.exp(1j*np.pi/2) * map1
+                source[:,:,1,1] = np.exp(1j*np.pi/2) * map1
                 source[:,:,0,0] = map2
-                source[:,:,0,1] = torch.exp(1j*np.pi/2) * map2
+                source[:,:,0,1] = np.exp(1j*np.pi/2) * map2
             elif source_pol == 'rcp':
                 source[:,:,1,0] = map1
-                source[:,:,1,1] = torch.exp(-1j*np.pi/2) * map1
+                source[:,:,1,1] = np.exp(-1j*np.pi/2) * map1
                 source[:,:,0,0] = map2
-                source[:,:,0,1] = torch.exp(-1j*np.pi/2) * map2
+                source[:,:,0,1] = np.exp(-1j*np.pi/2) * map2
             self.sources[wl] = source
 
     def simulate(self, design_variable):
@@ -167,10 +180,14 @@ class SuperpixelProblem(BaseProblem):
             epsilon_r = self.epsilon_r(design_variable)
             source = np.zeros(epsilon_r.shape + (3,), dtype=np.complex64)
             source[self.source_xs[0]:self.source_xs[1], self.source_ys[0]:self.source_ys[1], self.source_zs[0]:self.source_zs[1]] = self.sources[wavelength].numpy()
+            # source[source.shape[0]//2, source.shape[1]//2, source.shape[2]//2, 2] = 1e6
             E = self.compute_FDFD(wavelength, epsilon_r, source, 'forward')
 
             # debug plot:
             # plot_3slices(epsilon_r, cm_zero_center=False, fname=os.path.join('epsilon_r.png'))
+            # debug_plot(E[:,:,E.shape[2]//2,0], 'forward_Ex.png')
+            # debug_plot(E[:,:,E.shape[2]//2,1], 'forward_Ey.png')
+            # debug_plot(E[:,:,E.shape[2]//2,2], 'forward_Ez.png')
             # plot_3slices(E[...,0].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('forward_Ex.png'))
             # plot_3slices(E[...,1].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('forward_Ey.png'))
             # plot_3slices(E[...,2].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('forward_Ez.png'))
@@ -194,22 +211,28 @@ class SuperpixelProblem(BaseProblem):
         epsilon_r = self.epsilon_r(design_variable)
 
         def _adjoint_simulate(wavelength, forward_E, grad_E):
-            source_torch = torch.conj(grad_E).to(torch.complex64).resolve_conj()  # adjoint source
+            source_torch = torch.conj(grad_E.to(torch.complex64)).resolve_conj()  # adjoint source
             # source_torch = grad_E.to(torch.complex64)
 
             # debug plot:
             # print("source_torch shape: ", source_torch.shape)
             # plot_3slices(source_torch[...,0].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('adj_sourcex.png'))
+            # plot_3slices(source_torch[...,1].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('adj_sourcey.png'))
+            # plot_3slices(source_torch[...,2].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('adj_sourcez.png'))
 
             adjoint_E = self.compute_FDFD(wavelength, epsilon_r, source_torch, 'adjoint')
 
             # plot_3slices(adjoint_E[...,0].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('adjoint_Ex.png'))
+            # plot_3slices(adjoint_E[...,1].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('adjoint_Ey.png'))
+            # plot_3slices(adjoint_E[...,2].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('adjoint_Ez.png'))
+            # debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,0], 'adjoint_Ex.png')
+            # debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,1], 'adjoint_Ey.png')
+            # debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,2], 'adjoint_Ez.png')
 
             design_variable_torch = design_variable.clone().detach().requires_grad_(True)
             epsilon_for_residual = self.make_torch_epsilon_r(design_variable_torch)[None]
             forward_E = c2r(forward_E[None].detach())
 
-            # forward_source = self._ports[self.excite_port_idx].source(wavelength)
             forward_source = torch.zeros(epsilon_r.shape + (3,), dtype=torch.complex64)
             forward_source[self.source_xs[0]:self.source_xs[1], self.source_ys[0]:self.source_ys[1], self.source_zs[0]:self.source_zs[1]] = self.sources[wavelength]
             forward_source = c2r(forward_source[None].detach())
@@ -221,16 +244,10 @@ class SuperpixelProblem(BaseProblem):
                 self.pmls,
                 self.dL,
                 wavelength,
-                # bloch_vector=None,
-                # batched_compute=True,
-                # input_yee=False,
-                # Aop=False,
-                # ln_R=-10,
-                # scale_PML=False,
             )
-            plot_3slices(residual[0,...,0].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('residual.png'))
-
+            
             input_grad = torch.autograd.grad(r2c(residual)[0], design_variable_torch, grad_outputs=torch.conj(adjoint_E))[0]
+            # debug_plot(input_grad.squeeze(), 'input_grad.png')
             return input_grad
 
         input_grads = []
@@ -272,9 +289,12 @@ class SuperpixelChallenge(BaseChallenge):
 
         # compute the box size for the SC transformation
         p = self.problem
-        self.Rx = (p.grid_shape[0]-p.pmls[0] - p.pmls[1] - 2*self.SC_pml_space)//2
-        self.Ry = (p.grid_shape[1]-p.pmls[2] - p.pmls[3] - 2*self.SC_pml_space)//2
-        self.Rz = (p.grid_shape[2]-p.pmls[4] - p.pmls[5] - 2*self.SC_pml_space)//2
+        self.Rx = (p.grid_shape[0]-p.pmls[0] - p.pmls[1] - 2*self.SC_pml_space)//2 if p.pml_pad_mode \
+                    else (p.grid_shape[0] - 2*self.SC_pml_space)//2
+        self.Ry = (p.grid_shape[1]-p.pmls[2] - p.pmls[3] - 2*self.SC_pml_space)//2 if p.pml_pad_mode \
+                    else (p.grid_shape[1] - 2*self.SC_pml_space)//2
+        self.Rz = (p.grid_shape[2]-p.pmls[4] - p.pmls[5] - 2*self.SC_pml_space)//2 if p.pml_pad_mode \
+                    else (p.grid_shape[2] - 2*self.SC_pml_space)//2
         print("Rx, Ry, Rz: ", self.Rx, self.Ry, self.Rz)
         self.dxes = ([np.array([p.dL]*p.grid_shape[0]), np.array([p.dL]*p.grid_shape[1]), np.array([p.dL]*p.grid_shape[2])], [np.array([p.dL]*p.grid_shape[0]), np.array([p.dL]*p.grid_shape[1]), np.array([p.dL]*p.grid_shape[2])])
             
@@ -298,18 +318,32 @@ class SuperpixelChallenge(BaseChallenge):
             dxes = [[jnp.array(i) for i in dxes[0]], [jnp.array(i) for i in dxes[1]]]
 
             # (1) dipole near field within medium:
+            # Ex = 1/2* (Ex + jnp.roll(Ex, 1, axis=0))
+            # Ey = 1/2* (Ey + jnp.roll(Ey, 1, axis=1))
+            # Ez = 1/2* (Ez + jnp.roll(Ez, 1, axis=2))
+
             sx, sy, sz = Ex.shape
-            target = jnp.abs(Ex[sx//2, sy//2, sz//2])**2 + jnp.abs(Ey[sx//2, sy//2, sz//2])**2 + jnp.abs(Ez[sx//2, sy//2, sz//2])**2
+            # print("sz-self.problem.pmls[5] - 5: ", sz-self.problem.pmls[5] - 5)
+            offset_z = 10
+            target = jnp.abs(Ex[sx//2, sy//2, sz//2+offset_z])**2 + jnp.abs(Ey[sx//2, sy//2, sz//2+offset_z])**2 + jnp.abs(Ez[sx//2, sy//2, sz//2+offset_z])**2
             loss += -target
 
-            Ex_plot = Ex[:,:, sz//2].real
-            aux[wavelength] = (None, None, Ex_plot, None, None)
+            Ex_plot = jnp.abs(Ex[:,sy//2,:])
+            Ey_plot = jnp.abs(Ey[:,sy//2,:])
+            Ez_plot = jnp.abs(Ez[:,sy//2,:])
+            aux[wavelength] = (None, None, (Ex_plot, Ey_plot, Ez_plot), None, None)
 
             # (2) near field above device:
+            ## interpolate fields to be in the same physical space
+            # Ex = 1/2* (Ex + jnp.roll(Ex, 1, axis=0))
+            # Ey = 1/2* (Ey + jnp.roll(Ey, 1, axis=1))
+            # Ez = 1/2* (Ez + jnp.roll(Ez, 1, axis=2))
+
             # sx, sy, sz = Ex.shape
-            # target_z = -self.problem.pmls[5] - 5
-            # target = jnp.abs(Ex[sx//2, sy//2, target_z])**2 + jnp.abs(Ey[sx//2, sy//2, target_z])**2 + jnp.abs(Ez[sx//2, sy//2, target_z])**2
-            # loss += -target
+            # target_z = sz-self.problem.pmls[5] - 5
+            # # target = -jnp.abs(Ex[sx//2, sy//2, target_z])**2
+            # target = (jnp.abs(Ex[sx//2, sy//2, target_z])**2 + jnp.abs(Ey[sx//2, sy//2, target_z])**2 + jnp.abs(Ez[sx//2, sy//2, target_z])**2)
+            # loss += target
 
             # Ex_plot = Ex[:,sy//2, :].real
             # aux[wavelength] = (None, None, Ex_plot, None, None)
@@ -334,26 +368,27 @@ class SuperpixelChallenge(BaseChallenge):
             #     Hz_OBJ=Hz[None],
             #     N_points_on_sphere=self.farfield_points,
             # )
-            # if plot_farfield:
-            #     plot_poynting_radial_scatter(u0, far_E, far_H, fname=os.path.join(config['output_path'], 'poynting_radial_scatter.png'),
-            #                     plot_batch_idx=0, normalize=True, point_size=8)
+
+            # # plot_poynting_radial_scatter(u0, far_E, far_H, fname='poynting_radial_scatter.png',
+            # #                 plot_batch_idx=0, normalize=True, point_size=8)
 
             # t_theta, t_phi = self.target_angles
             # idx = self.sphere_grid_kd.query_cone(t_theta * np.pi / 180, t_phi * np.pi / 180, self.target_angle_radius * np.pi / 180)
 
-            # # print("target thetas: ", thetas[idx]*180/np.pi, "target phis: ", phis[idx]*180/np.pi)
+            # print("target thetas: ", thetas[idx]*180/np.pi, "target phis: ", phis[idx]*180/np.pi)
 
             # S = 0.5 * jnp.real(jnp.cross(far_E[0], jnp.conj(far_H[0]), axis=0))  # (3,N_points_on_sphere), real
             # Sr = jnp.sum(S * u0[0], axis=0)      # (N_points_on_sphere), real
-            
+
             # # eff = jnp.abs(Sr)
             # eff = Sr
             # assert (eff>0).all(), "eff should be positive"
 
             # target_region = eff[idx]
-            # loss += 1 - jnp.sum(target_region) / jnp.sum(eff)
-            
-            # sx, sy, sz = Ex.shape
+            # # loss += -1e2*jnp.sum(target_region)
+            # loss += 1e2*(1 - jnp.sum(target_region) / jnp.sum(eff))
+
+            # sx, sy, sz = Ez.shape
             # Ex_plot = Ex[:,sy//2, :].real
             # aux[wavelength] = (u0[0], Sr, Ex_plot, thetas, phis)
 

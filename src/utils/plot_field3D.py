@@ -569,41 +569,88 @@ def plot_poynting_radial_scatter(u0, E, H, fname=None, plot_batch_idx=0, normali
 def plot_Sr_subplot(u0, Sr, ax, point_size=8):
     """
     Scatter plot on the sphere for the radial component of the Poynting vector.
-    Radius ∝ |Re(S_r)| where S = 0.5 * Re(E × H*), r̂ = u0.
+    Radius ∝ S_r (you can swap to |S_r| if you like).
 
     Args:
-        u0 : torch.Tensor, shape (3, Nt, Np) or (1,3,Nt,Np). Unit vectors on the sphere.
-        Sr : torch.Tensor, shape (Nt,Np). Radial component of the Poynting vector.
-        ax : matplotlib.axes.Axes. Subplot to plot on.
-        normalize : bool. If True, radius is normalized to [0,1].
+        u0 : torch.Tensor, shape (3, N). Unit vectors on the sphere.
+        Sr : torch.Tensor, shape (N,). Radial component of the Poynting vector.
+        ax : matplotlib.axes.Axes. Subplot to plot on (3D).
         point_size : int. Scatter point size.
     """
     # ---- unify shapes ----
     assert len(u0.shape) == 2
     assert len(Sr.shape) == 1
+    assert u0.shape[1] == Sr.shape[0]
 
-    val = Sr 
-    # radius
-    r = val
+    # choose what to use for radius and color
+    val = Sr
+    r = val          # or r = Sr.abs() if you prefer always-outward
 
-    x = r * u0[0]
-    y = r * u0[1]
-    z = r * u0[2]
-    # to numpy
-    x, y, z, c = (t for t in (x, y, z, val))
+    # torch -> numpy
+    if isinstance(u0, torch.Tensor):
+        u0_np = u0.detach().cpu().numpy()
+    else:
+        u0_np = np.asarray(u0)
 
-    # plot
+    if isinstance(r, torch.Tensor):
+        r_np = r.detach().cpu().numpy()
+        val_np = val.detach().cpu().numpy()
+    else:
+        r_np = np.asarray(r)
+        val_np = np.asarray(val)
+
+    x = r_np * u0_np[0]
+    y = r_np * u0_np[1]
+    z = r_np * u0_np[2]
+    c = val_np
+
+    # ---- scatter of S_r ----
     sc = ax.scatter(x, y, z, c=c, s=point_size, cmap='viridis')
 
+    # ---- set radius extents ----
     R = 1.05 * np.max(np.abs([x, y, z]))
     R = 1.0 if not np.isfinite(R) or R == 0 else R
     ax.set_xlim(-R, R); ax.set_ylim(-R, R); ax.set_zlim(-R, R)
     ax.set_box_aspect([1, 1, 1])
-    ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z')
-    # plt.colorbar(shrink=0.5, aspect=5)
-    # cb.set_label(r'$|\,\mathrm{Re}(S_r)\,|$')
-    # ax.set_title(r'Radial Poynting Component: $|\,\mathrm{Re}(S_r)\,|$ (radius ∝ value)')
-    
+
+    # ---- wireframe sphere (lat / lon lines) ----
+    # use the same R so the grid passes through the outer points
+    n_lat = 10   # number of latitude circles
+    n_lon = 20   # number of longitude lines
+
+    phi = np.linspace(0, np.pi, n_lat)      # polar angle
+    theta = np.linspace(0, 2*np.pi, n_lon)  # azimuthal angle
+    phi_grid, theta_grid = np.meshgrid(phi, theta)
+
+    Xs = R * np.sin(phi_grid) * np.cos(theta_grid)
+    Ys = R * np.sin(phi_grid) * np.sin(theta_grid)
+    Zs = R * np.cos(phi_grid)
+
+    ax.plot_wireframe(Xs, Ys, Zs, linewidth=0.3, alpha=0.4)
+
+    # ---- radial line toward maximum |S_r| direction ----
+    idx_max = np.argmax(np.abs(val_np))
+    u_max = u0_np[:, idx_max]
+    line_len = R
+
+    ax.plot(
+        [0.0, u_max[0] * line_len],
+        [0.0, u_max[1] * line_len],
+        [0.0, u_max[2] * line_len],
+        linewidth=2.0
+    )
+
+    # ---- clean background ----
+    # Remove axes frame and background panes, keep just data, sphere grid, and line
+    ax.set_axis_off()
+
+    # (Optional) if you still want labels and colorbar, comment out set_axis_off()
+    # and instead do:
+    # ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z')
+    # ax.grid(False)
+    # for axis in (ax.xaxis, ax.yaxis, ax.zaxis):
+    #     axis.pane.set_visible(False)
+
     return sc
 
 # def plot_poynting_radial_scatter_old(u0, E, H, fname=None, plot_batch_idx=0, normalize=True, point_size=8):

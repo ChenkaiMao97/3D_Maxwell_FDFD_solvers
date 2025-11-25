@@ -105,12 +105,12 @@ def strattonChu3D_full_sphere_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ
     Hz_OBJ = 1/4* (Hz_OBJ + jnp.roll(Hz_OBJ, 1, axis=1) + jnp.roll(Hz_OBJ, 1, axis=2) + jnp.roll(Hz_OBJ, (1,1), axis=(1,2)))
 
     ##################### Prepare the normal vector of the data points on 6 faces #####################
-    n_back = jnp.tile(jnp.array([[1, 0, 0]]), ((y_right - y_left)*(z_top - z_bottom), 1))
-    n_front = jnp.tile(jnp.array([[-1, 0, 0]]), ((y_right - y_left)*(z_top - z_bottom), 1))
-    n_left = jnp.tile(jnp.array([[0, 1, 0]]), ((x_front - x_back)*(z_top - z_bottom), 1))
-    n_right = jnp.tile(jnp.array([[0, -1, 0]]), ((x_front - x_back)*(z_top - z_bottom), 1))
-    n_bottom = jnp.tile(jnp.array([[0, 0, 1]]), ((x_front - x_back)*(y_right - y_left), 1))
-    n_top = jnp.tile(jnp.array([[0, 0, -1]]), ((x_front - x_back)*(y_right - y_left), 1))
+    n_back = jnp.tile(jnp.array([[-1, 0, 0]]), ((y_right - y_left)*(z_top - z_bottom), 1))
+    n_front = jnp.tile(jnp.array([[1, 0, 0]]), ((y_right - y_left)*(z_top - z_bottom), 1))
+    n_left = jnp.tile(jnp.array([[0, -1, 0]]), ((x_front - x_back)*(z_top - z_bottom), 1))
+    n_right = jnp.tile(jnp.array([[0, 1, 0]]), ((x_front - x_back)*(z_top - z_bottom), 1))
+    n_bottom = jnp.tile(jnp.array([[0, 0, -1]]), ((x_front - x_back)*(y_right - y_left), 1))
+    n_top = jnp.tile(jnp.array([[0, 0, 1]]), ((x_front - x_back)*(y_right - y_left), 1))
 
     ##################### Prepare the coordinates of the data points on 6 faces #####################
     y = jnp.arange(y_left, y_right)
@@ -195,11 +195,11 @@ def strattonChu3D_full_sphere_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ
     E = jnp.concatenate([E_back, E_front, E_left, E_right, E_bottom, E_top], axis=1) # (bs, N_total, 3)
     H = jnp.concatenate([H_back, H_front, H_left, H_right, H_bottom, H_top], axis=1) # (bs, N_total, 3)
 
-    # n = jnp.concatenate([n_back], axis=0)
+    # n = jnp.concatenate([n_top], axis=0)
     # n = jnp.broadcast_to(n[jnp.newaxis, ...], (bs, *n.shape))  # (bs, N_total, 3)
-    # xyz = jnp.concatenate([xyz_back], axis=0)  # (N_total, 3)
-    # E = jnp.concatenate([E_back], axis=1) # (bs, N_total, 3)
-    # H = jnp.concatenate([H_back], axis=1) # (bs, N_total, 3)
+    # xyz = jnp.concatenate([xyz_top], axis=0)  # (N_total, 3)
+    # E = jnp.concatenate([E_top], axis=1) # (bs, N_total, 3)
+    # H = jnp.concatenate([H_top], axis=1) # (bs, N_total, 3)
 
     # xyz: (N_total, 3)
     r_rs = jnp.abs(r_obs * u0[None] - xyz[:,:,None]) # (N_total, 3, N_points_on_sphere)
@@ -221,14 +221,14 @@ def strattonChu3D_full_sphere_GPU(dl, xc, yc, zc, Rx, Ry, Rz, lambda_val, Ex_OBJ
     tg_H_sum = jnp.zeros((bs, 3, N_points_on_sphere), dtype=jnp.complex64)
     for angle_idx in range(N_points_on_sphere):
         far_E = t_coe[:,:,:,angle_idx] * (
-                - 1 / eps_background**.5 * jnp.cross(t_n, H, axis=2)
-                + jnp.cross(jnp.cross(t_n, E, axis=2), t_u[:,:,:,angle_idx], axis=2)
-                + jnp.sum(t_n * E, axis=2, keepdims=True) * t_u[:,:,:,angle_idx]
+                1 / eps_background**.5 * jnp.cross(t_n, H, axis=2)
+                - jnp.cross(jnp.cross(t_n, E, axis=2), t_u[:,:,:,angle_idx], axis=2)
+                - jnp.sum(t_n * E, axis=2, keepdims=True) * t_u[:,:,:,angle_idx]
         )
         far_H = t_coe[:,:,:,angle_idx] * (
-                + eps_background**.5 * jnp.cross(t_n, E, axis=2)
-                + jnp.cross(jnp.cross(t_n, H, axis=2), t_u[:,:,:,angle_idx], axis=2)
-                + jnp.sum(t_n * H, axis=2, keepdims=True) * t_u[:,:,:,angle_idx]
+                - eps_background**.5 * jnp.cross(t_n, E, axis=2)
+                - jnp.cross(jnp.cross(t_n, H, axis=2), t_u[:,:,:,angle_idx], axis=2)
+                - jnp.sum(t_n * H, axis=2, keepdims=True) * t_u[:,:,:,angle_idx]
         )
         far_E_sum = jnp.sum(far_E, axis=1)
         far_H_sum = jnp.sum(far_H, axis=1)

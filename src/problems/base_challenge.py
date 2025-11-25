@@ -112,8 +112,8 @@ class BaseChallenge:
                     fixed_solid=self._fixed_solid,
                     fixed_void=self._fixed_void,
                 ),
-                fixed_solid=jnp.asarray(self._fixed_solid),
-                fixed_void=jnp.asarray(self._fixed_void),
+                fixed_solid=jnp.asarray(self._fixed_solid) if self._fixed_solid is not None else None,
+                fixed_void=jnp.asarray(self._fixed_void) if self._fixed_void is not None else None,
             )
         }
 

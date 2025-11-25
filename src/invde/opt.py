@@ -59,7 +59,6 @@ class Designer:
         self.lower_bound = latent_bounds[0]
         self.upper_bound = latent_bounds[1]
         self.final_step_discretization = final_step_discretization
-
         self.beta_schedule = beta_schedule
         self.constraint_tolerance_schedule = constraint_tolerance_schedule
         if constraint_tolerance_schedule is not None:
@@ -172,8 +171,9 @@ class Designer:
             decay_rate=self.end_lr / self.lr,
             staircase=False  # for smooth decay
         )
-        opt = optax.adam(learning_rate=schedule)
-        opt_state = opt.init(self.state.latents)
+        opt = optax.adam(learning_rate=schedule, b1=0.7, b2=0.9)
+        # opt = optax.lion(learning_rate=schedule)
+        # opt = optax.sgd(learning_rate=schedule)
 
         print("self.beta_schedule", self.beta_schedule)
         print("self.constraint_weight_schedule", self.constraint_weight_schedule)
@@ -209,6 +209,8 @@ class Designer:
                         num_layers=1
                     )
 
+                # we want to re-initialize the optimizer for each beta
+                opt_state = opt.init(self.state.latents)
                 opt_steps = self.steps_per_beta_during_constraint if constraint_weight > 0 else self.steps_per_beta
                 for step in range(opt_steps):
                     print("step", step)
@@ -224,7 +226,7 @@ class Designer:
                         my_grad["density"].density += constraint_weight * grad_loss_mean / grad_const_s_mean * solid_g
                         my_grad["density"].density += constraint_weight * grad_loss_mean / grad_const_v_mean * void_g
                     
-                    # sanity check for gradient using finite difference:
+                    # # sanity check for gradient using finite difference:
                     # print("sanity check for gradient using finite difference:")
                     # epsilon = 1e-3
                     # new_latent = copy.deepcopy(self.state.latents)
@@ -235,9 +237,11 @@ class Designer:
                     # dx = epsilon * v
 
                     # mask1 = jnp.where(new_latent["density"].density + dx < 1, 1, 0)
-                    # mask2 = jnp.where(new_latent["density"].density - dx > 0, 1, 0)
-                    # dx = dx * mask1 * mask2
-                    # v = v * mask1 * mask2
+                    # mask2 = jnp.where(new_latent["density"].density + dx > 0, 1, 0)
+                    # mask3 = jnp.where(new_latent["density"].density - dx < 1, 1, 0)
+                    # mask4 = jnp.where(new_latent["density"].density - dx > 0, 1, 0)
+                    # dx = dx * mask1 * mask2 * mask3 * mask4
+                    # v = v * mask1 * mask2 * mask3 * mask4
 
                     # new_latent["density"].density = new_latent["density"].density + dx
                     # new_loss1, (response, aux, params) = loss_fn(
@@ -256,8 +260,9 @@ class Designer:
                     # finite_difference_grad = (new_loss1 - new_loss2) / (2 * epsilon)
                     # computed_grad = jnp.sum(v * my_grad["density"].density)
                     # print(f'finite difference grad: {finite_difference_grad:.3f}, computed grad: {computed_grad:.3f}')
+                    
+                    updates, opt_state = opt.update(my_grad, opt_state, self.state.latents)
 
-                    updates, opt_state = opt.update(my_grad, opt_state)
                     self.state.latents = optax.apply_updates(self.state.latents, updates)
                     self.state.latents["density"].density = jnp.clip(self.state.latents["density"].density, self.lower_bound, self.upper_bound)
                     print(f'step {step} loss {loss_value:.3f} constraint values: {solid_v:.3f}, {void_v:.3f}, lr: {schedule(self.state.step):.2e}')
@@ -449,37 +454,42 @@ class Designer:
             os.makedirs(self.log_dir, exist_ok=True)
 
             num_wls = len(self.challenge._wavelengths)
-            fig = plt.figure(figsize=((2*num_wls+3)*4, 4))
-            plt.subplot(1,2*num_wls+3,1)
+            num_fields = len(list(aux.values())[0][2])
+            fig = plt.figure(figsize=((3+num_wls*(num_fields+1))*4, 4))
+            plt.subplot(1,3+num_wls*(num_fields+1),1)
             plt.imshow(onp.rot90(self.state.latents["density"].density), cmap="binary")
             plt.title("latent")
             plt.colorbar()
-            plt.subplot(1,2*num_wls+3,2)
+            plt.subplot(1,3+num_wls*(num_fields+1),2)
             plt.imshow(onp.rot90(params["density"].density), cmap="binary")
             plt.title(f"params\nstep: {self.state.step}")
             plt.colorbar()
-            plt.subplot(1,2*num_wls+3,3)
+            plt.subplot(1,3+num_wls*(num_fields+1),3)
             vm = jnp.max(jnp.abs(my_grad["density"].density))
             plt.imshow(onp.rot90(my_grad["density"].density), cmap="seismic", vmin=-vm, vmax=vm)
             plt.title("grad")
             plt.colorbar()
 
             for idx, (wl, data) in enumerate(aux.items()):
-                u0, Sr, Ex, thetas, phis = data
+                u0, Sr, fields, thetas, phis = data
                 # print("total Sr: ", onp.sum(onp.array(Sr)))
                 # assert (Sr>0).all(), "Sr should be positive"
                 # max_idx = jnp.argmax(Sr)
                 # max_th = thetas[max_idx] * 180 / jnp.pi
                 # max_phi = phis[max_idx] * 180 / jnp.pi
 
-                ax = plt.subplot(1,2*num_wls+3,4+2*idx, projection='3d')
+                ax = plt.subplot(1,3+num_wls*(num_fields+1),4+idx*(num_fields+1))
                 # sc = plot_Sr_subplot(onp.array(u0), onp.array(Sr), ax=ax, point_size=8)
                 # fig.colorbar(sc, ax=ax)
                 plt.title(f"Sr for wl {wl}")
-                ax = plt.subplot(1,2*num_wls+3,4+2*idx+1)
-                plt.imshow(onp.rot90(Ex), cmap="seismic")
-                plt.colorbar()
-                # plt.title(f"Ex for wl {wl}\nmax_th: {max_th:.2f}, max_phi: {max_phi:.2f}")
+
+                num_fields = len(fields)
+                for i in range(num_fields):
+                    ax = plt.subplot(1,3+num_wls*(num_fields+1),4+idx*(num_fields+1)+i+1)
+                    plt.imshow(onp.rot90(fields[i]), cmap="seismic")
+                    plt.colorbar()
+                    plt.title(f"field {i}")
+                # plt.title(f"Ex for wl {wl}\nmax_th: {max_th:.2f}\nmax_phi: {max_phi:.2f}")
 
             plt.tight_layout()
             plt.savefig(os.path.join(self.log_dir, f"step_{self.state.step}.png"))
@@ -654,18 +664,17 @@ class Designer:
         plt.imshow(onp.rot90(params["density"].density), cmap="binary")
         plt.title(f"params\nstep: {self.state.step}")
         plt.colorbar()
-        plt.subplot(1,2*num_wls+3,3)
-        vm = jnp.max(jnp.abs(my_grad["density"].density))
-        plt.imshow(onp.rot90(my_grad["density"].density), cmap="seismic", vmin=-vm, vmax=vm)
-        plt.title("grad")
-        plt.colorbar()
+        # plt.subplot(1,2*num_wls+3,3)
+        # vm = jnp.max(jnp.abs(my_grad["density"].density))
+        # plt.imshow(onp.rot90(my_grad["density"].density), cmap="seismic", vmin=-vm, vmax=vm)
+        # plt.title("grad")
+        # plt.colorbar()
 
         for idx, (wl, data) in enumerate(aux.items()):
-            u0, Sr, Ex, theta_range, phi_range = data
-            max_th_idx, max_phi_idx = jnp.unravel_index(jnp.argmax(jnp.abs(Sr)), Sr.shape)
-
-            max_th = theta_range[max_th_idx] * 180 / jnp.pi
-            max_phi = phi_range[max_phi_idx] * 180 / jnp.pi
+            u0, Sr, Ex, thetas, phis = data
+            max_idx = jnp.argmax(Sr)
+            max_th = thetas[max_idx] * 180 / jnp.pi
+            max_phi = phis[max_idx] * 180 / jnp.pi
 
             ax = plt.subplot(1,2*num_wls+3,4+2*idx, projection='3d')
             plot_Sr_subplot(onp.array(u0), onp.array(Sr), ax=ax, point_size=8)
@@ -673,7 +682,7 @@ class Designer:
             ax = plt.subplot(1,2*num_wls+3,4+2*idx+1)
             plt.imshow(onp.rot90(Ex), cmap="seismic")
             plt.colorbar()
-            plt.title(f"Ex for wl {wl}\nmax_th: {max_th:.2f}, max_phi: {max_phi:.2f}")
+            plt.title(f"Ex for wl {wl}\nmax_th: {max_th:.2f}\nmax_phi: {max_phi:.2f}")
 
         plt.tight_layout()
         plt.savefig(os.path.join(self.log_dir, f"final_step.png"))

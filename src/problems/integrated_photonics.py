@@ -298,15 +298,9 @@ class IntegratedPhotonicsProblem(BaseProblem):
                 self.pmls,
                 self.dL,
                 wavelength,
-                # bloch_vector=None,
-                # batched_compute=False,
-                # input_yee=False,
-                # Aop=False,
-                # ln_R=-10,
-                # scale_PML=False,
             )
 
-            input_grad = torch.autograd.grad(r2c(residual)[0], design_variable_torch, grad_outputs=torch.conj(adjoint_E))[0]
+            input_grad = 2*torch.autograd.grad(r2c(residual)[0], design_variable_torch, grad_outputs=torch.conj(adjoint_E))[0]
 
             return input_grad
 
