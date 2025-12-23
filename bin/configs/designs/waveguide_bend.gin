@@ -1,6 +1,6 @@
 import bin.inverse_design
-import src.invde.base_challenge
 import src.invde.utils.utils
+import src.problems.base_challenge
 import src.problems.base_problem
 import src.problems.integrated_photonics
 

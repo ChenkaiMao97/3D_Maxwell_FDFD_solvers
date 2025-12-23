@@ -15,6 +15,10 @@ def main(config):
     print(f"final residual absolute mean: {torch.mean(torch.abs(final_residual))}")
 
     if config['spins_verification']:
+        print("mean: ", torch.mean(torch.abs(eps[...,0])), torch.mean(torch.abs(src)))
+        print("dL, wl, pmls: ", dL[0].numpy(), wl[0].numpy(), pmls)
+        print("shapes: eps: ", eps[...,0].shape, "src: ", src.shape)
+        print("dtypes: eps: ", eps[...,0].dtype, "src: ", src.dtype)
         spins_solution, spins_residual = spins_solve(config, eps[...,0].detach().cpu(), src.detach().cpu(), dL=float(dL[0].numpy()), wl=float(wl[0].numpy()), pmls=pmls)
         rel_diff, E_diff = scaled_MAE(c2r(solution).cpu(), spins_solution)
         print("relative error between E_spin and E_model", rel_diff)

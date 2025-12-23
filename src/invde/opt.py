@@ -472,24 +472,24 @@ class Designer:
 
             for idx, (wl, data) in enumerate(aux.items()):
                 u0, Sr, fields, thetas, phis = data
-                # print("total Sr: ", onp.sum(onp.array(Sr)))
-                # assert (Sr>0).all(), "Sr should be positive"
-                # max_idx = jnp.argmax(Sr)
-                # max_th = thetas[max_idx] * 180 / jnp.pi
-                # max_phi = phis[max_idx] * 180 / jnp.pi
+                print("total Sr: ", onp.sum(onp.array(Sr)))
+                assert (Sr>0).all(), "Sr should be positive"
+                max_idx = jnp.argmax(Sr)
+                max_th = thetas[max_idx] * 180 / jnp.pi
+                max_phi = phis[max_idx] * 180 / jnp.pi
 
-                ax = plt.subplot(1,3+num_wls*(num_fields+1),4+idx*(num_fields+1))
-                # sc = plot_Sr_subplot(onp.array(u0), onp.array(Sr), ax=ax, point_size=8)
-                # fig.colorbar(sc, ax=ax)
-                plt.title(f"Sr for wl {wl}")
+                ax = plt.subplot(1,3+num_wls*(num_fields+1),4+idx*(num_fields+1), projection='3d')
+                sc = plot_Sr_subplot(onp.array(u0), onp.array(Sr), ax=ax, point_size=8)
+                fig.colorbar(sc, ax=ax)
+                plt.title(f"Sr for wl {wl}\nmax_th: {max_th:.2f}\nmax_phi: {max_phi:.2f}")
 
                 num_fields = len(fields)
                 for i in range(num_fields):
-                    ax = plt.subplot(1,3+num_wls*(num_fields+1),4+idx*(num_fields+1)+i+1)
-                    plt.imshow(onp.rot90(fields[i]), cmap="seismic")
+                    plt.subplot(1,3+num_wls*(num_fields+1),4+idx*(num_fields+1)+i+1)
+                    vm = onp.max(onp.abs(fields[i]))
+                    plt.imshow(onp.rot90(fields[i]), cmap="seismic", vmin=-vm, vmax=vm)
                     plt.colorbar()
                     plt.title(f"field {i}")
-                # plt.title(f"Ex for wl {wl}\nmax_th: {max_th:.2f}\nmax_phi: {max_phi:.2f}")
 
             plt.tight_layout()
             plt.savefig(os.path.join(self.log_dir, f"step_{self.state.step}.png"))
@@ -652,37 +652,38 @@ class Designer:
 
     def log_final_superpixel(self, response, aux, params):
         # log step
-        os.makedirs(self.log_dir, exist_ok=True)
-
         num_wls = len(self.challenge._wavelengths)
-        plt.figure(figsize=((2*num_wls+3)*4, 4))
-        plt.subplot(1,2*num_wls+3,1)
+        num_fields = len(list(aux.values())[0][2])
+        fig = plt.figure(figsize=((3+num_wls*(num_fields+1))*4, 4))
+        plt.subplot(1,2+num_wls*(num_fields+1),1)
         plt.imshow(onp.rot90(self.state.latents["density"].density), cmap="binary")
         plt.title("latent")
         plt.colorbar()
-        plt.subplot(1,2*num_wls+3,2)
+        plt.subplot(1,2+num_wls*(num_fields+1),2)
         plt.imshow(onp.rot90(params["density"].density), cmap="binary")
         plt.title(f"params\nstep: {self.state.step}")
         plt.colorbar()
-        # plt.subplot(1,2*num_wls+3,3)
-        # vm = jnp.max(jnp.abs(my_grad["density"].density))
-        # plt.imshow(onp.rot90(my_grad["density"].density), cmap="seismic", vmin=-vm, vmax=vm)
-        # plt.title("grad")
-        # plt.colorbar()
 
         for idx, (wl, data) in enumerate(aux.items()):
-            u0, Sr, Ex, thetas, phis = data
+            u0, Sr, fields, thetas, phis = data
+            # print("total Sr: ", onp.sum(onp.array(Sr)))
+            assert (Sr>0).all(), "Sr should be positive"
             max_idx = jnp.argmax(Sr)
             max_th = thetas[max_idx] * 180 / jnp.pi
             max_phi = phis[max_idx] * 180 / jnp.pi
 
-            ax = plt.subplot(1,2*num_wls+3,4+2*idx, projection='3d')
-            plot_Sr_subplot(onp.array(u0), onp.array(Sr), ax=ax, point_size=8)
-            plt.title(f"Sr for wl {wl}")
-            ax = plt.subplot(1,2*num_wls+3,4+2*idx+1)
-            plt.imshow(onp.rot90(Ex), cmap="seismic")
-            plt.colorbar()
-            plt.title(f"Ex for wl {wl}\nmax_th: {max_th:.2f}\nmax_phi: {max_phi:.2f}")
+            ax = plt.subplot(1,2+num_wls*(num_fields+1),3+idx*(num_fields+1), projection='3d')
+            sc = plot_Sr_subplot(onp.array(u0), onp.array(Sr), ax=ax, point_size=8)
+            fig.colorbar(sc, ax=ax)
+            plt.title(f"Sr for wl {wl}\nmax_th: {max_th:.2f}\nmax_phi: {max_phi:.2f}")
+
+            num_fields = len(fields)
+            for i in range(num_fields):
+                plt.subplot(1,2+num_wls*(num_fields+1),3+idx*(num_fields+1)+i+1)
+                vm = onp.max(onp.abs(fields[i]))
+                plt.imshow(onp.rot90(fields[i]), cmap="seismic", vmin=-vm, vmax=vm)
+                plt.colorbar()
+                plt.title(f"field {i}")
 
         plt.tight_layout()
         plt.savefig(os.path.join(self.log_dir, f"final_step.png"))

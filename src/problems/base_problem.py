@@ -1,5 +1,5 @@
 import os
-from src.utils.utils import printc, is_multiple, resolve, c2r
+from src.utils.utils import printc, is_multiple, resolve, c2r, r2c
 from src.invde.utils.utils import *
 
 import numpy as np
@@ -14,6 +14,9 @@ from functools import cached_property
 from src.utils.GPU_worker_utils import solver_worker
 from src.utils.physics import E_to_H
 from src.solvers.spins_solver import spins_solve
+
+import matplotlib.pyplot as plt
+from src.utils.plot_field3D import plot_3slices
 
 import gin
 
@@ -99,39 +102,42 @@ class BaseProblem:
         print("design region extent: ", self.design_region_x_start, self.design_region_x_end, self.design_region_y_start, self.design_region_y_end, self.design_region_z_start, self.design_region_z_end)
         
     def init_GPU_workers(self, solver_config):
-        # init solvers on each GPU
-        gpu_ids = list(range(len(self.wavelengths)))
-        self.num_gpus = len(gpu_ids)
-        assert self.num_gpus <= torch.cuda.device_count(), f"number of wavelengths, hence GPUs, {len(gpu_ids)} is greater than the number of available GPUs {torch.cuda.device_count()}"
+        if self._backend == 'spins':
+            self.num_gpus = 1 # currently only one GPU is supported for spins solver
+        elif self._backend == 'NN':
+            # init solvers on each GPU
+            gpu_ids = list(range(len(self.wavelengths)))
+            self.num_gpus = len(gpu_ids)
+            assert self.num_gpus <= torch.cuda.device_count(), f"number of wavelengths, hence GPUs, {len(gpu_ids)} is greater than the number of available GPUs {torch.cuda.device_count()}"
 
-        self.task_queues = [mp.Queue() for _ in range(self.num_gpus)]
-        self.result_queue = mp.Queue()
-        # self.init_queues = [mp.Queue() for _ in range(self.num_gpus)] # for passing back values after init
-        
-        self.processes = []
+            self.task_queues = [mp.Queue() for _ in range(self.num_gpus)]
+            self.result_queue = mp.Queue()
+            # self.init_queues = [mp.Queue() for _ in range(self.num_gpus)] # for passing back values after init
+            
+            self.processes = []
 
-        for device_id in gpu_ids:
-            init_kwargs = {
-                'sim_shape': self.grid_shape,
-                'wl': self.wavelengths[device_id],
-                'dL': self.dL,
-                'pmls': self.pmls,
-                'save_intermediate': False,
-                'output_dir': None,
-                'solver_config': solver_config
-            }
-            # p = mp.Process(target=solver_worker, args=(device_id, init_kwargs, self.task_queues[device_id], self.result_queue, self.init_queues[device_id]))
-            p = mp.Process(target=solver_worker, args=(device_id, init_kwargs, self.task_queues[device_id], self.result_queue))
-            p.start()
-            self.processes.append(p)
+            for device_id in gpu_ids:
+                init_kwargs = {
+                    'sim_shape': self.grid_shape,
+                    'wl': self.wavelengths[device_id],
+                    'dL': self.dL,
+                    'pmls': self.pmls,
+                    'save_intermediate': False,
+                    'output_dir': None,
+                    'solver_config': solver_config
+                }
+                # p = mp.Process(target=solver_worker, args=(device_id, init_kwargs, self.task_queues[device_id], self.result_queue, self.init_queues[device_id]))
+                p = mp.Process(target=solver_worker, args=(device_id, init_kwargs, self.task_queues[device_id], self.result_queue))
+                p.start()
+                self.processes.append(p)
 
-        self.task_id_counter = 0
-        self.results = {}
+            self.task_id_counter = 0
+            self.results = {}
 
-        self.results_lock = threading.Lock()
-        self.results_cond = threading.Condition(self.results_lock)
-        self.listener_thread = threading.Thread(target=self._result_listener, daemon=True)
-        self.listener_thread.start()
+            self.results_lock = threading.Lock()
+            self.results_cond = threading.Condition(self.results_lock)
+            self.listener_thread = threading.Thread(target=self._result_listener, daemon=True)
+            self.listener_thread.start()
     
     def _result_listener(self):
         while True:
@@ -159,15 +165,16 @@ class BaseProblem:
 
         assert wl in self.wavelengths, f"wavelength {wl} is not in the list of wavelengths: {self.wavelengths}"
 
+        if isinstance(epsilon_r, np.ndarray):
+            epsilon_r = torch.from_numpy(epsilon_r)
+        if isinstance(source, np.ndarray):
+            source = torch.from_numpy(source)
+        epsilon_r = epsilon_r[None].to(torch.float32)
+        source = c2r(source[None].to(torch.complex64))
+
         if self._backend == 'NN':
             wl_torch = torch.tensor([wl], dtype=torch.float32)
             dl_torch = torch.tensor([self.dL], dtype=torch.float32)
-            if isinstance(epsilon_r, np.ndarray):
-                epsilon_r = torch.from_numpy(epsilon_r)
-            if isinstance(source, np.ndarray):
-                source = torch.from_numpy(source)
-            epsilon_r = epsilon_r[None].to(torch.float32)
-            source = c2r(source[None].to(torch.complex64))
 
             # send task to GPU worker queue
             task_id = self.task_id_counter
@@ -184,7 +191,8 @@ class BaseProblem:
                     self.results_cond.wait()
             e = self.results.pop(task_id)
         elif self._backend == 'spins':
-            e, spins_residual = spins_solve(None, epsilon_r, source, dL = self.dL, wl = wl, pmls=self.pmls)
+            e, spins_residual = spins_solve(None, epsilon_r, source, dL = float(self.dL), wl = float(wl), pmls=torch.tensor(self.pmls)[None])
+            e = r2c(e)
 
         if mode == 'forward':
             self.last_forward_E[wl] = e
