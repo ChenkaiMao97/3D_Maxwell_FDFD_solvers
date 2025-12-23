@@ -7,7 +7,7 @@ import jax.numpy as jnp
 from typing import Any, Callable, Dict, Optional, Tuple
 import numpy as onp
 from src.invde.utils.utils import DesignState
-from src.invde.base_challenge import BaseChallenge
+from src.problems.base_challenge import BaseChallenge
 
 import matplotlib.pyplot as plt
 

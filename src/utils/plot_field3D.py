@@ -608,9 +608,11 @@ def plot_Sr_subplot(u0, Sr, ax, point_size=8):
     sc = ax.scatter(x, y, z, c=c, s=point_size, cmap='viridis')
 
     # ---- set radius extents ----
-    R = 1.05 * np.max(np.abs([x, y, z]))
+    R = 1.0 * np.max(np.abs([x, y, z]))
     R = 1.0 if not np.isfinite(R) or R == 0 else R
-    ax.set_xlim(-R, R); ax.set_ylim(-R, R); ax.set_zlim(-R, R)
+
+    ratio = 0.65
+    ax.set_xlim(-R*ratio, R*ratio); ax.set_ylim(-R*ratio, R*ratio); ax.set_zlim(-R*ratio, R*ratio)
     ax.set_box_aspect([1, 1, 1])
 
     # ---- wireframe sphere (lat / lon lines) ----
@@ -637,7 +639,8 @@ def plot_Sr_subplot(u0, Sr, ax, point_size=8):
         [0.0, u_max[0] * line_len],
         [0.0, u_max[1] * line_len],
         [0.0, u_max[2] * line_len],
-        linewidth=2.0
+        linewidth=2.0,
+        color='red'
     )
 
     # ---- clean background ----

@@ -20,8 +20,8 @@ from spins.invdes.problem_graph.simspace import SimulationSpace
 
 # Have a single shared direct solver object because we need to use
 # multiprocessing to actually parallelize the solve.
-DIRECT_SOLVER = local_matrix_solvers.MultiprocessingSolver(
-    local_matrix_solvers.DirectSolver())
+# DIRECT_SOLVER = local_matrix_solvers.MultiprocessingSolver(
+#     local_matrix_solvers.DirectSolver())
 
 
 @optplan.register_node(optplan.WaveguideModeSource)

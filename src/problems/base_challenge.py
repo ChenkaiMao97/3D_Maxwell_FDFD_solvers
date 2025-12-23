@@ -73,23 +73,16 @@ class BaseChallenge:
 
         # Construct the jax.grad compatible simulation function for the model.
         self._backend = _backend
-        if _backend == 'NN':
-            self.problem.init_GPU_workers(solver_config=solver_config)
+        self.problem.init_GPU_workers(solver_config=solver_config)
         self._jax_sim_fn = self.construct_jax_sim_fn(self.problem)
 
     def construct_jax_sim_fn(self,
             problem: Callable,
         ):
         """Constructs the jax-compatible simulation function for the model."""
-        if self._backend == 'spins':
-            raise NotImplementedError("spins backend autograd is not supported yet")
-            # _jax_wrapped_sim_fn = autograd_wrapper.jax_wrap_autograd(
-            #     problem.simulate, argnums=0, outputnums=0
-            # )
-        elif self._backend == 'NN':
-            _jax_wrapped_sim_fn = torch_wrapper.jax_wrap_torch(
-                problem.simulate, problem.simulate_adjoint, argnums=0
-            )
+        _jax_wrapped_sim_fn = torch_wrapper.jax_wrap_torch(
+            problem.simulate, problem.simulate_adjoint, argnums=0
+        )
         return _jax_wrapped_sim_fn
     
     def init(self, key: jax.Array):

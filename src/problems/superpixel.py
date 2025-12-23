@@ -106,6 +106,7 @@ class SuperpixelProblem(BaseProblem):
         super().__init__(*args, **kwargs)
         self.spec = spec
         self.residual_fn = residue_E
+        print("backend: ", self._backend)
 
     def init(self, shape_only=False):
         self._waveguides = []
@@ -143,9 +144,9 @@ class SuperpixelProblem(BaseProblem):
             ky = 2*np.pi * self.eps_substrate**.5 / wl * np.sin(theta) * np.sin(phi)
             kz = 2*np.pi * self.eps_substrate**.5 / wl * np.cos(theta)
 
-            x = torch.linspace(self.source_xs[0]*self.dL, (self.source_xs[1]-1)*self.dL, sx) + global_frame_coordinate[0]
-            y = torch.linspace(self.source_ys[0]*self.dL, (self.source_ys[1]-1)*self.dL, sy) + global_frame_coordinate[1]
-            z = torch.linspace(self.source_zs[0]*self.dL, (self.source_zs[1]-1)*self.dL, sz) + global_frame_coordinate[2]
+            x = torch.linspace((self.source_xs[0]-self.grid_shape[0]//2)*self.dL, (self.source_xs[1]-1+self.grid_shape[0]//2)*self.dL, sx) + global_frame_coordinate[0]
+            y = torch.linspace((self.source_ys[0]-self.grid_shape[1]//2)*self.dL, (self.source_ys[1]-1+self.grid_shape[1]//2)*self.dL, sy) + global_frame_coordinate[1]
+            z = torch.linspace((self.source_zs[0]-self.grid_shape[2]//2)*self.dL, (self.source_zs[1]-1+self.grid_shape[2]//2)*self.dL, sz) + global_frame_coordinate[2]
             
             x, y = torch.meshgrid(x,y,indexing='ij')
             map1 = torch.exp(-1j*(kx*x+ky*y+kz*z[1]))
@@ -207,12 +208,11 @@ class SuperpixelProblem(BaseProblem):
         return fields
 
     def simulate_adjoint(self, design_variable, forward_output, grad_outputs):
-        assert self._backend == 'NN'
         epsilon_r = self.epsilon_r(design_variable)
 
         def _adjoint_simulate(wavelength, forward_E, grad_E):
-            source_torch = torch.conj(grad_E.to(torch.complex64)).resolve_conj()  # adjoint source
-            # source_torch = grad_E.to(torch.complex64)
+            # source_torch = torch.conj(grad_E.to(torch.complex64)).resolve_conj()  # adjoint source
+            source_torch = grad_E.to(torch.complex64)
 
             # debug plot:
             # print("source_torch shape: ", source_torch.shape)
@@ -225,9 +225,9 @@ class SuperpixelProblem(BaseProblem):
             # plot_3slices(adjoint_E[...,0].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('adjoint_Ex.png'))
             # plot_3slices(adjoint_E[...,1].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('adjoint_Ey.png'))
             # plot_3slices(adjoint_E[...,2].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('adjoint_Ez.png'))
-            # debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,0], 'adjoint_Ex.png')
-            # debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,1], 'adjoint_Ey.png')
-            # debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,2], 'adjoint_Ez.png')
+            debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,0], 'adjoint_Ex.png')
+            debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,1], 'adjoint_Ey.png')
+            debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,2], 'adjoint_Ez.png')
 
             design_variable_torch = design_variable.clone().detach().requires_grad_(True)
             epsilon_for_residual = self.make_torch_epsilon_r(design_variable_torch)[None]
@@ -246,7 +246,7 @@ class SuperpixelProblem(BaseProblem):
                 wavelength,
             )
             
-            input_grad = torch.autograd.grad(r2c(residual)[0], design_variable_torch, grad_outputs=torch.conj(adjoint_E))[0]
+            input_grad = torch.autograd.grad(r2c(residual)[0], design_variable_torch, grad_outputs=1j*torch.conj(adjoint_E))[0]
             # debug_plot(input_grad.squeeze(), 'input_grad.png')
             return input_grad
 
@@ -322,16 +322,16 @@ class SuperpixelChallenge(BaseChallenge):
             # Ey = 1/2* (Ey + jnp.roll(Ey, 1, axis=1))
             # Ez = 1/2* (Ez + jnp.roll(Ez, 1, axis=2))
 
-            sx, sy, sz = Ex.shape
-            # print("sz-self.problem.pmls[5] - 5: ", sz-self.problem.pmls[5] - 5)
-            offset_z = 10
-            target = jnp.abs(Ex[sx//2, sy//2, sz//2+offset_z])**2 + jnp.abs(Ey[sx//2, sy//2, sz//2+offset_z])**2 + jnp.abs(Ez[sx//2, sy//2, sz//2+offset_z])**2
-            loss += -target
+            # sx, sy, sz = Ex.shape
+            # # print("sz-self.problem.pmls[5] - 5: ", sz-self.problem.pmls[5] - 5)
+            # offset_z = 0
+            # target = jnp.abs(Ex[sx//2-1, sy//2-1, sz//2+offset_z-1])**2 + jnp.abs(Ey[sx//2-1, sy//2-1, sz//2+offset_z])**2 + jnp.abs(Ez[sx//2-1, sy//2-1, sz//2+offset_z])**2
+            # loss += -target
 
-            Ex_plot = jnp.abs(Ex[:,sy//2,:])
-            Ey_plot = jnp.abs(Ey[:,sy//2,:])
-            Ez_plot = jnp.abs(Ez[:,sy//2,:])
-            aux[wavelength] = (None, None, (Ex_plot, Ey_plot, Ez_plot), None, None)
+            # Ex_plot = jnp.abs(Ex[:,sy//2-1,:])
+            # Ey_plot = jnp.abs(Ey[:,sy//2-1,:])
+            # Ez_plot = jnp.abs(Ez[:,sy//2-1,:])
+            # aux[wavelength] = (None, None, (Ex_plot, Ey_plot, Ez_plot), None, None)
 
             # (2) near field above device:
             ## interpolate fields to be in the same physical space
@@ -349,47 +349,47 @@ class SuperpixelChallenge(BaseChallenge):
             # aux[wavelength] = (None, None, Ex_plot, None, None)
 
             # (3) farfield with straton-chu:
-            # Hx, Hy, Hz = E_to_H(Ex, Ey, Ez, dxes, omega, bloch_vector=None)
-            # thetas, phis, u0, far_E, far_H = strattonChu3D_full_sphere_GPU(
-            #     dl=self.problem.dL,
-            #     xc=Ex.shape[0]//2,
-            #     yc=Ex.shape[1]//2,
-            #     zc=Ex.shape[2]//2,
-            #     Rx=self.Rx,
-            #     Ry=self.Ry,
-            #     Rz=self.Rz,
-            #     lambda_val=wavelength,
-            #     eps_background=self.problem.eps_background,
-            #     Ex_OBJ=Ex[None],
-            #     Ey_OBJ=Ey[None],
-            #     Ez_OBJ=Ez[None],
-            #     Hx_OBJ=Hx[None],
-            #     Hy_OBJ=Hy[None],
-            #     Hz_OBJ=Hz[None],
-            #     N_points_on_sphere=self.farfield_points,
-            # )
+            Hx, Hy, Hz = E_to_H(Ex, Ey, Ez, dxes, omega, bloch_vector=None)
+            thetas, phis, u0, far_E, far_H = strattonChu3D_full_sphere_GPU(
+                dl=self.problem.dL,
+                xc=Ex.shape[0]//2,
+                yc=Ex.shape[1]//2,
+                zc=Ex.shape[2]//2,
+                Rx=self.Rx,
+                Ry=self.Ry,
+                Rz=self.Rz,
+                lambda_val=wavelength,
+                eps_background=self.problem.eps_background,
+                Ex_OBJ=Ex[None],
+                Ey_OBJ=Ey[None],
+                Ez_OBJ=Ez[None],
+                Hx_OBJ=Hx[None],
+                Hy_OBJ=Hy[None],
+                Hz_OBJ=Hz[None],
+                N_points_on_sphere=self.farfield_points,
+            )
 
-            # # plot_poynting_radial_scatter(u0, far_E, far_H, fname='poynting_radial_scatter.png',
-            # #                 plot_batch_idx=0, normalize=True, point_size=8)
+            # plot_poynting_radial_scatter(u0, far_E, far_H, fname='poynting_radial_scatter.png',
+            #                 plot_batch_idx=0, normalize=True, point_size=8)
 
-            # t_theta, t_phi = self.target_angles
-            # idx = self.sphere_grid_kd.query_cone(t_theta * np.pi / 180, t_phi * np.pi / 180, self.target_angle_radius * np.pi / 180)
+            t_theta, t_phi = self.target_angles
+            idx = self.sphere_grid_kd.query_cone(t_theta * np.pi / 180, t_phi * np.pi / 180, self.target_angle_radius * np.pi / 180)
 
             # print("target thetas: ", thetas[idx]*180/np.pi, "target phis: ", phis[idx]*180/np.pi)
 
-            # S = 0.5 * jnp.real(jnp.cross(far_E[0], jnp.conj(far_H[0]), axis=0))  # (3,N_points_on_sphere), real
-            # Sr = jnp.sum(S * u0[0], axis=0)      # (N_points_on_sphere), real
+            S = 0.5 * jnp.real(jnp.cross(far_E[0], jnp.conj(far_H[0]), axis=0))  # (3,N_points_on_sphere), real
+            Sr = jnp.sum(S * u0[0], axis=0)      # (N_points_on_sphere), real
 
-            # # eff = jnp.abs(Sr)
-            # eff = Sr
-            # assert (eff>0).all(), "eff should be positive"
+            # eff = jnp.abs(Sr)
+            eff = Sr
+            assert (eff>0).all(), "eff should be positive"
 
-            # target_region = eff[idx]
-            # # loss += -1e2*jnp.sum(target_region)
-            # loss += 1e2*(1 - jnp.sum(target_region) / jnp.sum(eff))
+            target_region = eff[idx]
+            # loss += -1e2*jnp.sum(target_region)
+            loss += 1e2*(1 - jnp.sum(target_region) / jnp.sum(eff))
 
-            # sx, sy, sz = Ez.shape
-            # Ex_plot = Ex[:,sy//2, :].real
-            # aux[wavelength] = (u0[0], Sr, Ex_plot, thetas, phis)
+            sx, sy, sz = Ez.shape
+            Ex_plot = Ex[:,sy//2, :].real
+            aux[wavelength] = (u0[0], Sr, (Ex_plot,), thetas, phis)
 
         return loss, aux
