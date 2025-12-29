@@ -18,7 +18,7 @@ from src.problems.base_problem import BaseProblem
 from src.problems.base_challenge import BaseChallenge
 
 from src.utils.physics import residue_E
-from src.utils.utils import resolve, printc, c2r, r2c
+from src.utils.utils import resolve, printc, c2r, r2c, smooth_edges
 from src.utils.stratton_chu_jax import strattonChu3D_full_sphere_GPU, E_to_H, fibonacci_sphere
 from src.utils.PML_utils import apply_scpml
 from src.utils.plot_field3D import plot_3slices, plot_poynting_radial_scatter
@@ -151,6 +151,10 @@ class SuperpixelProblem(BaseProblem):
             x, y = torch.meshgrid(x,y,indexing='ij')
             map1 = torch.exp(-1j*(kx*x+ky*y+kz*z[1]))
             map2 = -torch.exp(-1j*(kx*x+ky*y+kz*z[1])-1j*kz*self.dL)
+
+            # add smoothing for the edges:
+            map1 = smooth_edges(map1)
+            map2 = smooth_edges(map2)
                 
             if source_pol == 'x':
                 source[:,:,1,0] = map1

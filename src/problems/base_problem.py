@@ -13,7 +13,7 @@ from functools import cached_property
 
 from src.utils.GPU_worker_utils import solver_worker
 from src.utils.physics import E_to_H
-from src.solvers.spins_solver import spins_solve
+# from src.solvers.spins_solver import spins_solve
 
 import matplotlib.pyplot as plt
 from src.utils.plot_field3D import plot_3slices

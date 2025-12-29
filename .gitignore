@@ -3,3 +3,5 @@
 *cache*
 *.pyc
 *.pt
+*.log
+figures
