@@ -85,7 +85,8 @@ class NN_solver:
         return x
 
 @torch.no_grad()
-def NN_solve(config, eps, src, return_final_correction=False):
+def NN_solve(config, eps, src, return_xr_history=False, plot_iters=None):
+    print("in NN_solve: ", return_xr_history, plot_iters)
     model_path = config["model_path"]
 
     sim_shape = config["sim_shape"]
@@ -135,14 +136,14 @@ def NN_solve(config, eps, src, return_final_correction=False):
     freq = torch.tensor(dL/wl)[None].cuda()
     gmres.setup_eps(eps, freq)
     if restart == 0:
-        x, history, _, _ = gmres.solve(complex_rhs, verbose, return_final_correction=return_final_correction)
+        x, history, x_history, r_history = gmres.solve(complex_rhs, verbose, return_xr_history=return_xr_history, plot_iters=plot_iters)
     else:
-        x, history = gmres.solve_with_restart(complex_rhs, tol, max_iter, restart, verbose, return_final_correction=return_final_correction)
+        x, history, x_history, r_history = gmres.solve_with_restart(complex_rhs, tol, max_iter, restart, verbose, return_xr_history=return_xr_history, plot_iters=plot_iters)
     time_end = time.time()
     print(f"time taken for NN GMRES solver: {time_end - time_start} seconds")
     final_residual = residual_fn(x)
 
-    if return_final_correction:
-        return x, history, final_residual, final_correction
+    if return_xr_history:
+        return x, history, final_residual, x_history, r_history
     else:
         return x, history, final_residual

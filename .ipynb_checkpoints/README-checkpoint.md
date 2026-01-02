@@ -75,11 +75,4 @@ Adjoint gradient debugging:
 XLA_PYTHON_CLIENT_PREALLOCATE=false python -m bin.launch_job --pipeline="inverse_design" --solver-config="bin/configs/solvers/periodic_small_model.gin" --design-config="bin/configs/designs/gradient_debug_thin_slab.gin" --experiment-name="debugging_slab_nearfield"
 ```
 
-for the server
-```bash
-XLA_PYTHON_CLIENT_PREALLOCATE=false python -m bin.launch_job --pipeline="inverse_design" --solver-config="bin/configs/solvers/aperiodic_large_model_server.gin" --design-config="bin/configs/designs/superpixel.gin" --experiment-name="debugging_1"
-```
-
-
-
 

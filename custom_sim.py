@@ -14,12 +14,14 @@ from functools import partial
 from src.problems.meta_atom import make_meta_atom_cylinder
 from src.problems.waveguide_bend import make_waveguide_bend
 from src.problems.super_pixel_reparam import make_super_pixel_reparam
+from src.problems.ring_resonator import make_ring_resonator
 
 def get_problem_constructor(sim_type):
     problems = {
         'meta_atom': make_meta_atom_cylinder,
         'waveguide_bend': make_waveguide_bend,
-        'super_pixel_reparam': make_super_pixel_reparam
+        'super_pixel_reparam': make_super_pixel_reparam,
+        'ring_resonator': make_ring_resonator
     }
     return problems[sim_type]
 
@@ -27,13 +29,20 @@ def main(config):
     problem_constructor = get_problem_constructor(config['sim_type'])
     eps, src = problem_constructor(config["sim_shape"], config['wavelength'], config['dL'], config['pmls'], config['kwargs'])
 
-    solution, residual_history, final_residual, final_correction = NN_solve(config, eps, src)
+    return_xr_history = config["return_xr_history"]
+    plot_iters = config["plot_iters"]
+    solution, residual_history, final_residual, x_history, r_history = NN_solve(config, eps, src, return_xr_history=return_xr_history, plot_iters=plot_iters)
     print(f"final residual absolute mean: {torch.mean(torch.abs(final_residual))}")
 
     if config['save_for_plotting']:
         np.save(os.path.join(config['output_path'], 'solution.npy'), solution.detach().cpu().numpy())
         np.save(os.path.join(config['output_path'], 'src.npy'), src.detach().cpu().numpy())
         np.save(os.path.join(config['output_path'], 'eps.npy'), eps.detach().cpu().numpy())
+        if return_xr_history:
+            x_history = np.stack([i.detach().cpu().numpy() for i in x_history])
+            r_history = np.stack([i.detach().cpu().numpy() for i in r_history])
+            np.save(os.path.join(config['output_path'], 'x_history.npy'), x_history)
+            np.save(os.path.join(config['output_path'], 'r_history.npy'), r_history)
 
     # plot the results:
     # plot_fn_eps = partial(plot_3slices_plotly, colorscale="Greys")
@@ -44,7 +53,13 @@ def main(config):
     intensity = torch.sum(torch.abs(solution[0])**2, dim=-1).detach().cpu().numpy()
     plot_fn_eps(eps[0,:,:,:].detach().cpu().numpy().real, fname=os.path.join(config['output_path'], 'eps'))
     src_intensity = torch.sum(torch.abs(src[0]), dim=-1)
-    plot_fn_fields(src_intensity.detach().cpu().numpy(), fname=os.path.join(config['output_path'], 'src'))
+
+    # if return_xr_history:
+    #     for i in range(len(x_history)):
+    #         plot_fn_fields(x_history[i,0,:,:,:,0].real, fname=os.path.join(config['output_path'], f'x_history_{i}'))
+    #         plot_fn_fields(r_history[i,0,:,:,:,0].real, fname=os.path.join(config['output_path'], f'r_history_{i}'))
+    
+    # plot_fn_fields(src_intensity.detach().cpu().numpy(), fname=os.path.join(config['output_path'], 'src'))
     # plot_fn_fields(solution[0,:,:,:,0].detach().cpu().numpy().real, fname=os.path.join(config['output_path']))
     # plot_fn_fields(solution[0,:,:,:,0].detach().cpu().numpy().imag, fname=os.path.join(config['output_path']))
     # plot_fn_fields(solution[0,:,:,:,1].detach().cpu().numpy().real, fname=os.path.join(config['output_path']))

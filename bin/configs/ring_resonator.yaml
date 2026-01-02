@@ -1,4 +1,4 @@
-sim_type: super_pixel_reparam
+sim_type: ring_resonator
 
 ########## parameters for paths ##########
 # (1) small model 10/14
@@ -23,30 +23,27 @@ model_path: /media/ps3/root/checkpoints/waveynet3d/aperiodic_CondConv_30_pml_sma
 output_path: ./figures/ # change this to a different drive if you need to save big files
 
 ########## parameters for the physical simulation ##########
-sim_shape: [200, 200, 96] # number of pixels in x, y, z
+sim_shape: [200, 200, 90] # number of pixels in x, y, z
 wavelength: 800 # in nm
 dL: 25 # simulation resolution, in nm
 pmls: [30, 30, 30, 30, 30, 30] # number of pixels of PML for x_start, x_end, y_start, y_end, z_start, z_end
 
 kwargs: # key word arguments for constructing the problem, defined in the super_pixel_reparam.py file
   substrate_eps: 2.1025 # 1.45**2
-  meta_atom_eps: 5.76 # 2.4**2
+  medium_eps: 5.76 # 2.4**2
   top_medium_eps: 1.0 # 1.0**2
   substrate_thickness_nm: 800 # in nm
-  meta_atom_height_nm: 1200 # in nm
-  source_below_meta_nm: 200 # in nm
-  source_polarization: 'x'
-  pattern_size: [130, 130] # size of the super pixel pattern to be used
-  M: 2 # number of oval units along x
-  N: 2 # number of oval units along y
-  minimal_feature_size_nm: 50 # size of each oval unit in nm
+  waveguide_width_nm: 400 # in nm
+  waveguide_height_nm: 400 # in nm
+  ring_radius_nm: 1000 # in nm
+  gap_nm: 100 # in nm
   ln_R: -10 # parameter for PML, don't change
 
 ########## parameters for the GMRES solver ##########
 max_iter: 500
 tol: 1e-4 # relative residual target
 verbose: True
-restart: 25 # if == 0, no restart, otherwise, run restarted GMRES
+restart: 30 # if == 0, no restart, otherwise, run restarted GMRES
 
 ########## other configs ##########
 spins_verification: 0 # if 1, run simulation in spins as well to verify the results
