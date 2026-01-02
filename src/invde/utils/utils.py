@@ -1,19 +1,19 @@
 import h5py
 
 from typing import List, Tuple, Dict, Any, Union, Callable, Sequence, Optional
-import jax
-import jax.numpy as jnp
 import numpy as onp
 
 from dataclasses import dataclass, field
 from functools import partial
 
 from src.problems.integrated_photonics import IntegratedPhotonicsChallenge, IntegratedPhotonicsProblem, IntegratedPhotonicsSpec
-from src.problems.metasurface import MetasurfaceChallenge
+from src.problems.superpixel import SuperpixelChallenge, SuperpixelProblem, SuperpixelSpec
 from src.problems.coupling import CouplingChallenge
 
 from numpy.random import choice
 import math
+import jax
+import jax.numpy as jnp
 
 import gin
 
@@ -22,6 +22,7 @@ design_schemes = ["integrated_photonics", 'metasurface', 'coupling']
 @gin.configurable
 def get_integrated_photonics_challenge(
     key,
+    solver_config,
     port_pml_offset,
     input_monitor_offset,
     wg_eps,
@@ -54,11 +55,40 @@ def get_integrated_photonics_challenge(
 
     return IntegratedPhotonicsChallenge(
         problem_constructor=constructor,
-        target_s_params=target_s_params
+        target_s_params=target_s_params,
+        solver_config=solver_config
     )
 
-def get_metasurface_challenge(key):
-    return MetasurfaceChallenge(key=key)
+@gin.configurable
+def get_superpixel_challenge(
+    key, 
+    source_substrate_spacing, 
+    source_pml_spacing,
+    target_angles,
+    target_angle_radius,
+    farfield_points,
+    source_angles,
+    source_pol,
+    SC_pml_space,
+    global_frame_coordinate,
+    solver_config,
+):
+    spec = SuperpixelSpec(
+        source_substrate_spacing = source_substrate_spacing,
+        source_pml_spacing = source_pml_spacing,
+        source_angles = source_angles,
+        source_pol = source_pol,
+        global_frame_coordinate = global_frame_coordinate,
+    )
+    constructor = partial(SuperpixelProblem, spec=spec)
+    return SuperpixelChallenge(
+        problem_constructor=constructor,
+        target_angles=target_angles,
+        target_angle_radius=target_angle_radius,
+        farfield_points=farfield_points,
+        SC_pml_space=SC_pml_space,
+        solver_config=solver_config
+    )
 
 def get_coupling_challenge(key):
     return CouplingChallenge(key=key)

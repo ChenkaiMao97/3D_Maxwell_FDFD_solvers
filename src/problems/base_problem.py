@@ -1,10 +1,11 @@
 import os
-from src.utils.utils import printc, is_multiple, resolve, c2r
+from src.utils.utils import printc, is_multiple, resolve, c2r, r2c
 from src.invde.utils.utils import *
 
 import numpy as np
 import torch
 import multiprocessing as mp
+
 import threading
 import concurrent.futures
 
@@ -12,6 +13,10 @@ from functools import cached_property
 
 from src.utils.GPU_worker_utils import solver_worker
 from src.utils.physics import E_to_H
+# from src.solvers.spins_solver import spins_solve
+
+import matplotlib.pyplot as plt
+from src.utils.plot_field3D import plot_3slices
 
 import gin
 
@@ -29,6 +34,7 @@ class BaseProblem:
         eps_background,
         _backend='NN', # 'NN' or 'spins'
         density_dim = 2,
+        pml_pad_mode=True,
         eps_substrate = None
     ):
         """
@@ -63,12 +69,20 @@ class BaseProblem:
         self.pmls = pmls
         self.dL = dL
         self.wavelengths = wavelengths
+        self.pml_pad_mode = pml_pad_mode
         
-        self.grid_shape = (
-            self.design_variable_shape[0] + self.surrounding_spaces[0] + self.surrounding_spaces[1] + self.pmls[0] + self.pmls[1],
-            self.design_variable_shape[1] + self.surrounding_spaces[2] + self.surrounding_spaces[3] + self.pmls[2] + self.pmls[3],
-            self.design_variable_shape[2] + self.surrounding_spaces[4] + self.surrounding_spaces[5] + self.pmls[4] + self.pmls[5]
-        )
+        if pml_pad_mode:
+            self.grid_shape = (
+                self.design_variable_shape[0] + self.surrounding_spaces[0] + self.surrounding_spaces[1] + self.pmls[0] + self.pmls[1],
+                self.design_variable_shape[1] + self.surrounding_spaces[2] + self.surrounding_spaces[3] + self.pmls[2] + self.pmls[3],
+                self.design_variable_shape[2] + self.surrounding_spaces[4] + self.surrounding_spaces[5] + self.pmls[4] + self.pmls[5]
+            )
+        else:
+            self.grid_shape = (
+                self.design_variable_shape[0] + self.surrounding_spaces[0] + self.surrounding_spaces[1],
+                self.design_variable_shape[1] + self.surrounding_spaces[2] + self.surrounding_spaces[3],
+                self.design_variable_shape[2] + self.surrounding_spaces[4] + self.surrounding_spaces[5]
+            )
         printc(f"simulation with grid shape: {self.grid_shape}", "g")
 
         self.eps_design_max = eps_design_max
@@ -83,40 +97,47 @@ class BaseProblem:
 
         self.last_forward_E = {}
         self.last_adjoint_E = {}
-    
-    def init_GPU_workers(self):
-        # init solvers on each GPU
-        gpu_ids = list(range(len(self.wavelengths)))
-        self.num_gpus = len(gpu_ids)
-        assert self.num_gpus <= torch.cuda.device_count(), f"number of wavelengths, hence GPUs, {len(gpu_ids)} is greater than the number of available GPUs {torch.cuda.device_count()}"
 
-        self.task_queues = [mp.Queue() for _ in range(self.num_gpus)]
-        self.result_queue = mp.Queue()
-        # self.init_queues = [mp.Queue() for _ in range(self.num_gpus)] # for passing back values after init
+        print("grid shape: ", self.grid_shape)
+        print("design region extent: ", self.design_region_x_start, self.design_region_x_end, self.design_region_y_start, self.design_region_y_end, self.design_region_z_start, self.design_region_z_end)
         
-        self.processes = []
+    def init_GPU_workers(self, solver_config):
+        if self._backend == 'spins':
+            self.num_gpus = 1 # currently only one GPU is supported for spins solver
+        elif self._backend == 'NN':
+            # init solvers on each GPU
+            gpu_ids = list(range(len(self.wavelengths)))
+            self.num_gpus = len(gpu_ids)
+            assert self.num_gpus <= torch.cuda.device_count(), f"number of wavelengths, hence GPUs, {len(gpu_ids)} is greater than the number of available GPUs {torch.cuda.device_count()}"
 
-        for device_id in gpu_ids:
-            init_kwargs = {
-                'sim_shape': self.grid_shape,
-                'wl': self.wavelengths[device_id],
-                'dL': self.dL,
-                'pmls': self.pmls,
-                'save_intermediate': False,
-                'output_dir': None,
-            }
-            # p = mp.Process(target=solver_worker, args=(device_id, init_kwargs, self.task_queues[device_id], self.result_queue, self.init_queues[device_id]))
-            p = mp.Process(target=solver_worker, args=(device_id, init_kwargs, self.task_queues[device_id], self.result_queue))
-            p.start()
-            self.processes.append(p)
+            self.task_queues = [mp.Queue() for _ in range(self.num_gpus)]
+            self.result_queue = mp.Queue()
+            # self.init_queues = [mp.Queue() for _ in range(self.num_gpus)] # for passing back values after init
+            
+            self.processes = []
 
-        self.task_id_counter = 0
-        self.results = {}
+            for device_id in gpu_ids:
+                init_kwargs = {
+                    'sim_shape': self.grid_shape,
+                    'wl': self.wavelengths[device_id],
+                    'dL': self.dL,
+                    'pmls': self.pmls,
+                    'save_intermediate': False,
+                    'output_dir': None,
+                    'solver_config': solver_config
+                }
+                # p = mp.Process(target=solver_worker, args=(device_id, init_kwargs, self.task_queues[device_id], self.result_queue, self.init_queues[device_id]))
+                p = mp.Process(target=solver_worker, args=(device_id, init_kwargs, self.task_queues[device_id], self.result_queue))
+                p.start()
+                self.processes.append(p)
 
-        self.results_lock = threading.Lock()
-        self.results_cond = threading.Condition(self.results_lock)
-        self.listener_thread = threading.Thread(target=self._result_listener, daemon=True)
-        self.listener_thread.start()
+            self.task_id_counter = 0
+            self.results = {}
+
+            self.results_lock = threading.Lock()
+            self.results_cond = threading.Condition(self.results_lock)
+            self.listener_thread = threading.Thread(target=self._result_listener, daemon=True)
+            self.listener_thread.start()
     
     def _result_listener(self):
         while True:
@@ -144,8 +165,6 @@ class BaseProblem:
 
         assert wl in self.wavelengths, f"wavelength {wl} is not in the list of wavelengths: {self.wavelengths}"
 
-        wl_torch = torch.tensor([wl], dtype=torch.float32)
-        dl_torch = torch.tensor([self.dL], dtype=torch.float32)
         if isinstance(epsilon_r, np.ndarray):
             epsilon_r = torch.from_numpy(epsilon_r)
         if isinstance(source, np.ndarray):
@@ -153,20 +172,27 @@ class BaseProblem:
         epsilon_r = epsilon_r[None].to(torch.float32)
         source = c2r(source[None].to(torch.complex64))
 
-        # send task to GPU worker queue
-        task_id = self.task_id_counter
-        self.task_id_counter += 1
-        device_id = self.wavelengths.index(wl) # each device handles one omega, to reuse the precomputed PML 
-        
-        last_E = self.last_forward_E.get(wl, None) if mode == 'forward' else self.last_adjoint_E.get(wl, None)
+        if self._backend == 'NN':
+            wl_torch = torch.tensor([wl], dtype=torch.float32)
+            dl_torch = torch.tensor([self.dL], dtype=torch.float32)
 
-        self.task_queues[device_id].put((task_id, (epsilon_r, source, wl_torch, dl_torch, self.pmls, None, last_E)))
+            # send task to GPU worker queue
+            task_id = self.task_id_counter
+            self.task_id_counter += 1
+            device_id = self.wavelengths.index(wl) # each device handles one omega, to reuse the precomputed PML 
+            
+            last_E = self.last_forward_E.get(wl, None) if mode == 'forward' else self.last_adjoint_E.get(wl, None)
 
-        # wait and fetch the result
-        with self.results_cond:
-            while task_id not in self.results:
-                self.results_cond.wait()
-        e = self.results.pop(task_id)
+            self.task_queues[device_id].put((task_id, (epsilon_r, source, wl_torch, dl_torch, self.pmls, None, last_E)))
+
+            # wait and fetch the result
+            with self.results_cond:
+                while task_id not in self.results:
+                    self.results_cond.wait()
+            e = self.results.pop(task_id)
+        elif self._backend == 'spins':
+            e, spins_residual = spins_solve(None, epsilon_r, source, dL = float(self.dL), wl = float(wl), pmls=torch.tensor(self.pmls)[None])
+            e = r2c(e)
 
         if mode == 'forward':
             self.last_forward_E[wl] = e
@@ -181,9 +207,6 @@ class BaseProblem:
     
     def simulate_adjoint(self):
         raise NotImplementedError("This method must be implemented in the subclass")
-        pass
-    
-    def add_waveguide(self, waveguide):
         pass
     
     @cached_property
@@ -232,21 +255,50 @@ class BaseProblem:
         full_eps = full_density * (self.eps_design_max - self.eps_design_min) + self.eps_design_min
         return full_eps
     
+    def make_torch_epsilon_r(
+        self,
+        design_variable: torch.Tensor
+    ) -> torch.Tensor:
+        # both density_bg and design_variable have value between 0 and 1
+        # design_variable requires grad, while density_bg does not
+        destination_ = torch.from_numpy(self.density_bg).requires_grad_(False).to(torch.float32)
+        destination_[self.design_region_x_start:self.design_region_x_end, self.design_region_y_start:self.design_region_y_end, self.design_region_z_start:self.design_region_z_end] = design_variable[:,:,None]
+        epsilon_r = destination_ * (self.eps_design_max - self.eps_design_min) + self.eps_design_min
+        return epsilon_r
+    
     @cached_property
     def design_region_x_start(self):
-        return self.pmls[0] + self.surrounding_spaces[0]
+        if self.pml_pad_mode:
+            return self.pmls[0] + self.surrounding_spaces[0]
+        else:
+            return self.surrounding_spaces[0]
     @cached_property
     def design_region_x_end(self):
-        return self.grid_shape[0] - self.pmls[1] - self.surrounding_spaces[1]
+        if self.pml_pad_mode:
+            return self.grid_shape[0] - self.pmls[1] - self.surrounding_spaces[1]
+        else:
+            return self.grid_shape[0] - self.surrounding_spaces[1]
     @cached_property
     def design_region_y_start(self):
-        return self.pmls[2] + self.surrounding_spaces[2]
+        if self.pml_pad_mode:
+            return self.pmls[2] + self.surrounding_spaces[2]
+        else:
+            return self.surrounding_spaces[2]
     @cached_property
     def design_region_y_end(self):
-        return self.grid_shape[1] - self.pmls[3] - self.surrounding_spaces[3]
+        if self.pml_pad_mode:
+            return self.grid_shape[1] - self.pmls[3] - self.surrounding_spaces[3]
+        else:
+            return self.grid_shape[1] - self.surrounding_spaces[3]
     @cached_property
     def design_region_z_start(self):
-        return self.pmls[4] + self.surrounding_spaces[4]
+        if self.pml_pad_mode:
+            return self.pmls[4] + self.surrounding_spaces[4]
+        else:
+            return self.surrounding_spaces[4]
     @cached_property
     def design_region_z_end(self):
-        return self.grid_shape[2] - self.pmls[5] - self.surrounding_spaces[5]
+        if self.pml_pad_mode:
+            return self.grid_shape[2] - self.pmls[5] - self.surrounding_spaces[5]
+        else:
+            return self.grid_shape[2] - self.surrounding_spaces[5]

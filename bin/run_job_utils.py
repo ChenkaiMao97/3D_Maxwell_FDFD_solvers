@@ -4,6 +4,7 @@ import hashlib
 from dataclasses import dataclass, field
 from getpass import getuser
 from datetime import datetime
+
 import gpustat
 from typing import Optional
 

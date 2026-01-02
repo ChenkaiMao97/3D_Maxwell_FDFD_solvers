@@ -12,7 +12,7 @@ import functools
 @gin.configurable
 def _get_default_initializer(
     mean=0.5,
-    stddev=0.001,
+    stddev=0.00,
     length_scale=3.0,
     bounds=(0.0, 1.0)
 ):
@@ -105,19 +105,23 @@ def extract_fixed_solid_void_pixels(
     i_min, j_min = i[0], j[0]
     i_max, j_max = i[-1], j[-1]
 
-    assert i_min > 0
-    assert j_min > 0
-    assert i_max < solid.shape[0] - 1
-    assert j_max < solid.shape[1] - 1
+    # assert i_min > 0
+    # assert j_min > 0
+    # assert i_max < solid.shape[0] - 1
+    # assert j_max < solid.shape[1] - 1
 
     fixed_solid = onp.zeros((i_max - i_min + 1, j_max - j_min + 1), dtype=bool)
     fixed_void = onp.zeros((i_max - i_min + 1, j_max - j_min + 1), dtype=bool)
 
     for fixed_arr, arr in [(fixed_solid, solid), (fixed_void, void)]:
-        fixed_arr[:, 0] = arr[i_min : i_max + 1, j_min - 1]
-        fixed_arr[:, -1] = arr[i_min : i_max + 1, j_max + 1]
-        fixed_arr[0, :] = arr[i_min - 1, j_min : j_max + 1]
-        fixed_arr[-1, :] = arr[i_max + 1, j_min : j_max + 1]
+        if j_min > 0:
+            fixed_arr[:, 0] = arr[i_min : i_max + 1, j_min - 1]
+        if j_max < arr.shape[1] - 1:
+            fixed_arr[:, -1] = arr[i_min : i_max + 1, j_max + 1]
+        if i_min > 0:
+            fixed_arr[0, :] = arr[i_min - 1, j_min : j_max + 1]
+        if i_max < arr.shape[0] - 1:
+            fixed_arr[-1, :] = arr[i_max + 1, j_min : j_max + 1]
 
     return fixed_solid, fixed_void
 

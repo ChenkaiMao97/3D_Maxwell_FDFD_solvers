@@ -99,7 +99,6 @@ class IntegratedPhotonicsProblem(BaseProblem):
             if len(specs) == 0:
                 return
 
-            print("making waveguides and ports for side: ", loc)
             # The first port on the left side will be the excitation port (with largest y coord), so all ports have coordinates sorted from max to min
             previous_front = self.design_region_y_start if loc in ['l', 'r'] else self.design_region_x_start
             for idx, wg_spec in enumerate(specs):
@@ -155,7 +154,6 @@ class IntegratedPhotonicsProblem(BaseProblem):
                     assert port_y < y_end, "waveguide not long enough, port is inside design region"
                 else:
                     raise ValueError("loc needs to be in 'tblr'")
-                print("wg_min, wg_max, previous_front: ", wg_min, wg_max, previous_front)
                 assert wg_min>=previous_front # check waveguide spacing, and also within design region extent
                 previous_front = wg_max + resolve(s.wg_min_separation, self.dL)
 
@@ -224,38 +222,35 @@ class IntegratedPhotonicsProblem(BaseProblem):
                     precompute_source=True if port == self._ports[s.excite_port_idx] else False
                 )
                 # debugging plot for mode:
-                plt.figure(figsize=(10, 12))
-                overlap_e = port.overlap_e(self.wavelengths[0])
-                overlap_e_plot = overlap_e[:,:,round(1/2*(overlap_e.shape[2]-1))]
-                plt.subplot(3,2,1)
-                plt.imshow(overlap_e_plot[...,0].real, cmap="seismic")
-                plt.colorbar()
-                plt.subplot(3,2,2)
-                plt.imshow(overlap_e_plot[...,0].imag, cmap="seismic")
-                plt.colorbar()
-                plt.subplot(3,2,3)
-                plt.imshow(overlap_e_plot[...,1].real, cmap="seismic")
-                plt.colorbar()
-                plt.subplot(3,2,4)
-                plt.imshow(overlap_e_plot[...,1].imag, cmap="seismic")
-                plt.colorbar()
-                plt.subplot(3,2,5)
-                plt.imshow(overlap_e_plot[...,2].real, cmap="seismic")
-                plt.colorbar()
-                plt.subplot(3,2,6)
-                plt.imshow(overlap_e_plot[...,2].imag, cmap="seismic")
-                plt.colorbar()
-                plt.savefig(f"debug_overlap_e_port_{idx}_order_{port.order}.png", dpi=300)
-                plt.close()
-                idx += 1
+                # plt.figure(figsize=(10, 12))
+                # overlap_e = port.overlap_e(self.wavelengths[0])
+                # overlap_e_plot = overlap_e[:,:,round(1/2*(overlap_e.shape[2]-1))]
+                # plt.subplot(3,2,1)
+                # plt.imshow(overlap_e_plot[...,0].real, cmap="seismic")
+                # plt.colorbar()
+                # plt.subplot(3,2,2)
+                # plt.imshow(overlap_e_plot[...,0].imag, cmap="seismic")
+                # plt.colorbar()
+                # plt.subplot(3,2,3)
+                # plt.imshow(overlap_e_plot[...,1].real, cmap="seismic")
+                # plt.colorbar()
+                # plt.subplot(3,2,4)
+                # plt.imshow(overlap_e_plot[...,1].imag, cmap="seismic")
+                # plt.colorbar()
+                # plt.subplot(3,2,5)
+                # plt.imshow(overlap_e_plot[...,2].real, cmap="seismic")
+                # plt.colorbar()
+                # plt.subplot(3,2,6)
+                # plt.imshow(overlap_e_plot[...,2].imag, cmap="seismic")
+                # plt.colorbar()
+                # plt.savefig(f"debug_overlap_e_port_{idx}_order_{port.order}.png", dpi=300)
+                # plt.close()
+                # idx += 1
 
     def simulate(self, design_variable):
         fields = [None] * len(self.wavelengths)
-        epsilon_r_bg = self.epsilon_r_bg()
 
         def _simulate(wavelength):
-            k0 = 2 * jnp.pi * self.eps_background**.5 / wavelength
-
             epsilon_r = self.epsilon_r(design_variable)
 
             source = self._ports[self.excite_port_idx].source(
@@ -282,7 +277,6 @@ class IntegratedPhotonicsProblem(BaseProblem):
     def simulate_adjoint(self, design_variable, forward_output, grad_outputs):
         assert self._backend == 'NN'
         epsilon_r = self.epsilon_r(design_variable)
-        epsilon_r_bg = self.epsilon_r_bg()
 
         def _adjoint_simulate(wavelength, forward_E, grad_E):
             source_torch = torch.conj(grad_E).to(torch.complex64).resolve_conj()  # adjoint source
@@ -304,15 +298,9 @@ class IntegratedPhotonicsProblem(BaseProblem):
                 self.pmls,
                 self.dL,
                 wavelength,
-                # bloch_vector=None,
-                # batched_compute=False,
-                # input_yee=False,
-                # Aop=False,
-                # ln_R=-10,
-                # scale_PML=False,
             )
 
-            input_grad = torch.autograd.grad(r2c(residual)[0], design_variable_torch, grad_outputs=torch.conj(adjoint_E))[0]
+            input_grad = 2*torch.autograd.grad(r2c(residual)[0], design_variable_torch, grad_outputs=torch.conj(adjoint_E))[0]
 
             return input_grad
 
@@ -337,17 +325,6 @@ class IntegratedPhotonicsProblem(BaseProblem):
             input_grads = list(executor.map(worker, tasks))
 
         return (sum(input_grads)/len(self.wavelengths), ) # tuple of gradients for each input variable
-    
-    def make_torch_epsilon_r(
-        self,
-        design_variable: torch.Tensor
-    ) -> torch.Tensor:
-        # both density_bg and design_variable have value between 0 and 1
-        # design_variable requires grad, while density_bg does not
-        destination_ = torch.from_numpy(self.density_bg).requires_grad_(False).to(torch.float32)
-        destination_[self.design_region_x_start:self.design_region_x_end, self.design_region_y_start:self.design_region_y_end, self.design_region_z_start:self.design_region_z_end] = design_variable[:,:,None]
-        epsilon_r = destination_ * (self.eps_design_max - self.eps_design_min) + self.eps_design_min
-        return epsilon_r
 
 @gin.configurable
 class IntegratedPhotonicsChallenge(BaseChallenge):

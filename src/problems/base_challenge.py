@@ -36,6 +36,7 @@ class BaseChallenge:
         problem_constructor: Any,  # pyre-ignore[2]
         density_initializer = _get_default_initializer(),
         _backend: str = 'NN',
+        solver_config: str = None,
     ):
         """Initializes the challenge.
 
@@ -72,23 +73,16 @@ class BaseChallenge:
 
         # Construct the jax.grad compatible simulation function for the model.
         self._backend = _backend
-        if _backend == 'NN':
-            self.problem.init_GPU_workers()
+        self.problem.init_GPU_workers(solver_config=solver_config)
         self._jax_sim_fn = self.construct_jax_sim_fn(self.problem)
 
     def construct_jax_sim_fn(self,
             problem: Callable,
         ):
         """Constructs the jax-compatible simulation function for the model."""
-        if self._backend == 'spins':
-            raise NotImplementedError("spins backend autograd is not supported yet")
-            # _jax_wrapped_sim_fn = autograd_wrapper.jax_wrap_autograd(
-            #     problem.simulate, argnums=0, outputnums=0
-            # )
-        elif self._backend == 'NN':
-            _jax_wrapped_sim_fn = torch_wrapper.jax_wrap_torch(
-                problem.simulate, problem.simulate_adjoint, argnums=0
-            )
+        _jax_wrapped_sim_fn = torch_wrapper.jax_wrap_torch(
+            problem.simulate, problem.simulate_adjoint, argnums=0
+        )
         return _jax_wrapped_sim_fn
     
     def init(self, key: jax.Array):
@@ -111,8 +105,8 @@ class BaseChallenge:
                     fixed_solid=self._fixed_solid,
                     fixed_void=self._fixed_void,
                 ),
-                fixed_solid=jnp.asarray(self._fixed_solid),
-                fixed_void=jnp.asarray(self._fixed_void),
+                fixed_solid=jnp.asarray(self._fixed_solid) if self._fixed_solid is not None else None,
+                fixed_void=jnp.asarray(self._fixed_void) if self._fixed_void is not None else None,
             )
         }
 
