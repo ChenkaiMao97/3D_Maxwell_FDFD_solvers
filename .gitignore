@@ -5,3 +5,5 @@
 *.pt
 *.log
 figures
+data
+*ipynb_checkpoints*
