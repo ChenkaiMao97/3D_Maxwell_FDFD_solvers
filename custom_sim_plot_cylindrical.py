@@ -27,6 +27,25 @@ def get_problem_constructor(sim_type):
     }
     return problems[sim_type]
 
+def theta_map_xy(sx, sy):
+    """
+    Generate azimuthal angle map (phi) for an (sx, sy) x-y grid.
+
+    Returns:
+      theta : (sx, sy) float32
+              phi angle in radians, range (-pi, pi]
+    """
+    cx = (sx - 1) / 2.0
+    cy = (sy - 1) / 2.0
+
+    x = np.arange(sx, dtype=np.float32) - cx
+    y = np.arange(sy, dtype=np.float32) - cy
+    X, Y = np.meshgrid(x, y, indexing="ij")
+
+    theta = np.arctan2(Y, X)  # phi
+
+    return theta
+
 def main(config):
     problem_constructor = get_problem_constructor(config['sim_type'])
     eps, src = problem_constructor(config["sim_shape"], config['wavelength'], config['dL'], config['pmls'], config['kwargs'])
@@ -48,14 +67,21 @@ def main(config):
     intensity = torch.sum(torch.abs(solution[0])**2, dim=-1).detach().cpu().numpy()
     plot_fn_eps(eps[0,:,:,:].detach().cpu().numpy().real, fname=os.path.join(config['output_path'], 'eps'))
     src_intensity = torch.sum(torch.abs(src[0]), dim=-1)
+
+    theta_map = theta_map_xy(src_intensity.shape[0], src_intensity.shape[1])[:,:,None]
+    Ex = solution[0,:,:,:,0].detach().cpu().numpy()
+    Ey = solution[0,:,:,:,1].detach().cpu().numpy()
+    Ez = solution[0,:,:,:,2].detach().cpu().numpy()
+    Er = Ex * np.cos(theta_map) + Ey * np.sin(theta_map)
+    Ephi = -Ex * np.sin(theta_map) + Ey * np.cos(theta_map)
+
+    plot_fn_fields(Er.real, fname=os.path.join(config['output_path'], 'Er_r'))
+    plot_fn_fields(Er.imag, fname=os.path.join(config['output_path'], 'Er_i'))
+    plot_fn_fields(Ephi.real, fname=os.path.join(config['output_path'], 'Ephi_r'))
+    plot_fn_fields(Ephi.imag, fname=os.path.join(config['output_path'], 'Ephi_i'))
+    plot_fn_fields(Ez.real, fname=os.path.join(config['output_path'], 'Ez_r'))
+    plot_fn_fields(Ez.imag, fname=os.path.join(config['output_path'], 'Ez_i'))
     plot_fn_fields(src_intensity.detach().cpu().numpy(), fname=os.path.join(config['output_path'], 'src'))
-    plot_fn_fields(solution[0,:,:,:,0].detach().cpu().numpy().real, fname=os.path.join(config['output_path'], 'solution_xr'))
-    plot_fn_fields(solution[0,:,:,:,0].detach().cpu().numpy().imag, fname=os.path.join(config['output_path'], 'solution_xi'))
-    # plot_fn_fields(solution[0,:,:,:,1].detach().cpu().numpy().real, fname=os.path.join(config['output_path']))
-    # plot_fn_fields(solution[0,:,:,:,1].detach().cpu().numpy().imag, fname=os.path.join(config['output_path']))
-    # plot_fn_fields(solution[0,:,:,:,2].detach().cpu().numpy().real, fname=os.path.join(config['output_path'], 'solution_zr'))
-    # plot_fn_fields(solution[0,:,:,:,2].detach().cpu().numpy().imag, fname=os.path.join(config['output_path'], 'solution_zi'))
-    # plot_fn_fields(intensity, fname=os.path.join(config['output_path'], 'intensity.png'))
     plot_fn_fields(final_residual[0,:,:,:,0].detach().cpu().numpy().real, fname=os.path.join(config['output_path'], 'residual_xr'))
 
     if config['spins_verification']:

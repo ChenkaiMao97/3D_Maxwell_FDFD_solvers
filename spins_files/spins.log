@@ -2801,3 +2801,63 @@
 [2025-11-25 13:16:50,352][INFO][solver][run_plan] Running transformation opt_cont.
 [2025-11-25 13:16:50,352][INFO][solver][run_plan] Running transformation opt_cont.
 [2025-11-25 13:16:50,352][INFO][solver][run_plan] Running transformation opt_cont.
+[2026-02-05 18:09:53,970][INFO][solver][run_plan] Setting up workspace.
+[2026-02-05 18:09:53,971][INFO][solver][run_plan] Running transformation opt_cont.
+[2026-02-05 18:10:08,074][ERROR][maxwell][upload_files] ConnectionError during upload: maxwell-20260205-181006-f4adb0e8-0300-11f1-8b10-a0423f601cb4.J_zi
+Traceback (most recent call last):
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/urllib3/connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/urllib3/connectionpool.py", line 493, in _make_request
+    conn.request(
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/urllib3/connection.py", line 494, in request
+    self.endheaders()
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/http/client.py", line 1278, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/http/client.py", line 1038, in _send_output
+    self.send(msg)
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/http/client.py", line 976, in send
+    self.connect()
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/urllib3/connection.py", line 325, in connect
+    self.sock = self._new_conn()
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/urllib3/connection.py", line 213, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x735ad19ee230>: Failed to establish a new connection: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/requests/adapters.py", line 644, in send
+    resp = conn.urlopen(
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=9041): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x735ad19ee230>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/chenkaim/scripts/testings/3D_Maxwell_FDFD_solvers/spins/fdfd_solvers/maxwell.py", line 29, in upload_files
+    requests.post(server_url,
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/media/ps2/chenkaim/software/miniconda3/envs/waveynet3d/lib/python3.10/site-packages/requests/adapters.py", line 677, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=9041): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x735ad19ee230>: Failed to establish a new connection: [Errno 111] Connection refused'))

@@ -1,0 +1,24 @@
+sim_type: all_air
+
+model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_30_pml_small-10_16_25T15_21_04
+
+output_path: ./ # change this to a different drive if you need to save big files
+sim_shape: [128, 128, 100] # number of pixels in x, y, z
+wavelength: 800 # in nm
+dL: 20 # simulation resolution, in nm
+pmls: [30, 30, 30, 30, 30, 30] # number of pixels of PML for x_start, x_end, y_start, y_end, z_start, z_end
+
+kwargs: # key word arguments for constructing the problem, defined in the meta_atom.py file
+  source_position_z_nm: 1000 # in nm
+  source_polarization: 'x'
+  ln_R: -10 # parameter for PML, don't change
+
+########## parameters for the GMRES solver ##########
+max_iter: 500
+tol: 1e-4
+verbose: True
+restart: 20 # if == 0, no restart, otherwise, run restarted GMRES
+
+########## other configs ##########
+spins_verification: 0 # if == 1, run simulation in spins as well to verify the results
+save_for_plotting: 1 # if == 1, save the solution, src, eps, and final residual for plotting
