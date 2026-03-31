@@ -9,12 +9,16 @@ sim_type: waveguide_bend
 # model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_medium-10_14_25T07_06_43
 
 # (3)
-model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_30_pml_small-10_16_25T15_21_04
+# model_path: /media/ps3/chenkaim/checkpoints/copied_models/aperiodic_CondConv_30_pml_small-10_16_25T15_21_04
+model_path: /media/ps3/root/checkpoints/waveynet3d/aperiodic_CondConv_30_pml_small-10_16_25T15_21_04
+
+# model_path: /media/ps3/root/checkpoints/waveynet3d/BiCGStab_aperiodic_broadband_damping-03_30_26T07_08_41
+# epoch: 4
 
 output_path: ./ # change this to a different drive if you need to save big files
 
 ########## parameters for the physical simulation ##########
-sim_shape: [160, 160, 100] # number of pixels in x, y, z
+sim_shape: [256, 256, 128] # number of pixels in x, y, z
 wavelength: 800 # in nm
 dL: 20 # simulation resolution, in nm
 pmls: [30, 30, 30, 30, 30, 30] # number of pixels of PML for x_start, x_end, y_start, y_end, z_start, z_end
@@ -34,8 +38,12 @@ kwargs: # key word arguments for constructing the problem, defined in the wavegu
 max_iter: 500
 tol: 1e-4
 verbose: True
-restart: 40 # if == 0, no restart, otherwise, run restarted GMRES
+return_xr_history: 1
+plot_iters: [0]
+
+restart: 20 # if == 0, no restart, otherwise, run restarted GMRES
+solver_type: gmres
 
 ########## other configs ##########
 spins_verification: 0 # if == 1, run simulation in spins as well to verify the results
-save_for_plotting: 1 # if == 1, save the solution, src, eps, and final residual for plotting
+save_for_plotting: 0 # if == 1, save the solution, src, eps, and final residual for plotting

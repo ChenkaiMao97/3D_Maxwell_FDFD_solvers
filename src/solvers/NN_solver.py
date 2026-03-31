@@ -1,5 +1,6 @@
 import sys, os
 from src.solvers.gmres import mygmrestorch
+from src.solvers.bicgstab import mybicgstab
 from src.utils.physics import residue_E, src2rhs
 from src.utils.utils import *
 import time
@@ -22,6 +23,7 @@ class NN_solver:
         save_intermediate = False,
         output_dir = None,
         gpu_id = None,
+        solver_type = 'gmres',
     ):
         self.model_path = model_path
         self.sim_shape = sim_shape
@@ -35,7 +37,7 @@ class NN_solver:
         self.gpu_id = gpu_id
         self.save_intermediate = save_intermediate
         self.output_dir = output_dir
-
+        self.solver_type = solver_type
         self.residual_fn = residue_E
 
     def init(self):
@@ -67,18 +69,21 @@ class NN_solver:
         # prepare the GMRES solver:
         Aop = lambda x: r2c(self.residual_fn(c2r(x), eps[...,0], src, self.pmls, self.dL, self.wl, batched_compute=True, Aop=True))
         residual_fn = lambda x: r2c(self.residual_fn(c2r(x), eps[...,0], src, self.pmls, self.dL, self.wl, batched_compute=True, Aop=False))
-        gmres = mygmrestorch(self.model, Aop, tol=self.tol, max_iter=self.max_iter)
+        if self.solver_type == 'gmres':
+            solver = mygmrestorch(self.model, Aop, tol=self.tol, max_iter=self.max_iter)
+        elif self.solver_type == 'bicgstab':
+            solver = mybicgstab(self.model, Aop, tol=self.tol, max_iter=self.max_iter)
 
         complex_rhs = r2c(src2rhs(src, self.dL, self.wl))
         freq = torch.tensor(self.dL/self.wl)[None].cuda()
-        gmres.setup_eps(eps, freq)
+        solver.setup_eps(eps, freq)
         if self.restart == 0:
-            x, history, _, _ = gmres.solve(complex_rhs, self.verbose, init_x=init_x)
+            x, history, _, _ = solver.solve(complex_rhs, self.verbose, init_x=init_x)
         else:
-            x, history = gmres.solve_with_restart(complex_rhs, self.tol, self.max_iter, self.restart, self.verbose, init_x=init_x)
+            x, history = solver.solve_with_restart(complex_rhs, self.tol, self.max_iter, self.restart, self.verbose, init_x=init_x)
         # final_residual = self.residual_fn(x)
         # release memory:
-        del complex_rhs, gmres, history
+        del complex_rhs, solver, history
         gc.collect()
         torch.cuda.empty_cache()
 
@@ -99,6 +104,9 @@ def NN_solve(config, eps, src, return_xr_history=False, plot_iters=None):
     verbose = config["verbose"]
     restart = int(config["restart"])
 
+    solver_type = config["solver_type"] if "solver_type" in config else "gmres"
+    epoch = config["epoch"] if "epoch" in config else None
+
     ########## first parse the gin files, which contains the model configurations ##########
     sys.path.append(model_path)
     for file in os.listdir(model_path):
@@ -107,14 +115,17 @@ def NN_solve(config, eps, src, return_xr_history=False, plot_iters=None):
     
     # load the model
     from waveynet3d.models import model_factory as model_fn
-    model = prepare_model(sim_shape, model_path, model_fn)
+    model = prepare_model(sim_shape, model_path, model_fn, epoch=epoch)
 
     # use the dummy trainer and ds to reproduce the feature engineering for eps (this part should be rewritten to be cleaner)
     from waveynet3d.data.simulation_dataset import SyntheticDataset_same_wl_dL_shape as dataset_fn
     from waveynet3d.trainers.iterative_trainer import IterativeTrainer as trainer_fn
+    # from waveynet3d.data.simulation_dataset import SyntheticDataset_same_wl_dL as dataset_fn
+    # from waveynet3d.trainers.iterative_trainer_bicgstab import IterativeTrainerBiCGStab as trainer_fn
+
     dummy_trainer = trainer_fn(model_config=None, model_saving_path=None)
     dummy_ds = dataset_fn(dummy_trainer.domain_sizes, dummy_trainer.pml_ranges, residual_type=dummy_trainer.residual_type)
-    check_data_distribution(eps, pmls, wl, dL, dummy_trainer, dummy_ds)
+    # check_data_distribution(eps, pmls, wl, dL, dummy_trainer, dummy_ds)
 
     dummy_ds.set_ln_R(dummy_trainer.ln_R)
     print(f"NN solver uses ln_R (parameter for PML): {dummy_trainer.ln_R}")
@@ -128,19 +139,24 @@ def NN_solve(config, eps, src, return_xr_history=False, plot_iters=None):
     # prepare the GMRES solver:
     Aop = lambda x: r2c(residue_E(c2r(x), eps[...,0], src, pmls, dL, wl, batched_compute=True, Aop=True))
     residual_fn = lambda x: r2c(residue_E(c2r(x), eps[...,0], src, pmls, dL, wl, batched_compute=True, Aop=False))
-    gmres = mygmrestorch(model, Aop, tol=tol, max_iter=max_iter)
 
     # solve the problem:
     time_start = time.time()
     complex_rhs = r2c(src2rhs(src, dL, wl))
     freq = torch.tensor(dL/wl)[None].cuda()
-    gmres.setup_eps(eps, freq)
+
+
+    if solver_type == 'gmres':
+        solver = mygmrestorch(model, Aop, tol=tol, max_iter=max_iter)
+    elif solver_type == 'bicgstab':
+        solver = mybicgstab(model, Aop, tol=tol, max_iter=max_iter)
+    solver.setup_eps(eps, freq)
     if restart == 0:
-        x, history, x_history, r_history = gmres.solve(complex_rhs, verbose, return_xr_history=return_xr_history, plot_iters=plot_iters)
+        x, history, x_history, r_history = solver.solve(complex_rhs, tol, max_iter, return_xr_history=return_xr_history, plot_iters=plot_iters, verbose=verbose)
     else:
-        x, history, x_history, r_history = gmres.solve_with_restart(complex_rhs, tol, max_iter, restart, verbose, return_xr_history=return_xr_history, plot_iters=plot_iters)
+        x, history, x_history, r_history = solver.solve_with_restart(complex_rhs, tol, max_iter, restart, return_xr_history=return_xr_history, plot_iters=plot_iters, verbose=verbose)
     time_end = time.time()
-    print(f"time taken for NN GMRES solver: {time_end - time_start} seconds")
+    print(f"time taken for NN {solver_type} solver: {time_end - time_start} seconds")
     final_residual = residual_fn(x)
 
     if return_xr_history:

@@ -74,13 +74,16 @@ def init_dist():
         rank=0
     )
 
-def prepare_model(sim_shape, model_path, model_fn, device_id=0):
+def prepare_model(sim_shape, model_path, model_fn, epoch=None, device_id=0):
     # init_dist()
     model = model_fn(domain_sizes=sim_shape, paddings=[0,0,0])
-    try:
-        checkpoint = torch.load(os.path.join(model_path, "models/last_model.pt"), weights_only=False, map_location=f'cuda:{device_id}')
-    except:
-        checkpoint = torch.load(os.path.join(model_path, "models/best_model.pt"), weights_only=False, map_location=f'cuda:{device_id}')
+    if epoch is not None:
+        checkpoint = torch.load(os.path.join(model_path, f"models/epoch_{epoch}.pt"), weights_only=False, map_location=f'cuda:{device_id}')
+    else:
+        try:
+            checkpoint = torch.load(os.path.join(model_path, "models/last_model.pt"), weights_only=False, map_location=f'cuda:{device_id}')
+        except:
+            checkpoint = torch.load(os.path.join(model_path, "models/best_model.pt"), weights_only=False, map_location=f'cuda:{device_id}')
     model.load_state_dict(checkpoint['state_dict'])
     model.cuda(device_id)
     return model
