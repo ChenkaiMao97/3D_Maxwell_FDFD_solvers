@@ -1,0 +1,10 @@
+include 'bin/configs/solvers/aperiodic_large_model.gin'
+
+# Reference Waveynet3d checkpoint on this cluster.
+NN_solver.model_path = '/acmedata/chenkaim/checkpoints/waveynet3d/train_random_shape_mixed_nospin_resonant_relprev_g2cap10-07_04_26T15_43_28'
+
+# More meaningful than smoke, still bounded for iterative optimization.
+NN_solver.max_iter = 12
+NN_solver.tol = 1e-3
+NN_solver.verbose = True
+NN_solver.restart = 0

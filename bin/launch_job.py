@@ -45,7 +45,8 @@ def main(*,
     experiment_name: str,
     design_config: str=None,
     solver_config: str=None,
-    pipeline: str):
+    pipeline: str,
+    experiment_dir: str=None):
 
     if design_config is not None:
         gin.parse_config_file(design_config)
@@ -57,6 +58,7 @@ def main(*,
         experiment_name=experiment_name,
         design_config=design_config,
         solver_config=solver_config,
+        experiment_dir=experiment_dir,
     )
 
 

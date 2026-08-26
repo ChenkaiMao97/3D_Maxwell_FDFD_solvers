@@ -34,7 +34,7 @@ class BaseChallenge:
         wavelengths: Union[onp.ndarray, Sequence[float]],
         pmls: Tuple[int, int, int, int, int, int],
         problem_constructor: Any,  # pyre-ignore[2]
-        density_initializer = _get_default_initializer(),
+        density_initializer = None,
         _backend: str = 'NN',
         solver_config: str = None,
     ):
@@ -68,6 +68,8 @@ class BaseChallenge:
 
         assert self.problem.density_dim == 2, "currently we assume design region is 2d pattern extrudded into 3d, so density_dim should be 2"
         self._design_shape = tuple(self.problem.design_variable_shape[0:2])
+        if density_initializer is None:
+            density_initializer = _get_default_initializer()
         self._density_initializer = density_initializer
         self._wavelengths = wavelengths
 

@@ -1,0 +1,8 @@
+include 'bin/configs/solvers/aperiodic_large_model.gin'
+
+# Use an existing Waveynet checkpoint on this cluster instead of stale /media/ps3 copied models.
+NN_solver.model_path = '/acmedata/chenkaim/checkpoints/waveynet3d/train_random_shape_mixed_nospin_resonant_relprev_g2cap10-07_04_26T15_43_28'
+NN_solver.max_iter = 2
+NN_solver.tol = 1e-2
+NN_solver.verbose = True
+NN_solver.restart = 0

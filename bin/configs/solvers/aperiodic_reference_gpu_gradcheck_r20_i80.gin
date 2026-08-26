@@ -1,0 +1,5 @@
+include 'bin/configs/solvers/aperiodic_reference_gpu.gin'
+NN_solver.max_iter = 80
+NN_solver.tol = 1e-4
+NN_solver.verbose = False
+NN_solver.restart = 20

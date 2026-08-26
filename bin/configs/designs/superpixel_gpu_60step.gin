@@ -1,0 +1,14 @@
+include 'bin/configs/designs/superpixel.gin'
+
+# GPU sanity/full-pipeline run: enough steps to observe objective improvement,
+# but still short enough to run interactively under one allocation.
+Designer.steps_per_beta = 20
+Designer.steps_per_beta_during_constraint = 20
+Designer.beta_schedule = [32, 128, 512]
+Designer.constraint_weight_schedule = [0, 0, 0]
+Designer.save_bin = True
+Designer.final_step_discretization = 'grayscale'
+
+# Keep far-field post-processing lighter than the production config while
+# preserving the same objective structure.
+get_superpixel_challenge.farfield_points = 120

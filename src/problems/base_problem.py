@@ -35,7 +35,9 @@ class BaseProblem:
         _backend='NN', # 'NN' or 'spins'
         density_dim = 2,
         pml_pad_mode=True,
-        eps_substrate = None
+        eps_substrate = None,
+        use_transpose_adjoint = False,
+        residual_type = 'SC-PML'
     ):
         """
         The Problem classes takes care of constructing the geometry of the problem, and the simulation of the problem.
@@ -89,6 +91,8 @@ class BaseProblem:
         self.eps_design_min = eps_design_min
         self.eps_background = eps_background
         self.eps_substrate = eps_substrate
+        self.use_transpose_adjoint = use_transpose_adjoint
+        self.residual_type = residual_type
 
         self._backend = _backend
 
@@ -182,8 +186,9 @@ class BaseProblem:
             device_id = self.wavelengths.index(wl) # each device handles one omega, to reuse the precomputed PML 
             
             last_E = self.last_forward_E.get(wl, None) if mode == 'forward' else self.last_adjoint_E.get(wl, None)
+            transpose_solve = mode == 'adjoint' and self.use_transpose_adjoint
 
-            self.task_queues[device_id].put((task_id, (epsilon_r, source, wl_torch, dl_torch, self.pmls, None, last_E)))
+            self.task_queues[device_id].put((task_id, (epsilon_r, source, wl_torch, dl_torch, self.pmls, None, last_E, transpose_solve)))
 
             # wait and fetch the result
             with self.results_cond:
@@ -261,7 +266,7 @@ class BaseProblem:
     ) -> torch.Tensor:
         # both density_bg and design_variable have value between 0 and 1
         # design_variable requires grad, while density_bg does not
-        destination_ = torch.from_numpy(self.density_bg).requires_grad_(False).to(torch.float32)
+        destination_ = torch.from_numpy(self.density_bg).requires_grad_(False).to(device=design_variable.device, dtype=torch.float32)
         destination_[self.design_region_x_start:self.design_region_x_end, self.design_region_y_start:self.design_region_y_end, self.design_region_z_start:self.design_region_z_end] = design_variable[:,:,None]
         epsilon_r = destination_ * (self.eps_design_max - self.eps_design_min) + self.eps_design_min
         return epsilon_r

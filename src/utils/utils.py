@@ -86,6 +86,7 @@ def prepare_model(sim_shape, model_path, model_fn, epoch=None, device_id=0):
             checkpoint = torch.load(os.path.join(model_path, "models/best_model.pt"), weights_only=False, map_location=f'cuda:{device_id}')
     model.load_state_dict(checkpoint['state_dict'])
     model.cuda(device_id)
+    model.eval()
     return model
 
 def get_pixels(kwargs, key, dL):

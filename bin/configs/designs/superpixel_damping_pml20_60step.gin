@@ -1,0 +1,6 @@
+include 'bin/configs/designs/superpixel_gpu_60step.gin'
+
+# Keep the inverse-design domain inside the damping-model training envelope.
+SuperpixelChallenge.pmls = (20, 20, 20, 20, 20, 20)
+BaseProblem.residual_type = 'damping'
+BaseProblem.use_transpose_adjoint = False

@@ -1,0 +1,8 @@
+include 'bin/configs/designs/superpixel_damping_pml20_60step.gin'
+
+Designer.steps_per_beta = 1
+Designer.steps_per_beta_during_constraint = 1
+Designer.beta_schedule = [32]
+Designer.constraint_weight_schedule = [0]
+Designer.save_bin = False
+get_superpixel_challenge.farfield_points = 48

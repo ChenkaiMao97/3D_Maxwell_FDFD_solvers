@@ -1,0 +1,10 @@
+include 'bin/configs/designs/superpixel.gin'
+
+# Smoke-test overrides: one optimizer step, smaller far-field sampling.
+Designer.steps_per_beta = 1
+Designer.steps_per_beta_during_constraint = 1
+Designer.beta_schedule = [32]
+Designer.constraint_weight_schedule = [0]
+Designer.save_bin = False
+Designer.final_step_discretization = 'grayscale'
+get_superpixel_challenge.farfield_points = 50

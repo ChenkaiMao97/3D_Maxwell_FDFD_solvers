@@ -262,16 +262,17 @@ class Designer:
                     # print(f'finite difference grad: {finite_difference_grad:.3f}, computed grad: {computed_grad:.3f}')
                     
                     updates, opt_state = opt.update(my_grad, opt_state, self.state.latents)
-
-                    self.state.latents = optax.apply_updates(self.state.latents, updates)
-                    self.state.latents["density"].density = jnp.clip(self.state.latents["density"].density, self.lower_bound, self.upper_bound)
                     print(f'step {step} loss {loss_value:.3f} constraint values: {solid_v:.3f}, {void_v:.3f}, lr: {schedule(self.state.step):.2e}')
 
                     self.state.params = params
                     self.state.loss.append(float(loss_value))
                     self.state.step += 1
 
+                    # Save the latent, params, response, and loss from the same evaluated design.
                     self.log_step(my_grad, params, response, aux)
+
+                    self.state.latents = optax.apply_updates(self.state.latents, updates)
+                    self.state.latents["density"].density = jnp.clip(self.state.latents["density"].density, self.lower_bound, self.upper_bound)
                 
                 pbar.update(1)
                 self.state.beta_schedule_step += 1
@@ -380,8 +381,24 @@ class Designer:
     
     def stop_workers(self):
         self.challenge.problem.stop_workers()
+
+    def save_loss_history(self):
+        if self.log_dir is None or not self.state.loss:
+            return
+        os.makedirs(self.log_dir, exist_ok=True)
+        loss_history = onp.asarray(self.state.loss, dtype=onp.float64)
+        onp.save(os.path.join(self.log_dir, "loss_history.npy"), loss_history)
+        csv_data = onp.column_stack((onp.arange(1, len(loss_history) + 1), loss_history))
+        onp.savetxt(
+            os.path.join(self.log_dir, "loss_history.csv"),
+            csv_data,
+            delimiter=",",
+            header="step,loss",
+            comments="",
+        )
     
     def log_step(self, my_grad, params, response, aux):
+        self.save_loss_history()
         if self.log_fn_type == "integrated_photonics":
             self.log_step_integrated_photonics(my_grad, params, response, aux)
         elif self.log_fn_type == "superpixel":

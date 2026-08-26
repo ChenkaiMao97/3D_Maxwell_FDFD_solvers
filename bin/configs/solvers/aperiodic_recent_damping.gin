@@ -1,0 +1,11 @@
+include 'bin/configs/solvers/aperiodic_large_model.gin'
+
+# Recent Waveynet3d checkpoint trained with adiabatic absorber / imaginary-eps
+# damping boundaries. Pair this with a design config that sets
+# BaseProblem.residual_type = 'damping'.
+NN_solver.model_path = '/acmedata/chenkaim/checkpoints/waveynet3d/train_mixed_nospin_sampled_restarted_quad_scratch_increasing_lr1e3_1e4_w010-07_08_26T00_31_57'
+
+NN_solver.max_iter = 80
+NN_solver.tol = 1e-4
+NN_solver.verbose = True
+NN_solver.restart = 20

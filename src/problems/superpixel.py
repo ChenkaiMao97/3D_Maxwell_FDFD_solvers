@@ -102,11 +102,17 @@ class SuperpixelSpec:
 
 @gin.configurable
 class SuperpixelProblem(BaseProblem):
-    def __init__(self, *args, spec: SuperpixelSpec, **kwargs):
+    def __init__(self, *args, spec: SuperpixelSpec, plot_adjoint_debug=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.spec = spec
-        self.residual_fn = residue_E
+        self.plot_adjoint_debug = plot_adjoint_debug
+        if self.residual_type == 'damping':
+            from waveynet3d.gym.full_residual_util_for_training import residue_E_damping
+            self.residual_fn = residue_E_damping
+        else:
+            self.residual_fn = residue_E
         print("backend: ", self._backend)
+        print("problem residual_type: ", self.residual_type)
 
     def init(self, shape_only=False):
         self._waveguides = []
@@ -229,12 +235,30 @@ class SuperpixelProblem(BaseProblem):
             # plot_3slices(adjoint_E[...,0].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('adjoint_Ex.png'))
             # plot_3slices(adjoint_E[...,1].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('adjoint_Ey.png'))
             # plot_3slices(adjoint_E[...,2].detach().cpu().numpy().real, my_cmap=plt.cm.seismic, fname=os.path.join('adjoint_Ez.png'))
-            debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,0], 'adjoint_Ex.png')
-            debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,1], 'adjoint_Ey.png')
-            debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,2], 'adjoint_Ez.png')
+            if self.plot_adjoint_debug:
+                debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,0], 'adjoint_Ex.png')
+                debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,1], 'adjoint_Ey.png')
+                debug_plot(adjoint_E[:,:,adjoint_E.shape[2]//2,2], 'adjoint_Ez.png')
 
             design_variable_torch = design_variable.clone().detach().requires_grad_(True)
             epsilon_for_residual = self.make_torch_epsilon_r(design_variable_torch)[None]
+            if self.residual_type == 'damping':
+                from waveynet3d.gym.PML_utils import adiabatic_damping_imag_eps
+
+                damping_imag = adiabatic_damping_imag_eps(
+                    tuple(self.grid_shape),
+                    [int(p) for p in self.pmls],
+                    dL_nm=float(self.dL),
+                    wl_nm=float(wavelength),
+                    order=3.0,
+                    R_target=1e-10,
+                    dtype=np.float32,
+                )
+                damping_imag = torch.from_numpy(damping_imag).to(
+                    device=design_variable_torch.device,
+                    dtype=epsilon_for_residual.dtype,
+                )[None]
+                epsilon_for_residual = torch.stack((epsilon_for_residual, damping_imag), dim=-1)
             forward_E = c2r(forward_E[None].detach())
 
             forward_source = torch.zeros(epsilon_r.shape + (3,), dtype=torch.complex64)
@@ -250,7 +274,8 @@ class SuperpixelProblem(BaseProblem):
                 wavelength,
             )
             
-            input_grad = torch.autograd.grad(r2c(residual)[0], design_variable_torch, grad_outputs=1j*torch.conj(adjoint_E))[0]
+            grad_outputs_for_eps = torch.conj(adjoint_E) if self.use_transpose_adjoint else 1j*torch.conj(adjoint_E)
+            input_grad = torch.autograd.grad(r2c(residual)[0], design_variable_torch, grad_outputs=grad_outputs_for_eps)[0]
             # debug_plot(input_grad.squeeze(), 'input_grad.png')
             return input_grad
 
